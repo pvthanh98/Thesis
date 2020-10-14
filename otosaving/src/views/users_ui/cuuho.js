@@ -198,12 +198,15 @@ class Map extends React.PureComponent {
 
   loadMyposition = () => {
     navigator.geolocation.getCurrentPosition((position) => {
+      console.log(position)
       this.setState({
         myposition: {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         },
       });
+    },function(err){
+      console.log(err)
     });
   };
 

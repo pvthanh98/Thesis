@@ -60,7 +60,7 @@ app.post( "/api/service", passport.authenticate("jwt", { session: false }), uplo
 app.put("/api/service/", passport.authenticate("jwt", { session: false }), upload.single("file"), serviceCtl.modifyService);
 app.post("/api/service/delete",passport.authenticate("jwt", { session: false }), serviceCtl.deleteServices);
 //get service of a store
-app.get("/api/service/store/:id",passport.authenticate("jwt", { session: false }), serviceCtl.getMyService);
+app.get("/api/service/store/:id", serviceCtl.getMyService);
 
 //USER
 app.post("/api/user", userCtl.createUser);

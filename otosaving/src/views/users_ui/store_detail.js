@@ -8,7 +8,7 @@ import { Button } from "@material-ui/core";
 import { server } from "../../constant";
 import Icon from "@material-ui/core/Icon";
 import KeyboardVoiceIcon from "@material-ui/icons/KeyboardVoice";
-import {EditLocation, DriveEta} from "@material-ui/icons";
+import { EditLocation, DriveEta } from "@material-ui/icons";
 //tabbar
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -18,6 +18,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Rating from '../../components/user_ui/rating';
+import Card from '../../components/user_ui/card_material';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
 	withScriptjs,
@@ -91,15 +92,15 @@ const useStyle = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
-  },
-  customAppBar: {
-    backgroundColor:"#ffffff",
-    boxShadow:"none"
-  },
-  infoHeader: {
-    padding:"8px",
-    border:"1px solid red"
-  }
+	},
+	customAppBar: {
+		backgroundColor: "#ffffff",
+		boxShadow: "none"
+	},
+	infoHeader: {
+		padding: "8px",
+		border: "1px solid red"
+	},
 }));
 
 function TabPanel(props) {
@@ -129,13 +130,24 @@ function a11yProps(index) {
 	};
 }
 
+const RenderService = (props) => {
+	return props.services.map(service => (<Grid item md={3}>
+		<Card
+			service={service}
+		/>
+	</Grid>))
+}
+
 export default (props) => {
 	const classes = useStyle();
+	const [services, setServices] = React.useState([]);
+	const [loading, setLoading] = React.useState(true);
 	const theme = useTheme();
 	const dispatch = useDispatch();
 	const store_detail = useSelector((state) => state.store_detail);
 	useEffect(() => {
 		loadStore();
+		loadServices();
 	}, [props.match.params.id]);
 
 	const loadStore = async () => {
@@ -148,6 +160,18 @@ export default (props) => {
 			console.log(err);
 		}
 	};
+
+	const loadServices = () => {
+		axios().get(`/api/service/store/${props.match.params.id}`)
+			.then(res => {
+				setServices(res.data);
+				setLoading(false)
+			})
+			.catch(err => {
+				console.log(err);
+				setLoading(false)
+			})
+	}
 
 	const [value, setValue] = React.useState(0);
 
@@ -184,19 +208,19 @@ export default (props) => {
 						{store_detail ? (
 							<div className="mt-3">
 								<img
-									style={{ borderRadius: "50%", border:"1px solid #e4e4e4" }}
+									style={{ borderRadius: "50%", border: "1px solid #e4e4e4" }}
 									src={
 										server + "images/" + store_detail.image
 									}
 									width="180px"
 								/>
 								<h4 className="mt-3">{store_detail.name}</h4>
-								<p>{store_detail.description}</p>
-                <p><Rating star={4} /></p>
+								<div>{store_detail.description}</div>
+								<div><Rating star={4} /></div>
 							</div>
 						) : (
-							<div>Loading...</div>
-						)}
+								<div>Loading...</div>
+							)}
 					</Grid>
 					<Grid
 						className={classes.optionInfo}
@@ -220,15 +244,15 @@ export default (props) => {
 						>
 							Gọi
 						</Button>
-            
-            <div className={classes.customButton} style={{textAlign:"center"}}>
-            <hr />
-             <p><EditLocation/> {store_detail && store_detail.address}  </p>
-             <p><DriveEta /> Cách bạn 12 km</p>
-            </div>
+
+						<div className={classes.customButton} style={{ textAlign: "center" }}>
+							<hr />
+							<div><EditLocation /> {store_detail && store_detail.address}  </div>
+							<div><DriveEta /> Cách bạn 12 km</div>
+						</div>
 					</Grid>
 					<Grid item md={6} sm={12} xs={12}>
-            <hr />
+						<hr />
 						<AppBar className={classes.customAppBar} position="static" color="default">
 							<Tabs
 								value={value}
@@ -243,29 +267,33 @@ export default (props) => {
 							</Tabs>
 						</AppBar>
 					</Grid>
-          <Grid item md={6} sm={12} xs={12}>
-              
-					</Grid>
-          <SwipeableViews
+					<Grid item md={12} sm={12} xs={12}>
+						<SwipeableViews
+							className="mt-3"
 							axis={theme.direction === "rtl" ? "x-reverse" : "x"}
 							index={value}
 							onChangeIndex={handleChangeIndex}
 						>
-							<TabPanel
+							<div
 								value={value}
 								index={0}
 								dir={theme.direction}
+								style={{ overflow: "hidden" }}
 							>
-								Item One Item One 	Item One Item One	Item One Item One	Item One Item One	Item One Item One	Item One Item One	Item One Item One	Item One Item One	Item One Item One	Item One Item One
-							</TabPanel>
-							<TabPanel
+								<Grid container spacing={2}>
+									<RenderService services={services} />
+								</Grid>
+							</div>
+							<div
 								value={value}
 								index={1}
 								dir={theme.direction}
+								style={{ overflow: "hidden" }}
 							>
 								Item Two
-							</TabPanel>
+								</div>
 						</SwipeableViews>
+					</Grid>
 				</Grid>
 			</Container>
 			<Footer />

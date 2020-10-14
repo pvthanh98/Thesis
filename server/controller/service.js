@@ -10,7 +10,7 @@ module.exports = {
         .catch(err=>console.log(err))
 	},
 	getOutStandingService : (req, res) =>{
-        service.find({}).populate("store_id").limit(7)
+        service.find({}).populate("store_id").limit(4)
         .then(services=>{
             res.json(services)
         })

@@ -17,6 +17,7 @@
     "classnames": "2.2.6",
     "form-data": "^3.0.0",
     "history": "4.10.1",
+    "material-ui-rating": "^4.2.0",
     "perfect-scrollbar": "1.5.0",
     "prop-types": "15.7.2",
     "react": "16.13.1",

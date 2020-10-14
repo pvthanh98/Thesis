@@ -8,6 +8,7 @@ import Footer from "../../components/user_ui/footer";
 import Service from "../../components/user_ui/service";
 import axios from '../../service/axios';
 import {connect} from 'react-redux';
+import {Grid} from '@material-ui/core';
 function Home(props) {
   const [outStandingService, setOutStandingService] = React.useState([]);
   const getStores = () => {
@@ -48,10 +49,10 @@ function Home(props) {
     <div className="App">
       <Navbar />
       <Carousel />
-      <Container fluid={true} className="my-container">
+      <Grid container>
         <Service outStandingService={outStandingService} />
         <Stores />
-      </Container>
+      </Grid> 
       <Footer />
     </div>
   );

@@ -2,8 +2,8 @@ import React from "react";
 export default function (props) {
   let star = Math.round(props.star);
   let styles = {}
-  if(props.quantity) {
-    styles.justifyContent= "space-between";
+  if(props.quantity || props.align==="center") {
+    styles.display= "flex";
     styles.justifyContent="space-between";
   };
   switch (star) {
