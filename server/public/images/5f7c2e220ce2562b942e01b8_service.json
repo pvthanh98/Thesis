@@ -1,0 +1,145 @@
+[{
+  "_id": {
+    "$oid": "5f7d6bba2ca6a71e6c9b1e70"
+  },
+  "rating": {
+    "five": 0,
+    "four": 0,
+    "three": 0,
+    "two": 0,
+    "one": 0,
+    "total": 4
+  },
+  "store_id": {
+    "$oid": "5f7d6ad02ca6a71e6c9b1e6f"
+  },
+  "name": "Nhớt xe 15w49",
+  "description": "Nhớt được nhập khẩu từ Mỹ Nhớt được nhập khẩu từ Mỹ",
+  "image": "5f7d6ad02ca6a71e6c9b1e6f_nhotxe15w49.jpg",
+  "price": 200000,
+  "quantity": 120,
+  "timestamp": {
+    "$date": "2020-10-07T07:18:18.023Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f7d6cc32ca6a71e6c9b1e71"
+  },
+  "rating": {
+    "five": 0,
+    "four": 0,
+    "three": 0,
+    "two": 0,
+    "one": 0,
+    "total": 3
+  },
+  "store_id": {
+    "$oid": "5f7d6ad02ca6a71e6c9b1e6f"
+  },
+  "name": "Bánh Xe Nhật",
+  "description": "t is a long established fact that a reader will be distracted by the readable",
+  "image": "5f7d6ad02ca6a71e6c9b1e6f_banhxenhat.jpg",
+  "price": 1500000,
+  "quantity": 50,
+  "timestamp": {
+    "$date": "2020-10-07T07:22:43.070Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f7d6d212ca6a71e6c9b1e72"
+  },
+  "rating": {
+    "five": 0,
+    "four": 0,
+    "three": 0,
+    "two": 0,
+    "one": 0,
+    "total": 4
+  },
+  "store_id": {
+    "$oid": "5f7d6ad02ca6a71e6c9b1e6f"
+  },
+  "name": "Bơm bánh xe oto",
+  "description": "t is a long established fact that a reader will be distracted",
+  "image": "5f7d6ad02ca6a71e6c9b1e6f_bomxeoto.png",
+  "price": 50000,
+  "quantity": 1000,
+  "timestamp": {
+    "$date": "2020-10-07T07:24:17.922Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f7d6e0f2ca6a71e6c9b1e73"
+  },
+  "rating": {
+    "five": 0,
+    "four": 0,
+    "three": 0,
+    "two": 0,
+    "one": 0,
+    "total": 5
+  },
+  "store_id": {
+    "$oid": "5f7c2e220ce2562b942e01b8"
+  },
+  "name": "Máy Bơm Compresser",
+  "description": "Contrary to popular belief, Lorem Ipsum is not simply random text.",
+  "image": "5f7c2e220ce2562b942e01b8_may-bom-lop-xe-o-to-air-compressor-3.png",
+  "price": 1400000,
+  "quantity": 120,
+  "timestamp": {
+    "$date": "2020-10-07T07:28:15.087Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f7d6e952ca6a71e6c9b1e74"
+  },
+  "rating": {
+    "five": 0,
+    "four": 0,
+    "three": 0,
+    "two": 0,
+    "one": 0,
+    "total": 3
+  },
+  "store_id": {
+    "$oid": "5f7c2e220ce2562b942e01b8"
+  },
+  "name": "Bánh Xe Brigde",
+  "description": "Contrary to popular belief, Lorem Ipsum is not simply random text.",
+  "image": "5f7c2e220ce2562b942e01b8_banhxebrai.jfif",
+  "price": 1400000,
+  "quantity": 120,
+  "timestamp": {
+    "$date": "2020-10-07T07:30:29.849Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f7d6f662ca6a71e6c9b1e75"
+  },
+  "rating": {
+    "five": 0,
+    "four": 0,
+    "three": 0,
+    "two": 0,
+    "one": 0,
+    "total": 0
+  },
+  "store_id": {
+    "$oid": "5f7c2e690ce2562b942e01b9"
+  },
+  "name": "Kéo xe oto",
+  "description": " The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\"",
+  "image": "5f7c2e690ce2562b942e01b9_autopress-xe-ban-tai-keo-theo-ro-mooc-03.jpg",
+  "price": 500000,
+  "quantity": 1000,
+  "timestamp": {
+    "$date": "2020-10-07T07:33:58.141Z"
+  },
+  "__v": 0
+}]
