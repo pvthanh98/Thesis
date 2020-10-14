@@ -9,7 +9,7 @@ export default function (props) {
   const stores = useSelector(state => state.stores)
   const storeToCard = () => {
     return stores && stores.map(store=>{
-      return <Col md="2" key={store._id}>
+      return <Col md="3" className="mt-3" key={store._id}>
                 <Link to={"/store/id/"+store._id} style={{ color: "black", textDecoration: "none" }}>
                   <CardItem 
                     name={store.name}

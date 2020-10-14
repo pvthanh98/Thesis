@@ -55,6 +55,7 @@ export default function (props) {
         />
       </Link>
       <CardContent>
+        <h4>{props.name}</h4>
         <Typography variant="body2" color="textSecondary" component="p">
           {props.description}
         </Typography>
