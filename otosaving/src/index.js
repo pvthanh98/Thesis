@@ -28,9 +28,11 @@ import { createStore } from "redux";
 import Reducer from "./reducer/index";
 import { Provider } from "react-redux";
 import AdminLogin from './views/Adminpage/login';
+import socketIOClient from "socket.io-client";
+import {server} from './constant';
+const socket = socketIOClient(server);
 
 const hist = createBrowserHistory();
-
 const store = createStore(
   Reducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
@@ -48,3 +50,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root")
 );
+
+export {socket};

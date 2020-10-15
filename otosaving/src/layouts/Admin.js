@@ -9,8 +9,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
-
+import Chat from '../components/user_ui/chat/container';
+import { useSelector } from 'react-redux';
 import routes from "routes.js";
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
@@ -21,7 +21,6 @@ import PrivateRoute from '../components/PrivateRoute/privateroute';
 let ps;
 const switchRoutes = (
   <Switch> 
-    
     {routes.map((prop, key) => {
       if (prop.layout === "/admin") {
         return (
@@ -46,11 +45,13 @@ export default function Admin({ ...rest }) {
   const classes = useStyles();
   // ref to help us initialize PerfectScrollbar on windows devices
   const mainPanel = React.createRef();
+  const toggleChat = useSelector(state=>state.chat_toggle);
   // states and functions
   const [image, setImage] = React.useState(bgImage);
   const [color, setColor] = React.useState("blue");
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  
   const handleImageClick = image => {
     setImage(image);
   };
@@ -120,14 +121,7 @@ export default function Admin({ ...rest }) {
           <div className={classes.map}>{switchRoutes}</div>
         )}
         {getRoute() ? <Footer /> : null}
-        <FixedPlugin
-          handleImageClick={handleImageClick}
-          handleColorClick={handleColorClick}
-          bgColor={color}
-          bgImage={image}
-          handleFixedClick={handleFixedClick}
-          fixedClasses={fixedClasses}
-        />
+        {toggleChat && <Chat />}
       </div>
     </div>
   );

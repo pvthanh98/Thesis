@@ -4,7 +4,10 @@ import { Form, Input } from 'reactstrap';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import ChatContent from './chatcontent';
+import CancelIcon from '@material-ui/icons/Cancel';
+import {useDispatch} from 'react-redux';
 export default (props) => {
+  const dispatch = useDispatch();
   const [messages, setMessages] = React.useState([
     {msg:"Hi! how are you today", isStore:false, time:"12h00"},
     {msg:"Fine! thanks", isStore:true, time:"12h01"},
@@ -13,8 +16,9 @@ export default (props) => {
   ])
   return (
     <div className="chat-container">
-      <div className="chat-header" style={{display:"flex", alignItems:"center", padding:"8px"}}>
+      <div className="chat-header" style={{display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px"}}>
         <h4>Cửa hàng 01</h4>
+        <CancelIcon style={{cursor:"pointer"}} onClick={()=> dispatch({type:"SET_CHAT_TOGGLE",state:false})} />
       </div>
       <ChatContent messages={messages} />
       <div className="chat-input">

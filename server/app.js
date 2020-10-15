@@ -2,16 +2,16 @@ require("dotenv").config();
 require("./db/connect");
 const jwt = require("jsonwebtoken");
 const express = require("express");
-const http = require("http");
 const cors = require("cors");
 const app = express();
-const server = http.createServer(app);
+const server = require("http").createServer(app);
 const port = process.env.PORT;
 const path = require("path");
 const bodyParser = require("body-parser");
 const validator = require("./validator/validator");
 const passport = require("./config/passport");
 const multer = require("multer");
+const io = require("socket.io")(server);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "public", "images"));
@@ -36,6 +36,7 @@ const categoryCtl = require('./controller/category')
 const serviceCtl = require("./controller/service");
 const authCtl = require("./controller/auth");
 const userCtl = require("./controller/user");
+const messageCtl = require('./controller/message');
 //login
 app.post("/api/store/login", authCtl.login);
 app.post("/api/user/login", authCtl.userLogin);
@@ -64,8 +65,14 @@ app.get("/api/service/store/:id", serviceCtl.getMyService);
 
 //USER
 app.post("/api/user", userCtl.createUser);
-app.get('/test', passport.authenticate('jwt', { session:false }) , function(req,res){
-  res.send(req.user)
+
+//MESSAGES
+app.get('/api/messages/customer/:id', passport.authenticate("jwt", { session: false }), messageCtl.getCustomerMessagesById)
+
+io.on("connection", (socket) => { 
+  socket.on("cuuho",(data)=> console.log("Cuu ho send data"))
+  console.log("socket connected");
 })
+
 server.listen(port, () => console.log(`server is running on ${port}`));
 

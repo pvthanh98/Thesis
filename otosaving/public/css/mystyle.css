@@ -77,7 +77,8 @@
 }
 
 .chat-container {
-  position: absolute;
+  z-index: 10;
+  position: fixed;
   bottom: 12px;
   right: 1px;
   background-color: #f8f9fb;

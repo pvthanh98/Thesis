@@ -5,12 +5,16 @@ import myservice from './myservice';
 import mystore from './mystore';
 import categories from './category';
 import store_detail from './store_detail'
+import chat_toggle from './chattoggle';
+import messages from './messages'
 export default combineReducers({
     stores,
     services,
     myservice,
     mystore,
     categories,
-    store_detail
+    store_detail,
+    chat_toggle,
+    messages
 });
 

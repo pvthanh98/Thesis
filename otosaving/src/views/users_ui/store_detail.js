@@ -19,6 +19,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Rating from '../../components/user_ui/rating';
 import Card from '../../components/user_ui/card_material';
+import Chat from '../../components/user_ui/chat/container';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
 	withScriptjs,
@@ -92,6 +93,7 @@ const useStyle = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
+		position:"relative"
 	},
 	customAppBar: {
 		backgroundColor: "#ffffff",
@@ -145,6 +147,7 @@ export default (props) => {
 	const theme = useTheme();
 	const dispatch = useDispatch();
 	const store_detail = useSelector((state) => state.store_detail);
+	const chat_toggle = useSelector(state=> state.chat_toggle)
 	useEffect(() => {
 		loadStore();
 		loadServices();
@@ -234,6 +237,7 @@ export default (props) => {
 							className={classes.customButton}
 							color="primary"
 							endIcon={<Icon>send</Icon>}
+							onClick={()=>dispatch({ type: "SET_CHAT_TOGGLE", state: true })}
 						>
 							Nhắn Tin
 						</Button>
@@ -250,6 +254,7 @@ export default (props) => {
 							<div><EditLocation /> {store_detail && store_detail.address}  </div>
 							<div><DriveEta /> Cách bạn 12 km</div>
 						</div>
+						{chat_toggle && <Chat/>}
 					</Grid>
 					<Grid item md={6} sm={12} xs={12}>
 						<hr />

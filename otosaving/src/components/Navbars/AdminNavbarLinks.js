@@ -12,19 +12,21 @@ import Poppers from "@material-ui/core/Popper";
 import Divider from "@material-ui/core/Divider";
 // @material-ui/icons
 import Person from "@material-ui/icons/Person";
-import Notifications from "@material-ui/icons/Notifications";
+import MessageIcon from '@material-ui/icons/Message';
 import Dashboard from "@material-ui/icons/Dashboard";
 import Search from "@material-ui/icons/Search";
 // core components
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
-
+import {server} from '../../constant';
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+import {useDispatch} from 'react-redux';
 
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
   const handleClickNotification = event => {
@@ -33,9 +35,6 @@ export default function AdminNavbarLinks() {
     } else {
       setOpenNotification(event.currentTarget);
     }
-  };
-  const handleCloseNotification = () => {
-    setOpenNotification(null);
   };
   const handleClickProfile = event => {
     if (openProfile && openProfile.contains(event.target)) {
@@ -47,6 +46,11 @@ export default function AdminNavbarLinks() {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+
+  const openChat = () => {
+    dispatch({type:"SET_CHAT_TOGGLE", state:true});
+    setOpenNotification(null);
+  }
   return (
     <div>
       <div className={classes.searchWrapper}>
@@ -87,10 +91,10 @@ export default function AdminNavbarLinks() {
           onClick={handleClickNotification}
           className={classes.buttonLink}
         >
-          <Notifications className={classes.icons} />
+          <MessageIcon className={classes.icons} />
           <span className={classes.notifications}>5</span>
           <Hidden mdUp implementation="css">
-            <p onClick={handleCloseNotification} className={classes.linkText}>
+            <p className={classes.linkText}>
               Notification
             </p>
           </Hidden>
@@ -116,37 +120,37 @@ export default function AdminNavbarLinks() {
               }}
             >
               <Paper>
-                <ClickAwayListener onClickAway={handleCloseNotification}>
+                <ClickAwayListener>
                   <MenuList role="menu">
                     <MenuItem
-                      onClick={handleCloseNotification}
+                      onClick={openChat}
                       className={classes.dropdownItem}
-                    >
-                      Mike John responded to your email
+                      style={{width:"350px"}}
+                    > 
+                      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
+                      <span className="ml-3" style={{fontWeight:"bold"}}>
+                        Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
+                      </span>
                     </MenuItem>
                     <MenuItem
-                      onClick={handleCloseNotification}
+                      onClick={openChat}
                       className={classes.dropdownItem}
-                    >
-                      You have 5 new tasks
+                      style={{width:"350px"}}
+                    > 
+                      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
+                      <span className="ml-3">
+                        Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
+                      </span>
                     </MenuItem>
                     <MenuItem
-                      onClick={handleCloseNotification}
+                      onClick={openChat}
                       className={classes.dropdownItem}
-                    >
-                      You{"'"}re now friend with Andrew
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      Another Notification
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      Another One
+                      style={{width:"350px"}}
+                    > 
+                      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
+                      <span className="ml-3">
+                        Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
+                      </span>
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>

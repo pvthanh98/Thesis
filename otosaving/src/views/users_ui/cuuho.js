@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import axios from "service/axios";
 import MediaObject from '../../components/user_ui/media_store';
 import Chat from '../../components/user_ui/chat/container';
+import {socket} from '../../index';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -183,6 +184,7 @@ class Map extends React.PureComponent {
   componentDidMount() {
     this.loadMyposition();
     this.loadStore();
+    socket.emit("cuuho", "Hello")
   }
 
   loadStore = () => {
@@ -226,7 +228,7 @@ class Map extends React.PureComponent {
       return  <MediaObject 
                 store={store}
                 setSelectedWindow={this.setSelectedWindow}
-                chatToggle={this.chatToggle}
+                chatToggle={()=>this.props.setChatToggle(true)}
               />
       
     })
@@ -287,10 +289,12 @@ class Map extends React.PureComponent {
                       <hr />
                   </Col>
                   <Col md="12">
-                      {this.renderStore()}
+                      <div style={{height:"500px", overflow:"scroll"}}>
+                        {this.renderStore()}
+                      </div>
                   </Col>
               </Row>
-              {this.state.showChat && <Chat />}
+              {this.props.chat_toggle && <Chat />}
           </Container>
         <Footer />
       </div>
@@ -300,6 +304,7 @@ class Map extends React.PureComponent {
 
 const mapProp = (state) => ({
   stores: state.stores,
+  chat_toggle: state.chat_toggle
 });
 
 const mapDispatch = (dispatch) => ({
@@ -315,6 +320,13 @@ const mapDispatch = (dispatch) => ({
       services,
     });
   },
+  setChatToggle: (state) => {
+    dispatch({
+      type: "SET_CHAT_TOGGLE",
+      state,
+    });
+  },
+
 });
 
 export default connect(mapProp, mapDispatch)(Map);

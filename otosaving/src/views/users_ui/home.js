@@ -38,11 +38,19 @@ function Home(props) {
     .then(({data})=> props.updateCategories(data))
     .catch(err=>console.log(err))
   }
+  const loadMessages = () => {
+    if(localStorage.getItem('user_id')){
+        axios().get(`/api/messages/customer/${localStorage.getItem('user_id')}`)
+        .then(({data})=>props.updateMessages(data))
+        .catch(err=>console.log(err));
+    }
+  }
   useEffect(() => {
     loadCategories() // navbar
     getStores();
     getServices();
     getOutStandingService();
+    loadMessages();
   },[]);
   return (
     <div className="App">
@@ -75,6 +83,9 @@ const mapDispatch = dispatch => ({
     },
     updateCategories : (categories) => {
       dispatch({type:"GET_CATEGORY", categories})
+    },
+    updateMessages : (messages) => {
+      dispatch({type:"UPDATE_MESSAGES", messages})
     }
 })
 
