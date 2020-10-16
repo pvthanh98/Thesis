@@ -258,7 +258,10 @@ class Map extends React.PureComponent {
     return (
       <div>
         <Navbar />
-        <MyMapComponent
+        {
+          this.state.position !==null 
+          ?
+          <MyMapComponent
           myposition={this.state.myposition}
           stores={this.state.stores}
           setSelectedWindow={this.setSelectedWindow}
@@ -266,6 +269,8 @@ class Map extends React.PureComponent {
           stores={this.props.stores}
           updateStore={this.props.updateStore}
         />
+        : "Error"
+        }
         <Container className="custom-container">
               <Row>
                   <Col md="12 mt-3">
@@ -294,7 +299,7 @@ class Map extends React.PureComponent {
                       </div>
                   </Col>
               </Row>
-              {this.props.chat_toggle && <Chat />}
+              {this.props.chat_toggle && <Chat where="customer" />}
           </Container>
         <Footer />
       </div>

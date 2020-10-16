@@ -5,12 +5,15 @@ import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { animateScroll as scroll } from 'react-scroll';
 import Rating from '../../components/user_ui/rating';
-
+import axios from "../../service/axios";
+import {useDispatch} from 'react-redux';
 export default (props) => {
+
+  const dispatch = useDispatch();
+  
   const scrollToTop = () =>{
     scroll.scrollToTop();
   }
-  
   const setSelectedWindow = () => {
     props.setSelectedWindow({
       id: props.store._id,
@@ -23,6 +26,19 @@ export default (props) => {
     });
     scrollToTop();
   };
+
+  const handleButtonClick = () => {
+    props.chatToggle();
+    loadMessages();
+  }
+  const loadMessages = () => {
+    const customer_id =localStorage.getItem("user_id")
+    if(customer_id){
+      axios().get(`/api/messages/customer_and_store/${customer_id}/${props.store._id}`)
+      .then(({data})=> dispatch({type:"UPDATE_MESSAGES", messages:data}))
+      .catch(err=>console.log(err));
+    }
+  }
   return (
     <Media className="mb-3">
       <Media left href="#" className="mr-3">
@@ -43,7 +59,7 @@ export default (props) => {
         Cách bạn {props.store.distance ? props.store.distance.distance.text : <Loading />}
       </Media>
       <Media>
-        <Button onClick={props.chatToggle}  variant="contained" color="primary" endIcon={<Icon>send</Icon>}>
+        <Button onClick={handleButtonClick}  variant="contained" color="primary" endIcon={<Icon>send</Icon>}>
           Nhắn Tin
         </Button>
         <Button

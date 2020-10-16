@@ -6,7 +6,7 @@ class ChatContent extends React.Component {
     }
     renderMessages = () => {
         return this.props.messages && this.props.messages.map(message=>{
-            return <ChatItem isStore={message.isStore} msg={message.msg} time={message.time} />
+            return <ChatItem where={this.props.where} message={message} />
         })
     }
     render(){

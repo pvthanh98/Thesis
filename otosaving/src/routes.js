@@ -80,8 +80,8 @@ const dashboardRoutes = [
     showSidebar: true
   },
   {
-    path: "/table",
-    name: "Table List",
+    path: "/bill",
+    name: "Bill",
     rtlName: "قائمة الجدول",
     icon: "content_paste",
     component: TableList,
@@ -89,37 +89,37 @@ const dashboardRoutes = [
     layout: "/admin",
     showSidebar: true
   },
-  {
-    path: "/typography",
-    name: "Typography",
-    exact: true,
-    rtlName: "طباعة",
-    icon: LibraryBooks,
-    component: Typography,
-    layout: "/admin",
+  // {
+  //   path: "/typography",
+  //   name: "Typography",
+  //   exact: true,
+  //   rtlName: "طباعة",
+  //   icon: LibraryBooks,
+  //   component: Typography,
+  //   layout: "/admin",
 
-    showSidebar: true
-  },
-  {
-    path: "/icons",
-    name: "Icons",
-    rtlName: "الرموز",
-    icon: BubbleChart,
-    component: Icons,
-    exact: true,
-    layout: "/admin",
-    showSidebar: true
-  },
-  {
-    path: "/maps",
-    name: "Maps",
-    rtlName: "خرائط",
-    icon: LocationOn,
-    component: Maps,
-    layout: "/admin",
-    exact: true,
-    showSidebar: true
-  },
+  //   showSidebar: true
+  // },
+  // {
+  //   path: "/icons",
+  //   name: "Icons",
+  //   rtlName: "الرموز",
+  //   icon: BubbleChart,
+  //   component: Icons,
+  //   exact: true,
+  //   layout: "/admin",
+  //   showSidebar: true
+  // },
+  // {
+  //   path: "/maps",
+  //   name: "Maps",
+  //   rtlName: "خرائط",
+  //   icon: LocationOn,
+  //   component: Maps,
+  //   layout: "/admin",
+  //   exact: true,
+  //   showSidebar: true
+  // },
   {
     path: "/info",
     name: "Info",

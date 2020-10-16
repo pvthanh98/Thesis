@@ -109,7 +109,7 @@
   font-size: 12px;
 }
 
-.store-msg-content {
+.partner-msg-content {
   background-color: #eeeeee;
   border:1px solid rgb(238, 238, 238);
 }
@@ -118,7 +118,7 @@
   width: 85%;
 }
 
-.store_msg {
+.partner_msg {
   display: flex;
   margin-top: 8px;
   float: left;
@@ -138,6 +138,15 @@
 .chat-input {
   height:10%;
 }
+
+.al-left{
+  text-align: "left";
+}
+
+.al-right{
+  text-align: "right";
+}
+
 
 .user-info-bar {
   position: relative;

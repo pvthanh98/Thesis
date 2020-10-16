@@ -31,6 +31,16 @@ import AdminLogin from './views/Adminpage/login';
 import socketIOClient from "socket.io-client";
 import {server} from './constant';
 const socket = socketIOClient(server);
+socket.on('connect', function(){
+  if(localStorage.getItem("admin_token")){
+    socket.emit('authenticate', {token: localStorage.getItem("admin_token"),type:"admin"});
+    return; 
+  }
+  if(localStorage.getItem("user_token")){
+    socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
+    return;
+  }
+});
 
 const hist = createBrowserHistory();
 const store = createStore(

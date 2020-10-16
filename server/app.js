@@ -67,11 +67,30 @@ app.get("/api/service/store/:id", serviceCtl.getMyService);
 app.post("/api/user", userCtl.createUser);
 
 //MESSAGES
-app.get('/api/messages/customer/:id', passport.authenticate("jwt", { session: false }), messageCtl.getCustomerMessagesById)
+app.get('/api/messages/customer_and_store/:customer_id/:store_id', passport.authenticate("jwt", { session: false }), messageCtl.getCustomerStore)
 
+
+//SOKET IO. CHAT
+const Message = require('./db/message');
 io.on("connection", (socket) => { 
-  socket.on("cuuho",(data)=> console.log("Cuu ho send data"))
-  console.log("socket connected");
+  socket.auth = false;
+  socket.on('authenticate', function(data){
+    jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
+      if (!err && decoded) {
+        console.log(`Authenticated socket ${socket.id} type: ${data.type}`);
+        socket.auth = true;
+        socket.user_type=data.type;
+      }
+    })
+  });
+  
+  setTimeout(function(){
+    //sau 1s mà client vẫn chưa dc auth, lúc đấy chúng ta mới disconnect.
+    if (!socket.auth) {
+      console.log("Disconnecting socket ", socket.id);
+      socket.disconnect('unauthorized');
+    }
+  }, 1000);
 })
 
 server.listen(port, () => console.log(`server is running on ${port}`));

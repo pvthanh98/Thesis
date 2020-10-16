@@ -33,11 +33,7 @@ function Home(props) {
     .then(res=>setOutStandingService(res.data))
     .catch(err=>console.log(err));
   }
-  const loadCategories = () => {
-    axios().get('/api/category')
-    .then(({data})=> props.updateCategories(data))
-    .catch(err=>console.log(err))
-  }
+ 
   const loadMessages = () => {
     if(localStorage.getItem('user_id')){
         axios().get(`/api/messages/customer/${localStorage.getItem('user_id')}`)
@@ -45,8 +41,7 @@ function Home(props) {
         .catch(err=>console.log(err));
     }
   }
-  useEffect(() => {
-    loadCategories() // navbar
+  useEffect(() => { 
     getStores();
     getServices();
     getOutStandingService();
@@ -80,9 +75,6 @@ const mapDispatch = dispatch => ({
             type:"GET_SERVICES",
             services
         })
-    },
-    updateCategories : (categories) => {
-      dispatch({type:"GET_CATEGORY", categories})
     },
     updateMessages : (messages) => {
       dispatch({type:"UPDATE_MESSAGES", messages})
