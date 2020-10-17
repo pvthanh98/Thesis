@@ -6,7 +6,7 @@ import Carousel from "../../components/user_ui/Carousel";
 import Stores from "../../components/user_ui/stores";
 import Footer from "../../components/user_ui/footer";
 import Service from "../../components/user_ui/service";
-import axios from '../../service/axios';
+import axios from '../../service/axios_user';
 import {connect} from 'react-redux';
 function Home(props) {
   const [outStandingService, setOutStandingService] = React.useState([]);

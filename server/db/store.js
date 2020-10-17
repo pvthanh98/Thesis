@@ -21,7 +21,8 @@ const storeSchema = new Schema({
     total: { type:Number, default: 0 },
   },
   timestamp: { type: Date, default: Date.now },
-  phone:{type:String}
+  phone:{type:String},
+  socket_id: String
 });
 
 const Store = mongoose.model('store', storeSchema);

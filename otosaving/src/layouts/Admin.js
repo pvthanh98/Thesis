@@ -12,6 +12,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import Chat from '../components/user_ui/chat/container';
 import { useSelector } from 'react-redux';
 import routes from "routes.js";
+import {socket} from '../index';
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
@@ -78,6 +79,19 @@ export default function Admin({ ...rest }) {
   };
   // initialize and destroy the PerfectScrollbar plugin
   React.useEffect(() => {
+    //socket io
+    socket.on("customer_send_msg_to_you",(data)=>{
+      console.log("Customer send what?")
+    })
+
+
+
+
+
+
+
+    ////////////////////////////////////////////////
+
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current, {
         suppressScrollX: true,

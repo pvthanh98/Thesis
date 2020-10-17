@@ -12,6 +12,7 @@ const validator = require("./validator/validator");
 const passport = require("./config/passport");
 const multer = require("multer");
 const io = require("socket.io")(server);
+const user_auth = require("./middleware/user_auth");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "public", "images"));
@@ -67,12 +68,16 @@ app.get("/api/service/store/:id", serviceCtl.getMyService);
 app.post("/api/user", userCtl.createUser);
 
 //MESSAGES
-app.get('/api/messages/customer_and_store/:customer_id/:store_id', passport.authenticate("jwt", { session: false }), messageCtl.getCustomerStore)
+app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore)
 
 
 //SOKET IO. CHAT
 const Message = require('./db/message');
+const auth_user = require("./middleware/user_auth");
+const Customer = require('./db/customer');
+const Store =  require('./db/store');
 io.on("connection", (socket) => { 
+  //authenticate for socket io
   socket.auth = false;
   socket.on('authenticate', function(data){
     jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
@@ -80,17 +85,42 @@ io.on("connection", (socket) => {
         console.log(`Authenticated socket ${socket.id} type: ${data.type}`);
         socket.auth = true;
         socket.user_type=data.type;
+        socket.user_id = decoded.id;
+        if(data.type==="user") Customer.findByIdAndUpdate(decoded.id,{
+          socket_id: socket.id
+        })
+        .then(()=>console.log("update USER socket_id to dbs"))
+        .catch(err=>console.log(err));
+        if(data.type==="store") Store.findByIdAndUpdate(decoded.id,{
+          socket_id: socket.id
+        })
+        .then(()=>console.log("update STORE socket_id to dbs"))
+        .catch(err=>console.log(err));
       }
     })
   });
   
   setTimeout(function(){
-    //sau 1s mà client vẫn chưa dc auth, lúc đấy chúng ta mới disconnect.
+    //sau 1s mà client vẫn chưa dc auth, lúc đấy disconnect.
     if (!socket.auth) {
       console.log("Disconnecting socket ", socket.id);
       socket.disconnect('unauthorized');
     }
   }, 1000);
+  // end authenticating for socket.io
+  socket.on("customer_send_msg", async (data)=>{
+    const store_id = data.to;
+    const {body} = data;
+    await Message.create({
+      store_id,
+      customer_id: socket.user_id,
+      is_store: false,
+      body
+    })
+    const result = await Store.findById(store_id,"socket_id");
+    console.log(`socketID to store (${result.socket_id})`)
+    socket.to(result.socket_id).emit("customer_send_msg_to_you");
+  })
 })
 
 server.listen(port, () => console.log(`server is running on ${port}`));

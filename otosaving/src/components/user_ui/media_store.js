@@ -5,8 +5,9 @@ import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { animateScroll as scroll } from 'react-scroll';
 import Rating from '../../components/user_ui/rating';
-import axios from "../../service/axios";
+import axios from "../../service/axios_user";
 import {useDispatch} from 'react-redux';
+import {server} from '../../constant';
 export default (props) => {
 
   const dispatch = useDispatch();
@@ -29,21 +30,21 @@ export default (props) => {
 
   const handleButtonClick = () => {
     props.chatToggle();
+    console.log(`you click to id ${props.store._id}`)
     loadMessages();
   }
   const loadMessages = () => {
-    const customer_id =localStorage.getItem("user_id")
-    if(customer_id){
-      axios().get(`/api/messages/customer_and_store/${customer_id}/${props.store._id}`)
-      .then(({data})=> dispatch({type:"UPDATE_MESSAGES", messages:data}))
-      .catch(err=>console.log(err));
-    }
+    axios().get(`/api/messages/customer_to/${props.store._id}`)
+    .then(({data})=> {
+      dispatch({type:"UPDATE_MESSAGES", messages:data})
+    })
+    .catch(err=>console.log(err));
   }
   return (
     <Media className="mb-3">
       <Media left href="#" className="mr-3">
         <img
-          src={"http://localhost:8080/images/" + props.store.image}
+          src={`${server}/images/${props.store.image}`}
           style={{ borderRadius: "12px" }}
           height="80px"
         />

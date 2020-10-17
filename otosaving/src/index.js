@@ -33,7 +33,7 @@ import {server} from './constant';
 const socket = socketIOClient(server);
 socket.on('connect', function(){
   if(localStorage.getItem("admin_token")){
-    socket.emit('authenticate', {token: localStorage.getItem("admin_token"),type:"admin"});
+    socket.emit('authenticate', {token: localStorage.getItem("admin_token"),type:"store"});
     return; 
   }
   if(localStorage.getItem("user_token")){
