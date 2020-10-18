@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import axios from "service/axios";
 import MediaObject from '../../components/user_ui/media_store';
 import Chat from '../../components/user_ui/chat/container';
-import {socket} from '../../index';
+import {socket} from '../../views/users_ui/index';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,

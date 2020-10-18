@@ -11,7 +11,7 @@ class ChatContent extends React.Component {
     }
     renderMessages = () => {
         return this.props.messages && this.props.messages.map(message=>{
-            return <ChatItem key={message._id} where={this.props.where} message={message} />
+            return <ChatItem key={message._id} info={this.props.info} where={this.props.where} message={message} />
         })
     }
     render(){

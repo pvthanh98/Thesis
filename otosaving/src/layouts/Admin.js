@@ -10,15 +10,27 @@ import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import Chat from '../components/user_ui/chat/container';
-import { useSelector } from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import routes from "routes.js";
-import {socket} from '../index';
+import axios from '../service/axios';
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/reactlogo.png";
 import PrivateRoute from '../components/PrivateRoute/privateroute';
+
+import socketIOClient from "socket.io-client";
+import {server} from '../constant';
+const socket = socketIOClient(server);
+socket.on('connect', function(){
+  if(localStorage.getItem("admin_token")){
+    socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "store"});
+    return;
+  }
+});
+
+
 let ps;
 const switchRoutes = (
   <Switch> 
@@ -52,6 +64,8 @@ export default function Admin({ ...rest }) {
   const [color, setColor] = React.useState("blue");
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const message_store_list = useSelector(state=> state.message_store_list);
+  const dispatch = useDispatch();
   
   const handleImageClick = image => {
     setImage(image);
@@ -78,12 +92,18 @@ export default function Admin({ ...rest }) {
     }
   };
   // initialize and destroy the PerfectScrollbar plugin
+  const loadListMsgOfStore = () => {
+    axios().get("/api/messages/store_list")
+    .then(({data})=>dispatch({type:"UPDATE_MESSAGE_STORE_LIST", messages: data}))
+    .catch(err=>console.log(err))
+  }
+
   React.useEffect(() => {
     //socket io
     socket.on("customer_send_msg_to_you",(data)=>{
       console.log("Customer send what?")
     })
-
+    loadListMsgOfStore()
 
 
 
@@ -107,7 +127,7 @@ export default function Admin({ ...rest }) {
       }
       window.removeEventListener("resize", resizeFunction);
     };
-  }, [mainPanel]);
+  }, []);
   return (
     <div className={classes.wrapper}>
       <Sidebar

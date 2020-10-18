@@ -5,7 +5,7 @@ import Icon from '@material-ui/core/Icon';
 import ChatContent from './chatcontent';
 import CancelIcon from '@material-ui/icons/Cancel';
 import {useSelector, useDispatch} from 'react-redux';
-import {socket} from '../../../index';
+import {socket} from '../../../views/users_ui/index';
 import axios from '../../../service/axios_user';
 export default (props) => {
   const dispatch = useDispatch();
@@ -24,7 +24,25 @@ export default (props) => {
       body: msgInput
     });
     setMsgInput("");
-    loadMessages();
+    loadMessageLocal();
+  }
+
+  const loadMessageLocal = () => {
+    let newMsg = {
+      is_store:false,
+      body: msgInput,
+      timestamp: new Date().toISOString()
+    }
+    
+    let newMsgContent = [...messages.content];
+    newMsgContent.push(newMsg);
+    let newMessages = {
+      info: {...messages.info},
+      content: newMsgContent
+    }
+
+    console.log(newMessages)
+    dispatch({type:"UPDATE_MESSAGES", messages: newMessages});
   }
 
   const loadMessages = () => {
@@ -41,7 +59,7 @@ export default (props) => {
         <h4>{messages && messages.info.store.name}</h4>
         <CancelIcon style={{cursor:"pointer"}} onClick={()=> dispatch({type:"SET_CHAT_TOGGLE",state:false})} />
       </div>
-      <ChatContent where={props.where} messages={messages.content} />
+      <ChatContent where={props.where} info={messages.info} messages={messages.content} />
       <div className="chat-input">
           <Form onSubmit={handleForm} style={{height:"100%", display:"flex"}}>
              <Input 

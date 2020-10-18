@@ -20,7 +20,7 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 import {server} from '../../constant';
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 
 const useStyles = makeStyles(styles);
 
@@ -29,6 +29,8 @@ export default function AdminNavbarLinks() {
   const dispatch = useDispatch();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+  const message_store_list = useSelector(state => state.message_store_list)
+
   const handleClickNotification = event => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -50,6 +52,24 @@ export default function AdminNavbarLinks() {
   const openChat = () => {
     dispatch({type:"SET_CHAT_TOGGLE", state:true});
     setOpenNotification(null);
+  }
+
+  const renderMessageList = () => {
+    return message_store_list.map(msg => {
+      return <MenuItem
+                onClick={openChat}
+                className={classes.dropdownItem}
+                style={{width:"350px", display:"flex"}}
+              > 
+                <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
+                <div className="ml-3" >
+                  <div>Thanh phan</div>
+                  <div style={{fontWeight:"bold"}}>
+                    Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
+                  </div>
+                </div>
+              </MenuItem>
+    })
   }
   return (
     <div>
@@ -121,37 +141,8 @@ export default function AdminNavbarLinks() {
             >
               <Paper>
                 <ClickAwayListener>
-                  <MenuList role="menu">
-                    <MenuItem
-                      onClick={openChat}
-                      className={classes.dropdownItem}
-                      style={{width:"350px"}}
-                    > 
-                      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
-                      <span className="ml-3" style={{fontWeight:"bold"}}>
-                        Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
-                      </span>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={openChat}
-                      className={classes.dropdownItem}
-                      style={{width:"350px"}}
-                    > 
-                      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
-                      <span className="ml-3">
-                        Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
-                      </span>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={openChat}
-                      className={classes.dropdownItem}
-                      style={{width:"350px"}}
-                    > 
-                      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
-                      <span className="ml-3">
-                        Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
-                      </span>
-                    </MenuItem>
+                  <MenuList role="menu" style={{marginTop:"60px"}}>
+                    {renderMessageList()}
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

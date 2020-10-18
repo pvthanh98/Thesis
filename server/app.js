@@ -69,6 +69,7 @@ app.post("/api/user", userCtl.createUser);
 
 //MESSAGES
 app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore)
+app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList)
 
 
 //SOKET IO. CHAT
@@ -113,10 +114,11 @@ io.on("connection", (socket) => {
     const {body} = data;
     await Message.create({
       store_id,
-      customer_id: socket.user_id,
+      customer_id: socket.user_type==="user"? socket.user_id: null,
       is_store: false,
       body
-    })
+    }).then(()=>console.log("saved message"))
+    .catch(err => console.log(err));
     const result = await Store.findById(store_id,"socket_id");
     console.log(`socketID to store (${result.socket_id})`)
     socket.to(result.socket_id).emit("customer_send_msg_to_you");
