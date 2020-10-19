@@ -71,7 +71,7 @@ app.post("/api/user", userCtl.createUser);
 app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore);
 app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList);
 app.get('/api/messages/store_to/:customer_id', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreToCustomer)
-
+app.post('/api/messages/read_message', messageCtl.readMessage)
 //SOKET IO. CHAT
 const Message = require('./db/message');
 const auth_user = require("./middleware/user_auth");
@@ -79,7 +79,7 @@ const Customer = require('./db/customer');
 const Store =  require('./db/store');
 io.on("connection", (socket) => { 
   //authenticate for socket io
-  socket.emit("socketID","Your socketID: "+ socket.id)
+  socket.emit("socketID",{socket_id: socket.id})
   socket.auth = false;
   socket.on('authenticate', function(data){
     jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
@@ -141,9 +141,25 @@ io.on("connection", (socket) => {
     socket.to(result.socket_id).emit("store_send_msg_to_you",{from_id:socket.user_id});
   })
 
+  socket.on("store_read_message", async function({message_id}){
+    try {
+      console.log(message_id)
+      const {customer_id} = await Message.findByIdAndUpdate(message_id, { is_read:true });
+      socket.emit("refresh_message");
+      Customer.findById(customer_id,"socket_id").then(customer=>{
+        socket.to(customer.socket_id).emit("refresh_message");
+      })
+    } catch(err){
+      console.log(err);
+    }
+  });
 
 
+  
 
+  socket.on("disconnect", function(){
+    console.log("Disconnect "+ socket.id)
+  })
 
 })
 

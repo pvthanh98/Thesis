@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { server } from '../../constant';
 import Icon from '@material-ui/core/Icon';
 import { connect} from 'react-redux';
+import {socket} from '../../views/users_ui/index';
 import {
   Collapse,
   Navbar,
@@ -33,7 +34,8 @@ function MyNavbar (props) {
     localStorage.removeItem('user_token');
     localStorage.removeItem('user_avt');
     localStorage.removeItem('user_name');
-    localStorage.removeItem('user_id')
+    localStorage.removeItem('user_id');
+    socket.disconnect(true);
   }
 
   return (

@@ -22,11 +22,12 @@ import {server} from '../../constant';
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 import {useSelector, useDispatch} from 'react-redux';
 import axios from "service/axios";
+import {socket} from '../../layouts/Admin';
 
 const RenderMessageList = (({messages,openChat,classes})=>(
   messages.map(message=>(
     <MenuItem
-      onClick={()=>openChat(message.customer_id._id)}
+      onClick={()=>openChat(message.customer_id._id, message._id)}
       className={classes.dropdownItem}
       style={{width:"350px", display:"flex"}}
       key={message._id}
@@ -34,7 +35,7 @@ const RenderMessageList = (({messages,openChat,classes})=>(
       <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/${message.customer_id.image}`} />
       <div className="ml-3" >
         <div>{message.customer_id.name}</div>
-        <div style={{fontWeight:"bold"}}>
+        <div className={!message.is_read?"unread-message":""}>
           {message.body}
         </div>
       </div>
@@ -69,11 +70,12 @@ export default function AdminNavbarLinks() {
     setOpenProfile(null);
   };
 
-  const openChat = (customer_id) => {
+  const openChat = (customer_id, message_id) => {
     dispatch({type:"SET_CHAT_TOGGLE", state:true});
     setOpenNotification(null);
     axios().get(`/api/messages/store_to/${customer_id}`)
-    .then(({data})=>dispatch({type:"UPDATE_STORE_MESSAGES", messages:data}))
+    .then(({data})=>dispatch({type:"UPDATE_STORE_MESSAGES", messages:data}));
+    socket.emit("store_read_message",{message_id})
   }
 
   return (
@@ -117,7 +119,7 @@ export default function AdminNavbarLinks() {
           className={classes.buttonLink}
         >
           <MessageIcon className={classes.icons} />
-          <span className={classes.notifications}>5</span>
+        <span className={classes.notifications}>{message_store_list.unread}</span>
           <Hidden mdUp implementation="css">
             <p className={classes.linkText}>
               Notification
@@ -147,7 +149,7 @@ export default function AdminNavbarLinks() {
               <Paper>
                 <ClickAwayListener>
                   <MenuList role="menu" style={{marginRight:"20px"}}>
-                    <RenderMessageList messages={message_store_list} openChat={openChat} classes={classes} />
+                    <RenderMessageList messages={message_store_list.messages} openChat={openChat} classes={classes} />
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

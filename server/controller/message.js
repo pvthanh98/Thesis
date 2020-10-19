@@ -66,14 +66,19 @@ module.exports = {
                 }
             ]);
             let listMessages= [];
+            let unread =0;
             for(let i=0;i<customer_id_list.length;i++){
                 let msg = await Message
                                 .findOne({customer_id:customer_id_list[i]._id})
                                 .populate("customer_id", "name image")
                                 .sort({timestamp:-1}).limit(1);
+                if(!msg.is_read) unread++;
                 listMessages.push(msg)
             }
-            res.send(listMessages)
+            res.send({
+                unread,
+                messages:listMessages
+            })
         } catch(e){
             res.sendStatus(400);
             throw e;
@@ -125,5 +130,9 @@ module.exports = {
             res.sendStatus(400);
             throw err
         }
+    },
+    readMessage: (req, res) => {
+        console.log(`read msg id ${req.body.id}`);
+        res.send("ok")
     }
 }

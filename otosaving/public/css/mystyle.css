@@ -183,3 +183,7 @@
 .store-toolbar {
   padding:8px 0px 8px 0px;
 }
+
+.unread-message {
+  font-weight: bold;
+}

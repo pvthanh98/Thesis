@@ -12,13 +12,12 @@ import StoreDetail from './store_detail';
 import { useSelector, useDispatch } from 'react-redux';
 import socketIOClient from "socket.io-client";
 import {server} from '../../constant';
-let socket = null;
-if(localStorage.getItem("user_token")){
-  socket = socketIOClient(server);
-  socket.on('connect', function(){
-      socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
-  });
-}
+
+const socket = socketIOClient(server);
+socket.on('connect', function(){
+    socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
+});
+
 
 
 function Index() {

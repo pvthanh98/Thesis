@@ -6,6 +6,7 @@ const messageSchema = new Schema({
   store_id: { type: Schema.Types.ObjectId, ref: 'store' },
   is_store: { type:Boolean, default:false },
   body: { type:String },
+  is_read: {type:Boolean, default:false},
   timestamp: { type: Date, default: Date.now }
 });
 

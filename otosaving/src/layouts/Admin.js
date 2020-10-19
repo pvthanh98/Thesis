@@ -105,8 +105,12 @@ export default function Admin({ ...rest }) {
     socket.on("customer_send_msg_to_you",(data)=>{
       loadMessages(data.from_id);
       loadListMsgOfStore()
+    });
+
+    socket.on("refresh_message",()=>{
+      loadListMsgOfStore();
     })
-    loadListMsgOfStore()
+    
 
 
 
@@ -114,7 +118,7 @@ export default function Admin({ ...rest }) {
 
 
     ////////////////////////////////////////////////
-
+    loadListMsgOfStore()
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current, {
         suppressScrollX: true,
