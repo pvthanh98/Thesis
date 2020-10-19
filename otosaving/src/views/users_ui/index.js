@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Route } from "react-router-dom";
-import axios from '../../service/axios';
+import axios from '../../service/axios_user';
 import Home from './home';
 import Login from './login';
 import Rescue from './cuuho';
@@ -12,19 +12,31 @@ import StoreDetail from './store_detail';
 import { useSelector, useDispatch } from 'react-redux';
 import socketIOClient from "socket.io-client";
 import {server} from '../../constant';
-const socket = socketIOClient(server);
-socket.on('connect', function(){
-  if(localStorage.getItem("user_token")){
-    socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
-    return;
-  }
-});
+let socket = null;
+if(localStorage.getItem("user_token")){
+  socket = socketIOClient(server);
+  socket.on('connect', function(){
+      socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
+  });
+}
+
 
 function Index() {
   const dispatch = useDispatch();
   useEffect(() => {
     loadCategories();
+    socket.on("store_send_msg_to_you",({from_id})=>{
+      console.log("STORE SEND MESSAGE TO ME")
+      loadMessages(from_id);
+    })
   });
+  const loadMessages = (store_id) => {
+    axios().get(`/api/messages/customer_to/${store_id}`)
+    .then(({data})=> {
+      dispatch({type:"UPDATE_MESSAGES", messages:data})
+    })
+    .catch(err=>console.log(err));
+  }
   const loadCategories = () => {
     axios().get('/api/category')
     .then(({data})=> dispatch({type:"GET_CATEGORY", categories:data}))

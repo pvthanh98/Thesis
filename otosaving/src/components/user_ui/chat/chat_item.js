@@ -9,7 +9,7 @@ export default (props) => {
           <div className="msg partner_msg">
             <img
               className="mr-2"
-              src={`${server}/images/${props.info.store_id.image}`}
+              src={`${server}/images/${props.info.store.image}`}
               height="30px"
               style={{ borderRadius: "50%" }}
             />

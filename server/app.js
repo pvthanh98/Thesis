@@ -68,9 +68,9 @@ app.get("/api/service/store/:id", serviceCtl.getMyService);
 app.post("/api/user", userCtl.createUser);
 
 //MESSAGES
-app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore)
-app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList)
-
+app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore);
+app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList);
+app.get('/api/messages/store_to/:customer_id', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreToCustomer)
 
 //SOKET IO. CHAT
 const Message = require('./db/message');
@@ -79,6 +79,7 @@ const Customer = require('./db/customer');
 const Store =  require('./db/store');
 io.on("connection", (socket) => { 
   //authenticate for socket io
+  socket.emit("socketID","Your socketID: "+ socket.id)
   socket.auth = false;
   socket.on('authenticate', function(data){
     jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
@@ -121,8 +122,29 @@ io.on("connection", (socket) => {
     .catch(err => console.log(err));
     const result = await Store.findById(store_id,"socket_id");
     console.log(`socketID to store (${result.socket_id})`)
-    socket.to(result.socket_id).emit("customer_send_msg_to_you");
+    socket.to(result.socket_id).emit("customer_send_msg_to_you",{from_id:socket.user_id});
+  });
+
+  socket.on("store_send_msg", async (data)=>{
+    const customer_id = data.to;
+    const { body } = data;
+    await Message.create({
+      store_id: socket.user_type==="store"? socket.user_id: null,
+      customer_id,
+      is_store: true,
+      body
+    }).then(()=>{
+      console.log("saved message");
+    });
+    const result = await Customer.findById(customer_id,"socket_id");
+    console.log(`socketID to customer (${result.socket_id})`)
+    socket.to(result.socket_id).emit("store_send_msg_to_you",{from_id:socket.user_id});
   })
+
+
+
+
+
 })
 
 server.listen(port, () => console.log(`server is running on ${port}`));

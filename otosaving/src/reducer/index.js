@@ -8,6 +8,7 @@ import store_detail from './store_detail'
 import chat_toggle from './chattoggle';
 import messages from './messages';
 import message_store_list from './massage_store_list';
+import message_store from './messages_store';
 export default combineReducers({
     stores,
     services,
@@ -17,6 +18,7 @@ export default combineReducers({
     store_detail,
     chat_toggle,
     messages,
-    message_store_list
+    message_store_list,
+    message_store
 });
 

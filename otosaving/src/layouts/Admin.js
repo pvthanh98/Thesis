@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-import Chat from '../components/user_ui/chat/container';
+import Chat from '../components/user_ui/chat/container_store';
 import {useSelector, useDispatch} from 'react-redux';
 import routes from "routes.js";
 import axios from '../service/axios';
@@ -22,14 +22,16 @@ import PrivateRoute from '../components/PrivateRoute/privateroute';
 
 import socketIOClient from "socket.io-client";
 import {server} from '../constant';
-const socket = socketIOClient(server);
-socket.on('connect', function(){
-  if(localStorage.getItem("admin_token")){
-    socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "store"});
-    return;
-  }
-});
-
+let socket = null;
+if(localStorage.getItem("admin_token")){
+  socket = socketIOClient(server);
+  socket.on('connect', function(){
+    if(localStorage.getItem("admin_token")){
+      socket.emit("authenticate",{token: localStorage.getItem("admin_token"), type: "store"});
+      return;
+    }
+  });
+}
 
 let ps;
 const switchRoutes = (
@@ -101,7 +103,8 @@ export default function Admin({ ...rest }) {
   React.useEffect(() => {
     //socket io
     socket.on("customer_send_msg_to_you",(data)=>{
-      console.log("Customer send what?")
+      loadMessages(data.from_id);
+      loadListMsgOfStore()
     })
     loadListMsgOfStore()
 
@@ -128,6 +131,14 @@ export default function Admin({ ...rest }) {
       window.removeEventListener("resize", resizeFunction);
     };
   }, []);
+
+  const loadMessages = (customer_id) => {
+    axios().get(`/api/messages/store_to/${customer_id}`)
+    .then(({data})=> {
+      dispatch({type:"UPDATE_STORE_MESSAGES", messages:data})
+    })
+    .catch(err=>console.log(err));
+  }
   return (
     <div className={classes.wrapper}>
       <Sidebar
@@ -155,8 +166,10 @@ export default function Admin({ ...rest }) {
           <div className={classes.map}>{switchRoutes}</div>
         )}
         {getRoute() ? <Footer /> : null}
-        {toggleChat && <Chat />}
+        {toggleChat && <Chat where="store"  />}
       </div>
     </div>
   );
 }
+
+export {socket}

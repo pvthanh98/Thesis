@@ -21,6 +21,26 @@ import Button from "components/CustomButtons/Button.js";
 import {server} from '../../constant';
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 import {useSelector, useDispatch} from 'react-redux';
+import axios from "service/axios";
+
+const RenderMessageList = (({messages,openChat,classes})=>(
+  messages.map(message=>(
+    <MenuItem
+      onClick={()=>openChat(message.customer_id._id)}
+      className={classes.dropdownItem}
+      style={{width:"350px", display:"flex"}}
+      key={message._id}
+    > 
+      <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/${message.customer_id.image}`} />
+      <div className="ml-3" >
+        <div>{message.customer_id.name}</div>
+        <div style={{fontWeight:"bold"}}>
+          {message.body}
+        </div>
+      </div>
+    </MenuItem>
+  ))
+))
 
 const useStyles = makeStyles(styles);
 
@@ -49,28 +69,13 @@ export default function AdminNavbarLinks() {
     setOpenProfile(null);
   };
 
-  const openChat = () => {
+  const openChat = (customer_id) => {
     dispatch({type:"SET_CHAT_TOGGLE", state:true});
     setOpenNotification(null);
+    axios().get(`/api/messages/store_to/${customer_id}`)
+    .then(({data})=>dispatch({type:"UPDATE_STORE_MESSAGES", messages:data}))
   }
 
-  const renderMessageList = () => {
-    return message_store_list.map(msg => {
-      return <MenuItem
-                onClick={openChat}
-                className={classes.dropdownItem}
-                style={{width:"350px", display:"flex"}}
-              > 
-                <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/default_store.png`} />
-                <div className="ml-3" >
-                  <div>Thanh phan</div>
-                  <div style={{fontWeight:"bold"}}>
-                    Xe của tôi đang gặp sự cố, xin giúp đỡ. Xe của tôi đang gặp sự cố.
-                  </div>
-                </div>
-              </MenuItem>
-    })
-  }
   return (
     <div>
       <div className={classes.searchWrapper}>
@@ -141,8 +146,8 @@ export default function AdminNavbarLinks() {
             >
               <Paper>
                 <ClickAwayListener>
-                  <MenuList role="menu" style={{marginTop:"60px"}}>
-                    {renderMessageList()}
+                  <MenuList role="menu" style={{marginRight:"20px"}}>
+                    <RenderMessageList messages={message_store_list} openChat={openChat} classes={classes} />
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
