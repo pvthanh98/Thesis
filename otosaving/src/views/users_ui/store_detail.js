@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Navbar from "../../components/user_ui/navbar";
 import Footer from "../../components/user_ui/footer";
 import { Grid, Container } from "@material-ui/core";
-import axios from "../../service/axios";
+import axios from "../../service/axios_user";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@material-ui/core";
 import { server } from "../../constant";
@@ -164,6 +164,17 @@ export default (props) => {
 		}
 	};
 
+	const loadMessages = () => {
+		console.log("press me")
+		dispatch({ type: "SET_CHAT_TOGGLE", state: true })
+		axios().get(`/api/messages/customer_to/${store_detail._id}`)
+		.then(({data})=> {
+		  console.log(data)
+		  dispatch({type:"UPDATE_MESSAGES", messages:data})
+		})
+		.catch(err=>console.log(err));
+	  }
+
 	const loadServices = () => {
 		axios().get(`/api/service/store/${props.match.params.id}`)
 			.then(res => {
@@ -237,7 +248,7 @@ export default (props) => {
 							className={classes.customButton}
 							color="primary"
 							endIcon={<Icon>send</Icon>}
-							onClick={()=>dispatch({ type: "SET_CHAT_TOGGLE", state: true })}
+							onClick={loadMessages}
 						>
 							Nhắn Tin
 						</Button>
@@ -254,7 +265,7 @@ export default (props) => {
 							<div><EditLocation /> {store_detail && store_detail.address}  </div>
 							<div><DriveEta /> Cách bạn 12 km</div>
 						</div>
-						{chat_toggle && <Chat/>}
+						{chat_toggle && <Chat where="customer"/>}
 					</Grid>
 					<Grid item md={6} sm={12} xs={12}>
 						<hr />

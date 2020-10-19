@@ -30,7 +30,6 @@ export default (props) => {
 
   const handleButtonClick = () => {
     props.chatToggle();
-    console.log(`you click to id ${props.store._id}`)
     loadMessages();
   }
   const loadMessages = () => {
