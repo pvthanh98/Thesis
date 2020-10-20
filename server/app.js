@@ -38,6 +38,7 @@ const serviceCtl = require("./controller/service");
 const authCtl = require("./controller/auth");
 const userCtl = require("./controller/user");
 const messageCtl = require('./controller/message');
+const BillCtl = require("./controller/bill");
 //login
 app.post("/api/store/login", authCtl.login);
 app.post("/api/user/login", authCtl.userLogin);
@@ -65,6 +66,9 @@ app.post("/api/service/delete",passport.authenticate("jwt", { session: false }),
 app.get("/api/service/store/:id", serviceCtl.getMyService);
 app.get("/api/service/search/:name", passport.authenticate("jwt", { session: false }), serviceCtl.getSearchSS);
 
+//BILL
+app.get('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.getBill);
+app.post('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.postBill);
 //USER
 app.post("/api/user", userCtl.createUser);
 
@@ -73,6 +77,7 @@ app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustome
 app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList);
 app.get('/api/messages/store_to/:customer_id', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreToCustomer)
 app.post('/api/messages/read_message', messageCtl.readMessage)
+
 //SOKET IO. CHAT
 const Message = require('./db/message');
 const auth_user = require("./middleware/user_auth");

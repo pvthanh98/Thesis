@@ -73,7 +73,6 @@ module.exports = {
 	getSearchSS: (req, res) => {
 		const store_id = req.user.id;
 		const {name} = req.params;
-		console.log(name,store_id)
 		service.find({store_id:store_id, $text:{$search:name}}, "name image price quantity")
 		.then(services=>{
 			res.send(services)

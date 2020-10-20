@@ -16,13 +16,17 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import FolderIcon from '@material-ui/icons/Folder';
 import IconButton from '@material-ui/core/IconButton';
 import AddCircle from '@material-ui/icons/AddCircle';
+import DeleteIcon from '@material-ui/icons/Delete';
+import {Link} from 'react-router-dom';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import ListIcon from '@material-ui/icons/List';
+import AddIcon from '@material-ui/icons/Add';
 
 import {
     Search, 
@@ -69,6 +73,20 @@ const styles = {
   },
   infoItem: {
       padding: "8px"
+  },
+  root: {
+    padding: "8px"
+  },
+  controllButton : {
+    textAlign:"right",
+    padding: "8px"
+  },
+  input :{
+    textAlign:"right"
+  },
+  linkCustom: {
+    borderBottom: "1px solid #d6d6d6",
+    marginTop:"4px"
   }
 };
 
@@ -82,11 +100,13 @@ export default function ProvisionalBill() {
   const [phone, setPhone] = React.useState("");
   const [inputSearch, setInputSearch] = React.useState("");
   const [err, setErr] =React.useState(false);
-  const [isMadeBill, setIsMadeBill] = React.useState(true);
-  const [inputSearchService, setInputNameServier] = React.useState("")
+  const [isMadeBill, setIsMadeBill] = React.useState(false);
+  const [inputSearchService, setInputNameService] = React.useState("")
   const [resultService, setResultService] = React.useState([])
   const [loading, setLoading] = React.useState(false);
   const [billTemp, setBillTemp] = React.useState([]);
+  //////// for submit
+  const [customerID, setCustomerID] = React.useState(null);
   useEffect(()=>{
       return function(){
           setErr(false);
@@ -94,6 +114,7 @@ export default function ProvisionalBill() {
   },[])
 
   const searchCustomer = () => {
+    setCustomerID(inputSearch);
     axios().get(`/api/store/search_customer/${inputSearch}`)
     .then(({data})=> {
         setName(data.name);
@@ -107,7 +128,7 @@ export default function ProvisionalBill() {
 
   const handleChangeService = (e) => {
     setLoading(true);
-    setInputNameServier(e.target.value);
+    setInputNameService(e.target.value);
     if(e.target.value!=""){
       axios().get(`/api/service/search/${e.target.value}`)
       .then(({data})=>{
@@ -120,17 +141,35 @@ export default function ProvisionalBill() {
 
   const addToBill = (id,name, price) => {
     let bills = [...billTemp];
+    let index = bills.findIndex(bill=>bill.id===id);
+    if(index>=0){
+      bills[index].quantity +=1; 
+    } else 
     bills.push({
       id,
       name,
-      price
+      price,
+      quantity:1
     });
     setBillTemp(bills);
+  }
+  const deleteItem = (index) => {
+    let bills = [...billTemp];
+    bills.splice(index,1);
+    setBillTemp(bills);
+  }
+
+  const renderIconButton = (index) => {
+    return (
+      <IconButton onClick={()=>deleteItem(index)} aria-label="delete" color="primary">
+        <DeleteIcon />
+      </IconButton>
+    )
   }
 
   const renderList = () => {
     return resultService.map(service=>{
-      return <ListItem>
+      return <ListItem key={service._id}>
                 <ListItemAvatar>
                   <Avatar src={`${server}/images/${service.image}`}>
                     <FolderIcon />
@@ -151,12 +190,65 @@ export default function ProvisionalBill() {
 
   const renderBillTemp = () => {
     return billTemp.map((bill, index)=>{
-      return [index+1, bill.name, bill.price, 1, parseFloat(bill.price) * 1];
+      return [index+1, bill.name, bill.price, bill.quantity, 
+        parseFloat(bill.price) * bill.quantity, renderIconButton(index)
+      ];
     })
+  }
+
+  const makeBill = () => {
+    let services = [];
+    let total_cost =0;
+    for(let i=0;i<billTemp.length;i++){
+      total_cost += billTemp[i].price * billTemp[i].quantity;
+      services.push({
+        service_id: billTemp[i].id,
+        quantity: billTemp[i].quantity
+      })
+    }
+    const bill ={
+      customerr_id: customerID,
+      total_cost,
+      services,
+    }
+    
+    axios().post('/api/bill',bill)
+    .then(reslt=> {
+      alert("Thêm thành công");
+      resetData();
+    })
+    .catch(err=>console.log(err));
+  }
+
+  const resetData =() => {
+    setName("");
+    setImage("");
+    setAddress("");
+    setPhone("");
+    setInputNameService("");
+    setInputSearch("");
+    setBillTemp([]);
+    setIsMadeBill(false);
   }
 
   return (
     <GridContainer>
+      <GridItem xs={12} sm={12} md={12}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link to="/admin/provisional_bill/" style={{color:"black"}}>
+            <ListIcon />
+            List
+          </Link>
+          <Link
+            to="/admin/provisional_bill/add"
+            style={{color:"black"}}
+            className={classes.linkCustom}
+          >
+            <AddIcon className={classes.icon} />
+            Add
+          </Link>
+      </Breadcrumbs>
+      </GridItem>
       <GridItem xs={12} sm={12} md={4}>
         <Card>
           <CardHeader color="primary">
@@ -234,9 +326,19 @@ export default function ProvisionalBill() {
                   <GridItem xs={12} sm={12} md={12}>
                     <Table
                       tableHeaderColor="primary"
-                      tableHead={["ID", "Name", "Price", "Quantity", "Total"]}
+                      tableHead={["ID", "Name", "Price", "Quantity", "Total",""]}
                       tableData={renderBillTemp()}
                     />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={12} style={{textAlign:"right"}}>
+                    <Button 
+                      disabled={billTemp.length<=0 ? true : false} 
+                      className="mt-3" variant="contained" 
+                      color="primary"
+                      onClick={makeBill}
+                    >
+                        Yêu Cầu Xác Nhận
+                    </Button>
                   </GridItem>
               </GridContainer>
           </CardBody>

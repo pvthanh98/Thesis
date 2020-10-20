@@ -29,7 +29,8 @@ import Language from "@material-ui/icons/Language";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
-import ProvisionalBill from './views/ProvisionalBill/provisional_bill';
+import ProvisionalBillAdd from './views/ProvisionalBill/provisional_bill_add';
+import ProvisionalList from './views/ProvisionalBill/list';
 import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
@@ -91,10 +92,19 @@ const dashboardRoutes = [
     showSidebar: true
   },
   {
+    path: "/provisional_bill/add",
+    name: "Provisional Bill",
+    icon: "business_center",
+    component: ProvisionalBillAdd,
+    exact: true,
+    layout: "/admin",
+    showSidebar: false
+  },
+  {
     path: "/provisional_bill",
     name: "Provisional Bill",
     icon: "business_center",
-    component: ProvisionalBill,
+    component: ProvisionalList,
     exact: true,
     layout: "/admin",
     showSidebar: true
