@@ -2,6 +2,8 @@ import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from '../../service/axios';
 import { Spinner } from 'reactstrap';
+import {socket} from '../../layouts/Admin';
+import {server} from '../../constant';
 function Login(props) {
 	const [email, setEmail] = React.useState("");
 	const [isLogin, setLogin] = React.useState(false); 
@@ -35,6 +37,7 @@ function Login(props) {
 				localStorage.setItem('admin_avt', res.data.admin_avt)
 				setLogin(true);
 				setLoading(false);
+				socket.connect(server);
 			}
 		})
 		.catch(err=> {

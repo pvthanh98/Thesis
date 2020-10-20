@@ -70,6 +70,19 @@ module.exports = {
 			throw err;
 		})
 	},
+	getSearchSS: (req, res) => {
+		const store_id = req.user.id;
+		const {name} = req.params;
+		console.log(name,store_id)
+		service.find({store_id:store_id, $text:{$search:name}}, "name image price quantity")
+		.then(services=>{
+			res.send(services)
+		})
+		.catch(err=>{
+			res.sendStatus(400);
+			throw err;
+		})
+	},
 	modifyService: (req, res) => {
 		let data = {
 			name:req.body.name,

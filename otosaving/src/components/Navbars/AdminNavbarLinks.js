@@ -23,6 +23,7 @@ import styles from "assets/jss/material-dashboard-react/components/headerLinksSt
 import {useSelector, useDispatch} from 'react-redux';
 import axios from "service/axios";
 import {socket} from '../../layouts/Admin';
+import {Redirect} from 'react-router-dom';
 
 const RenderMessageList = (({messages,openChat,classes})=>(
   messages.map(message=>(
@@ -50,6 +51,7 @@ export default function AdminNavbarLinks() {
   const dispatch = useDispatch();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+  const [isLogin, setIsLogin] = React.useState(true);
   const message_store_list = useSelector(state => state.message_store_list)
 
   const handleClickNotification = event => {
@@ -67,8 +69,18 @@ export default function AdminNavbarLinks() {
     }
   };
   const handleCloseProfile = () => {
-    setOpenProfile(null);
+    
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_name");
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_avt");
+    localStorage.removeItem("admin_id");
+    setIsLogin(false)
+    socket.disconnect(true);
+    setOpenProfile(null);
+  }
 
   const openChat = (customer_id, message_id) => {
     dispatch({type:"SET_CHAT_TOGGLE", state:true});
@@ -77,7 +89,7 @@ export default function AdminNavbarLinks() {
     .then(({data})=>dispatch({type:"UPDATE_STORE_MESSAGES", messages:data}));
     socket.emit("store_read_message",{message_id})
   }
-
+  if(!isLogin) return <Redirect to = "/admin/login" />
   return (
     <div>
       <div className={classes.searchWrapper}>
@@ -209,7 +221,7 @@ export default function AdminNavbarLinks() {
                     </MenuItem>
                     <Divider light />
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={handleLogout}
                       className={classes.dropdownItem}
                     >
                       Logout

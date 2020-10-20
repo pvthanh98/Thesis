@@ -13,7 +13,6 @@ import Chat from '../components/user_ui/chat/container_store';
 import {useSelector, useDispatch} from 'react-redux';
 import routes from "routes.js";
 import axios from '../service/axios';
-
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
@@ -22,16 +21,15 @@ import PrivateRoute from '../components/PrivateRoute/privateroute';
 
 import socketIOClient from "socket.io-client";
 import {server} from '../constant';
-let socket = null;
-if(localStorage.getItem("admin_token")){
-  socket = socketIOClient(server);
-  socket.on('connect', function(){
-    if(localStorage.getItem("admin_token")){
-      socket.emit("authenticate",{token: localStorage.getItem("admin_token"), type: "store"});
-      return;
-    }
-  });
-}
+
+const socket = socketIOClient(server);
+socket.on('connect', function(){
+  if(localStorage.getItem("admin_token")){
+    socket.emit("authenticate",{token: localStorage.getItem("admin_token"), type: "store"});
+    return;
+  }
+});
+
 
 let ps;
 const switchRoutes = (

@@ -47,7 +47,7 @@ app.get("/api/store", storeCtl.getStore);
 app.get("/api/store/id/:id", storeCtl.getStoreById)
 app.post("/api/store/modify", passport.authenticate("jwt", { session: false }), upload.single("file_store"), storeCtl.modifyStore);
 app.post("/api/store/me", passport.authenticate("jwt", { session: false }), storeCtl.getStoreInfo);
-
+app.get("/api/store/search_customer/:id", passport.authenticate("jwt", { session: false }), storeCtl.searchCustomer);
 //Service category
 app.post('/api/category', categoryCtl.postCategory);
 app.get('/api/category',categoryCtl.getCategory)
@@ -63,6 +63,7 @@ app.put("/api/service/", passport.authenticate("jwt", { session: false }), uploa
 app.post("/api/service/delete",passport.authenticate("jwt", { session: false }), serviceCtl.deleteServices);
 //get service of a store
 app.get("/api/service/store/:id", serviceCtl.getMyService);
+app.get("/api/service/search/:name", passport.authenticate("jwt", { session: false }), serviceCtl.getSearchSS);
 
 //USER
 app.post("/api/user", userCtl.createUser);

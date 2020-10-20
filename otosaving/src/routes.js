@@ -29,6 +29,7 @@ import Language from "@material-ui/icons/Language";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
+import ProvisionalBill from './views/ProvisionalBill/provisional_bill';
 import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
@@ -83,8 +84,17 @@ const dashboardRoutes = [
     path: "/bill",
     name: "Bill",
     rtlName: "قائمة الجدول",
-    icon: "content_paste",
+    icon: "payment",
     component: TableList,
+    exact: true,
+    layout: "/admin",
+    showSidebar: true
+  },
+  {
+    path: "/provisional_bill",
+    name: "Provisional Bill",
+    icon: "business_center",
+    component: ProvisionalBill,
     exact: true,
     layout: "/admin",
     showSidebar: true
@@ -123,7 +133,7 @@ const dashboardRoutes = [
   {
     path: "/info",
     name: "Info",
-    icon: StoreIcon,
+    icon: "info",
     component: StoreInfo,
     layout: "/admin",
     exact: true,

@@ -7,6 +7,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import {useSelector, useDispatch} from 'react-redux';
 import axios from '../../../service/axios_user';
 import {socket} from '../../../layouts/Admin';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 export default (props) => {
   const dispatch = useDispatch();
   const messages = useSelector(state => state.message_store);
@@ -54,7 +55,12 @@ export default (props) => {
   return (
     <div className="chat-container">
       <div className="chat-header" style={{display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px"}}>
-        <h4>{messages && messages.info.customer.name}</h4>
+        <div>
+          <h4>{messages && messages.info.customer.name} 
+           <CopyToClipboard text={messages.info.customer.id}><Button className="ml-3" color="secondary" variant="contained">copy id</Button></CopyToClipboard>
+          </h4>
+
+        </div>
         <CancelIcon style={{cursor:"pointer"}} onClick={()=> dispatch({type:"SET_CHAT_TOGGLE",state:false})} />
       </div>
       <ChatContent where={props.where} info={messages.info} messages={messages.content} />

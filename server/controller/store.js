@@ -5,6 +5,7 @@ const Store = require("../db/store");
 const salt = bcrypt.genSaltSync(10);
 const path = require("path");
 const Jimp = require('jimp');
+const Customer = require("../db/customer");
 module.exports = {
     createStore : (req, res) =>{
         const errors = validationResult(req);
@@ -81,5 +82,16 @@ module.exports = {
         store.findById(id, "email name description latitude longtitude rating address image phone")
         .then(store=>res.json(store))
         .catch(err=>{res.sendStatus(403);throw err});
-    }
+    },
+    searchCustomer : (req, res) => {
+        const {id} = req.params;
+        Customer.findById(id,"name address phone image")
+        .then(customerInfo => {
+            res.send(customerInfo)
+        })
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        })
+    },
 }

@@ -20,5 +20,5 @@ const serviceSchema = new Schema({
   },
   timestamp: { type: Date, default: Date.now }
 });
-
+serviceSchema.index({name:'text'})
 module.exports = mongoose.model('service', serviceSchema);
