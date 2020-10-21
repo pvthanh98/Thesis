@@ -9,6 +9,7 @@ import chat_toggle from './chattoggle';
 import messages from './messages';
 import message_store_list from './massage_store_list';
 import message_store from './messages_store';
+import bills from './bills';
 export default combineReducers({
     stores,
     services,
@@ -19,6 +20,7 @@ export default combineReducers({
     chat_toggle,
     messages,
     message_store_list,
-    message_store
+    message_store,
+    bills
 });
 

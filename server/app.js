@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
         if(data.type==="user") Customer.findByIdAndUpdate(decoded.id,{
           socket_id: socket.id
         })
-        .then(()=>console.log("update USER socket_id to dbs"))
+        .then(()=>console.log("update USER socket_id "+socket_id+" to dbs"))
         .catch(err=>console.log(err));
         if(data.type==="store") Store.findByIdAndUpdate(decoded.id,{
           socket_id: socket.id
@@ -111,7 +111,7 @@ io.on("connection", (socket) => {
   setTimeout(function(){
     //sau 1s mà client vẫn chưa dc auth, lúc đấy disconnect.
     if (!socket.auth) {
-      console.log("Disconnecting socket ", socket.id);
+      console.log("Authenticated failed disconnecting socket ", socket.id);
       socket.disconnect('unauthorized');
     }
   }, 1000);

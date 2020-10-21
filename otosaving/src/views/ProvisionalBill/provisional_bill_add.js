@@ -207,7 +207,7 @@ export default function ProvisionalBill() {
       })
     }
     const bill ={
-      customerr_id: customerID,
+      customer_id: customerID,
       total_cost,
       services,
     }

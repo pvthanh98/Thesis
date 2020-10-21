@@ -4,6 +4,7 @@ module.exports = {
     postBill: (req,res) => {
         let data = {...req.body};
         data.store_id =  req.user.id;
+        console.log(data)
         Bill.create(data).then(()=>{
             res.sendStatus(200);
         }).catch(err=>{

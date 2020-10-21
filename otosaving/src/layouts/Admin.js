@@ -98,6 +98,11 @@ export default function Admin({ ...rest }) {
     .catch(err=>console.log(err))
   }
 
+  const loadBill = () => {
+    axios().get('/api/bill')
+    .then(({data})=> dispatch({type:"UPDATE_BILLS", bills: data}))
+    .catch(err=>console.log(err));
+  } 
   React.useEffect(() => {
     //socket io
     socket.on("customer_send_msg_to_you",(data)=>{
@@ -116,6 +121,7 @@ export default function Admin({ ...rest }) {
 
 
     ////////////////////////////////////////////////
+    loadBill();
     loadListMsgOfStore()
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current, {
