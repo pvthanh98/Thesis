@@ -28,7 +28,8 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {Redirect} from 'react-router-dom';
 import axios from '../../service/axios';
-import Loading from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import ReplayIcon from '@material-ui/icons/Replay';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -161,7 +162,9 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Dịch vụ
+          Service {" "}<IconButton onClick={props.loadServices} >
+						<ReplayIcon />
+					</IconButton>
         </Typography>
       )}
 
@@ -244,15 +247,18 @@ export default function Service() {
 
   const loadServices = () => {
     setLoading(true);
-    axios().get(`/api/service/store/${localStorage.getItem("admin_id")}`)
-    .then(res=>{
-      setServices(res.data);
-      setLoading(false)
-    })
-    .catch(err => {
-      console.log(err);
-      setLoading(false)
-    })
+    var timeout = setTimeout(function(){
+      axios().get(`/api/service/store/${localStorage.getItem("admin_id")}`)
+      .then(res=>{
+        setServices(res.data);
+        setLoading(false)
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false)
+      })
+      clearTimeout(timeout);
+    },1000)
   }
 
   const rows = services.map((service)=>({
@@ -332,11 +338,13 @@ export default function Service() {
           </Link>
         </Breadcrumbs>
       </GridItem>
+      {loading && <GridItem xs={12} sm={12} md={12}>
+        <div style={{textAlign:"center", padding:"8px 0px 8px 0px"}}>
+          <LinearProgress color="primary" />
+        </div>
+      </GridItem>}
       <GridItem xs={12} sm={12} md={12}>
       <Paper className={classes.paper}>
-        {loading && <div style={{textAlign:"center", padding:"8px"}}>
-        <Loading color="secondary" />
-        </div>}
         <EnhancedTableToolbar 
           setRedirectToModify={setRedirectToModify} 
           numSelected={selected.length} 

@@ -20,6 +20,8 @@ import axios from '../../service/axios';
 import FormData from 'form-data';
 import { Alert } from 'reactstrap';
 import Create from '@material-ui/icons/Create';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const styles = {
   root: {
@@ -51,6 +53,8 @@ export default function ServiceModify(props) {
   const [loading, setLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [err, setErr] = React.useState("");
+  const [categories, setCategories] = React.useState([]);
+  const [caterorySelected, setCategorySelected] = React.useState("");
   const handleFormInput = e => {
     const {value} = e.target;
     switch(e.target.name){ 
@@ -62,19 +66,16 @@ export default function ServiceModify(props) {
         setDescription(value);
         return;
       }
-      case "quantity" : {
-        setQuantity(value)        
-        return;
-      }
-      case "quantity" : {
-        setQuantity(value)        
-        return;
-      }
       case "file" : {
         setFile(e.target.files[0])
         return;
       }
     }
+  }
+  const loadCategories = () =>{
+    axios().get("/api/category")
+    .then(({data})=> {setCategories(data);setCategorySelected(data[0]._id)})
+    .catch(err=>console.log(err))
   }
 
   const onFormSubmit = () => {
@@ -87,6 +88,7 @@ export default function ServiceModify(props) {
     data.append('price', price);
     data.append('file', file);
     data.append('detail', detail);
+    data.append("category", caterorySelected);
     axios()
     .put('/api/service',data)
     .then(res => {
@@ -103,6 +105,7 @@ export default function ServiceModify(props) {
   }
 
   useEffect(()=>{
+    loadCategories();
     loadServiceToModify()
     return ()=>{
       setLoading(false);
@@ -115,11 +118,13 @@ export default function ServiceModify(props) {
       if(props.match.params && props.match.params.id){
         axios().get(`/api/service/id/${props.match.params.id}`)
         .then(({data})=>{
+          console.log(data)
           setName(data.name);
           setDescription(data.description);
           setPrice(data.price);
           setQuantity(data.quantity);
-          setDetail(data.detail)
+          setDetail(data.detail);
+          setCategorySelected(data.category._id);
         })
         .catch(err=>console.log(err))
       }
@@ -134,6 +139,7 @@ export default function ServiceModify(props) {
     setPrice("");
     setDetail("");
   }
+  const renderCategories = () => categories.map(category => <MenuItem key={category._id} value={category._id}>{category.name}</MenuItem>)
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
@@ -194,6 +200,19 @@ export default function ServiceModify(props) {
                 <Grid item md={4} className={classes.root}>
                   <div>Ảnh đại diện</div>
                   <Input type="file" name="file" onChange={handleFormInput} />
+                </Grid>
+                <Grid item md={4} className={classes.root}>
+                  <div>Categories</div>
+                  <Select
+                    labelId="demo-simple-select-helper-label"
+                    id="demo-simple-select-helper"
+                    onChange={(e)=>setCategorySelected(e.target.value)}
+                    value={caterorySelected}
+                    fullWidth
+                    name="category"
+                  >
+                    {renderCategories()}
+                  </Select>
                 </Grid>
                 <Grid item md={12} className={classes.root}>
                   <div className="mb-3">Detail</div>

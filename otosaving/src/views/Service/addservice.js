@@ -64,20 +64,9 @@ export default function AddService() {
         setDescription(value);
         return;
       }
-      case "quantity" : {
-        setQuantity(value)        
-        return;
-      }
-      case "quantity" : {
-        setQuantity(value)        
-        return;
-      }
       case "file" : {
         setFile(e.target.files[0])
         return;
-      }
-      case "category" : {
-        console.log(value)
       }
     }
   }
@@ -197,7 +186,7 @@ export default function AddService() {
                   <Select
                     labelId="demo-simple-select-helper-label"
                     id="demo-simple-select-helper"
-                    onChange={handleFormInput}
+                    onChange={(e)=>setCategorySelected(e.target.value)}
                     value={caterorySelected}
                     fullWidth
                     name="category"

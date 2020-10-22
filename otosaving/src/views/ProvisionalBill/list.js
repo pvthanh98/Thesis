@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem.js";
@@ -21,10 +21,15 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
+import axios from "service/axios";
+import LinearProgress from '@material-ui/core/LinearProgress';
+import ReplayIcon from '@material-ui/icons/Replay';
+import {Redirect} from 'react-router-dom';
+
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
 		return -1;
@@ -60,8 +65,8 @@ const headCells = [
 	},
 	{ id: "Customer", numeric: true, disablePadding: false, label: "Customer" },
 	{ id: "Total", numeric: true, disablePadding: false, label: "Total" },
-  { id: "Quantity", numeric: true, disablePadding: false, label: "Quantity" },
-  { id: "State", numeric: true, disablePadding: false, label: "State" },
+	{ id: "Quantity", numeric: true, disablePadding: false, label: "Quantity" },
+	{ id: "State", numeric: true, disablePadding: false, label: "State" },
 ];
 
 function EnhancedTableHead(props) {
@@ -124,6 +129,10 @@ const useToolbarStyles = makeStyles((theme) => ({
 		paddingLeft: theme.spacing(2),
 		paddingRight: theme.spacing(1),
 	},
+	linkCustom: {
+		borderBottom: "1px solid #d6d6d6",
+		marginTop:"4px"
+	},
 	highlight:
 		theme.palette.type === "light"
 			? {
@@ -169,20 +178,23 @@ const EnhancedTableToolbar = (props) => {
 					component="div"
 				>
 					Provisional Bill List
+					{" "}<IconButton onClick={props.reloadBill} >
+						<ReplayIcon />
+					</IconButton>
 				</Typography>
 			)}
 
-      {(numSelected === 1) && (
+      		{(numSelected === 1) && (
 				<Tooltip title="modify">
-					<IconButton aria-label="modify">
-          <BorderColorIcon />
+					<IconButton onClick={()=>props.setToModifyPage(true)} aria-label="modify">
+          				<BorderColorIcon />
 					</IconButton>
 				</Tooltip>
 			) }
 
 			{numSelected > 0 ? (
 				<Tooltip title="Delete">
-					<IconButton aria-label="delete">
+					<IconButton onClick={props.deleteBill} aria-label="delete">
 						<DeleteIcon />
 					</IconButton>
 				</Tooltip>
@@ -229,14 +241,36 @@ const ProvisionalBillList = (props) => {
 	const [selected, setSelected] = React.useState([]);
 	const [page, setPage] = React.useState(0);
 	const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [loading, setLoading] = React.useState(false);
+	const [ toModifyPage, setToModifyPage] =React.useState(false);
+	const dispatch = useDispatch();
   
-  const bill_temp = useSelector(state => state.bills).filter(bill=> !bill.confirm);
-  
-  const rows = bill_temp.map(bill=> ({
-    ID:bill._id, Customer: bill.customer_id, Total: bill.total_cost, 
-    Quantity: bill.services.length, State : bill.paid ? "Đã thanh toán" : "Chưa thanh toán, chờ xác nhận"
-  }))
+	const bill_temp = useSelector(state => state.bills).filter(bill=> !bill.confirm);
+	
+	const rows = bill_temp.map(bill=> ({
+		ID:bill._id, Customer: bill.customer_id.name, Total: bill.total_cost, 
+		Quantity: bill.services.length, State : bill.paid ? "Đã thanh toán" : "Chưa thanh toán, chờ xác nhận"
+	}));
+
+	useEffect(()=>{
+		reloadBill()
+	},[])
+
+	const reloadBill = () => {
+		setLoading(true);
+		axios().get('/api/bill')
+		.then(({data})=> { setAndDelayLoading(data);})
+		.catch(err=>{console.log(err); setAndDelayLoading(); });
+	}
+
+	const setAndDelayLoading = (data) => {
+		var timeout = setTimeout(function(){
+			setLoading(false);
+			if(data) dispatch({type:"UPDATE_BILLS", bills: data}); 
+			clearTimeout(timeout)
+		},1000)
+	}
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === "asc";
@@ -282,22 +316,28 @@ const ProvisionalBillList = (props) => {
 		setPage(0);
 	};
 
+	const deleteBill = () =>{
+		axios().post('/api/bill/delete', {
+			bill_ids: selected
+		})
+		.then(()=> {
+			reloadBill();
+		})
+		.catch(err=> console.log(err));
+	}
 
 	const isSelected = (name) => selected.indexOf(name) !== -1;
 
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+	if(toModifyPage) return <Redirect to={"/admin/provisional_bill/modify/"+selected[0]} />
 	return (
 		<GridContainer>
 			<GridItem xs={12} sm={12} md={12}>
 				<Breadcrumbs aria-label="breadcrumb">
 					<Link
 						to="/admin/provisional_bill/"
-						style={{ color: "black" }}
-						className={
-							props.match.url === "/admin/provisional_bill/"
-								? classes.linkCustom
-								: ""
-						}
+						style={{ color: "black",borderBottom: "1px solid #d6d6d6", marginTop:"8px" }}
+						className={classes.linkCustom}
 					>
 						<ListIcon />
 						List
@@ -316,9 +356,10 @@ const ProvisionalBillList = (props) => {
 					</Link>
 				</Breadcrumbs>
 			</GridItem>
-			<GridItem xs={12} sm={12} md={12}>
+			<GridItem xs={12} sm={12} md={12} style={{marginTop:"12px"}}>
 				<Paper className={classes.paper}>
-					<EnhancedTableToolbar numSelected={selected.length} />
+					{loading && <LinearProgress />}
+					<EnhancedTableToolbar reloadBill={reloadBill} setToModifyPage={setToModifyPage} numSelected={selected.length} deleteBill={deleteBill} />
 					<TableContainer>
 						<Table
 							className={classes.table}

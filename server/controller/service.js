@@ -89,6 +89,7 @@ module.exports = {
 			price: req.body.price,
 			quantity: req.body.quantity,
 			detail: req.body.detail,
+			category:req.body.category
 		}
 		if(req.file) data.image = req.user.id + "_" + req.file.originalname;
 		service.findByIdAndUpdate(req.body.id, data)

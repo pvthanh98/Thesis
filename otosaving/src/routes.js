@@ -41,7 +41,7 @@ import RTLPage from "views/RTLPage/RTLPage.js";
 import Service from "views/Service/service";
 import AddService from './views/Service/addservice';
 import ModifyService from './views/Service/modifyservice';
-
+import ProvisionalBillModify from './views/ProvisionalBill/modify';
 const dashboardRoutes = [
   {
     path: "/dashboard",
@@ -90,6 +90,15 @@ const dashboardRoutes = [
     exact: true,
     layout: "/admin",
     showSidebar: true
+  },
+  {
+    path: "/provisional_bill/modify/:id",
+    name: "Provisional Bill",
+    icon: "business_center",
+    component: ProvisionalBillModify,
+    exact: true,
+    layout: "/admin",
+    showSidebar: false
   },
   {
     path: "/provisional_bill/add",

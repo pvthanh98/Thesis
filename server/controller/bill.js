@@ -16,9 +16,48 @@ module.exports = {
     getBill: (req,res) => {
         Bill.find({})
         .populate("services.service_id", "name")
+        .populate("customer_id", "name")
         .then((bills)=>{
             res.send(bills)
         })
         .catch(err=>res.send(err));
     },
+
+    deleteBill: async (req, res) => {
+        const {bill_ids} = req.body;
+        try{
+            for(let i=0;i<bill_ids.length;i++){
+                await Bill.findByIdAndDelete(bill_ids[i]);
+            }
+            res.send("ok")
+        } catch(e){
+            res.sendStatus(400);
+            throw e;
+        }
+    },
+
+    getBillByID : (req, res) => {
+        const {id} = req.params;
+        Bill.findById(id)
+        .populate("customer_id", "name image address phone")
+        .populate("services.service_id", "name price total")
+        .then((bill)=>{
+            res.json(bill)
+        })
+        .catch(err=> {
+            if(err) {
+                res.sendStatus(400);
+                throw err;
+            }
+        })
+    },
+    modifyBillTemp: (req, res) => {
+        const {id} = req.params;
+        Bill.findByIdAndUpdate(id,req.body)
+        .then(()=> res.sendStatus(200))
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        })
+    }
 }

@@ -27,9 +27,10 @@ import {Link} from 'react-router-dom';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import ListIcon from '@material-ui/icons/List';
 import AddIcon from '@material-ui/icons/Add';
+import {Typography} from '@material-ui/core';
+import Create from '@material-ui/icons/Create';
 
 import {
-    Search, 
     AccountBox as AccountBoxIcon, 
     Room as RoomIcon,
     PhoneAndroid
@@ -92,7 +93,7 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function ProvisionalBill() {
+export default function ProvisionalBill(props) {
   const classes = useStyles();
   const [name, setName] = React.useState("");
   const [address, setAddress] = React.useState("");
@@ -100,32 +101,40 @@ export default function ProvisionalBill() {
   const [phone, setPhone] = React.useState("");
   const [inputSearch, setInputSearch] = React.useState("");
   const [err, setErr] =React.useState(false);
-  const [isMadeBill, setIsMadeBill] = React.useState(false);
   const [inputSearchService, setInputNameService] = React.useState("")
   const [resultService, setResultService] = React.useState([])
   const [loading, setLoading] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(false);
-  const [billTemp, setBillTemp] = React.useState([]);
-  const [isSuccess, setIsSuccess] = React.useState(false)
+  const [billTemp, setBillTemp] = React.useState([]);  
+  const [isSuccess, setIsSuccess] = React.useState(false);
   //////// for submit
   const [customerID, setCustomerID] = React.useState(null);
   useEffect(()=>{
+      loadBillByID();
       return function(){
           setErr(false);
       }
   },[])
 
-  const searchCustomer = () => {
-    setCustomerID(inputSearch);
-    axios().get(`/api/store/search_customer/${inputSearch}`)
-    .then(({data})=> {
-        setName(data.name);
-        setImage(data.image)
-        setAddress(data.address)
-        setPhone(data.phone)
-        setErr(false)
+  const loadBillByID = () => {
+    const {id} = props.match.params;
+    axios().get(`/api/bill/id/${id}`)
+    .then(({data})=>{
+      setInputSearch(data._id);
+      setName(data.customer_id.name);
+      setAddress(data.customer_id.address);
+      setImage(data.customer_id.image)
+      setPhone(data.customer_id.phone);
+      setCustomerID(data.customer_id._id)
+      let bill = []
+      data.services.forEach(service => bill.push({
+        id:service.service_id._id,
+        name:service.service_id.name,
+        price: service.service_id.price,
+        quantity:service.quantity
+      }));
+      setBillTemp(bill);
     })
-    .catch(err=> setErr(true))
   }
 
   const handleChangeService = (e) => {
@@ -198,7 +207,7 @@ export default function ProvisionalBill() {
     })
   }
 
-  const makeBill = () => {
+  const submitBillModify = () => {
     setLoadingPage(true);
     let services = [];
     let total_cost =0;
@@ -215,28 +224,20 @@ export default function ProvisionalBill() {
       services,
     }
     
-    axios().post('/api/bill',bill)
-    .then(reslt=> {
+    axios().put(`/api/bill/provisional/${props.match.params.id}`,bill)
+    .then(()=> {
       setAndDelayLoading();
     })
-    .catch(err=>console.log(err));
+    .catch(err=>{
+      console.log(err)
+      setAndDelayLoading();
+    });
   }
 
-  const resetData =() => {
-    setName("");
-    setImage("");
-    setAddress("");
-    setPhone("");
-    setInputNameService("");
-    setInputSearch("");
-    setBillTemp([]);
-    setIsMadeBill(false);
-  }
   const setAndDelayLoading = (data) => {
 		var timeout = setTimeout(function(){
       setLoadingPage(false);
       setIsSuccess(true)
-      resetData();
 			clearTimeout(timeout)
 		},1000)
 	}
@@ -252,18 +253,16 @@ export default function ProvisionalBill() {
           <Link
             to="/admin/provisional_bill/add"
             style={{color:"black"}}
-            className={classes.linkCustom}
           >
             <AddIcon className={classes.icon} />
             Add
           </Link>
+          <Typography color="textPrimary" className={classes.linkCustom}>
+            <Create className={classes.icon} />
+              Modify
+          </Typography>
       </Breadcrumbs>
       </GridItem>
-      {loadingPage && <GridItem xs={12} sm={12} md={12}>
-        <div style={{padding:"8px 0px 0px 0px"}}>
-          <LinearProgress color="primary" />
-        </div>
-      </GridItem>}
       <GridItem xs={12} sm={12} md={4}>
         <Card>
           <CardHeader color="primary">
@@ -278,14 +277,10 @@ export default function ProvisionalBill() {
                       <div>ID Khách hàng</div>
                         <Input 
                             type="text" 
-                            className={classes.inputSearch} 
+                            fullWidth
+                            disabled
                             value={inputSearch}
-                            onChange={(e)=>setInputSearch(e.target.value)}
-
                         />
-                      <Button onClick={searchCustomer} className={classes.buttonSearch} color="primary">
-                        <Search />
-                      </Button>
                       {err && <Alert className="mt-3" severity="error">Customer not found</Alert>}
                   </GridItem>
               </GridContainer>
@@ -313,25 +308,10 @@ export default function ProvisionalBill() {
                   <GridItem style={{textAlign:"center"}} xs={12} sm={12} md={4}>
                       { image && <img src={`${server}/images/${image}`} style={{height:"120px", borderRadius:"50%"}} />}
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={12}>
-                    <div style={{textAlign:"right", marginTop:"12px"}}>
-                        <Button 
-                          color={!isMadeBill ? "primary" : "secondary"}
-                          fullWidth 
-                          disabled={name==="" ? true : false} 
-                          variant="contained"
-                          onClick={()=>setIsMadeBill(!isMadeBill)}
-                        >
-                          {!isMadeBill ? "Make Bill" : "Cancel"}
-                        </Button>
-                    </div>
-                    {isSuccess && <Alert className="mt-3" severity="success">success</Alert>}
-                  </GridItem>
               </GridContainer>
           </CardBody>
         </Card>
       </GridItem>
-      {isMadeBill && 
       <GridItem xs={12} sm={12} md={8}>
         <Card>
           <CardHeader color="warning">
@@ -350,17 +330,22 @@ export default function ProvisionalBill() {
                     <Button 
                       disabled={billTemp.length<=0 ? true : false} 
                       className="mt-3" variant="contained" 
-                      color="primary"
-                      onClick={makeBill}
+                      color="secondary"
+                      onClick={submitBillModify}
                     >
-                        Yêu Cầu Xác Nhận
+                        Yêu Cầu Xác Nhận Thay Đổi
                     </Button>
+                    {loadingPage &&
+                      <div style={{padding:"8px 0px 0px 0px"}}>
+                        <LinearProgress color="primary" />
+                      </div>
+                    }
+                    {isSuccess && <Alert className="mt-3" severity="success">success</Alert>}
                   </GridItem>
               </GridContainer>
           </CardBody>
         </Card>
-      </GridItem>}
-      {isMadeBill && 
+      </GridItem>
       <GridItem xs={12} sm={12} md={4}>
         <Card>
           <CardHeader color="primary">
@@ -392,7 +377,7 @@ export default function ProvisionalBill() {
             </List>
           </CardBody>
         </Card>
-      </GridItem>}
+      </GridItem>
     </GridContainer>
   );
 }

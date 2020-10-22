@@ -68,7 +68,10 @@ app.get("/api/service/search/:name", passport.authenticate("jwt", { session: fal
 
 //BILL
 app.get('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.getBill);
+app.get('/api/bill/id/:id',passport.authenticate("jwt", { session: false }),BillCtl.getBillByID);
 app.post('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.postBill);
+app.post('/api/bill/delete', passport.authenticate("jwt", { session: false }), BillCtl.deleteBill);
+app.put('/api/bill/provisional/:id', passport.authenticate("jwt", { session: false }), BillCtl.modifyBillTemp);
 //USER
 app.post("/api/user", userCtl.createUser);
 
@@ -97,7 +100,7 @@ io.on("connection", (socket) => {
         if(data.type==="user") Customer.findByIdAndUpdate(decoded.id,{
           socket_id: socket.id
         })
-        .then(()=>console.log("update USER socket_id "+socket_id+" to dbs"))
+        .then(()=>console.log("update USER socket_id "+ socket.id+" to dbs"))
         .catch(err=>console.log(err));
         if(data.type==="store") Store.findByIdAndUpdate(decoded.id,{
           socket_id: socket.id
