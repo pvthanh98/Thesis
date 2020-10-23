@@ -21,7 +21,6 @@ import PrivateRoute from '../components/PrivateRoute/privateroute';
 
 import socketIOClient from "socket.io-client";
 import {server} from '../constant';
-
 const socket = socketIOClient(server);
 socket.on('connect', function(){
   if(localStorage.getItem("admin_token")){
@@ -29,7 +28,6 @@ socket.on('connect', function(){
     return;
   }
 });
-
 
 let ps;
 const switchRoutes = (

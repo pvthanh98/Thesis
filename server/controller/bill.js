@@ -14,7 +14,7 @@ module.exports = {
         
     },
     getBill: (req,res) => {
-        Bill.find({})
+        Bill.find({store_id:req.user.id})
         .populate("services.service_id", "name")
         .populate("customer_id", "name")
         .then((bills)=>{

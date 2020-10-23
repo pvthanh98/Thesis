@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import socketIOClient from "socket.io-client";
 import {server} from '../../constant';
 import CustomerIndex from './Customer/index';
+import StoreList from './storelist';
 const socket = socketIOClient(server);
 socket.on('connect', function(){
     socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
@@ -28,7 +29,7 @@ function Index() {
       console.log("STORE SEND MESSAGE TO ME")
       loadMessages(from_id);
     })
-  });
+  },[]);
   const loadMessages = (store_id) => {
     axios().get(`/api/messages/customer_to/${store_id}`)
     .then(({data})=> {
@@ -46,8 +47,9 @@ function Index() {
       <Route exact path="/login" component={Login} />
       <Route exact path="/cuuho" component={Rescue} />
       <Route exact path="/user/register" component={UserRegister} />
-      <Route path="/store/register" component={StoreRegister} />
-      <Route path="/store/id/:id" component={StoreDetail} />
+      <Route exact path="/store/register" component={StoreRegister} />
+      <Route exact path="/store/id/:id" component={StoreDetail} />
+      <Route exact path="/store" component={StoreList} />
       <Route exact path="/service/:id/:name" component={ServiceDetail} />
       <Route path="/customer/" component={CustomerIndex} />
       <Route exact path="/" component={Home} />

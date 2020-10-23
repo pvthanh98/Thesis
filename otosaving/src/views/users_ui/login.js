@@ -4,12 +4,6 @@ import axios from '../../service/axios';
 import { Spinner } from 'reactstrap';
 import {server} from '../../constant';
 import {socket} from '../users_ui/index';
-// if(localStorage.getItem("user_token")){
-//   socket = socketIOClient(server);
-//   socket.on('connect', function(){
-//       socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
-//   });
-// }
 
 function Login(props) {
 	const [email, setEmail] = React.useState("");

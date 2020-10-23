@@ -49,6 +49,9 @@ app.get("/api/store/id/:id", storeCtl.getStoreById)
 app.post("/api/store/modify", passport.authenticate("jwt", { session: false }), upload.single("file_store"), storeCtl.modifyStore);
 app.post("/api/store/me", passport.authenticate("jwt", { session: false }), storeCtl.getStoreInfo);
 app.get("/api/store/search_customer/:id", passport.authenticate("jwt", { session: false }), storeCtl.searchCustomer);
+//store filter
+app.get("/api/store/rating", storeCtl.getStoreByRating);
+app.get("/api/store/sell", storeCtl.getStoreBySale);
 //Service category
 app.post('/api/category', categoryCtl.postCategory);
 app.get('/api/category',categoryCtl.getCategory)
@@ -92,12 +95,13 @@ const Customer = require('./db/customer');
 const Store =  require('./db/store');
 io.on("connection", (socket) => { 
   //authenticate for socket io
+  console.log("Client connecting....")
   socket.emit("socketID",{socket_id: socket.id})
   socket.auth = false;
   socket.on('authenticate', function(data){
+    console.log(`Data from client with socketID(${socket.id})`, data)
     jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
       if (!err && decoded) {
-        console.log(`Authenticated socket ${socket.id} type: ${data.type}`);
         socket.auth = true;
         socket.user_type=data.type;
         socket.user_id = decoded.id;
@@ -124,6 +128,7 @@ io.on("connection", (socket) => {
   }, 1000);
   // end authenticating for socket.io
   socket.on("customer_send_msg", async (data)=>{
+    console.log("Customer send message")
     const store_id = data.to;
     const {body} = data;
     await Message.create({
@@ -166,14 +171,6 @@ io.on("connection", (socket) => {
       console.log(err);
     }
   });
-
-
-  
-
-  socket.on("disconnect", function(){
-    console.log("Disconnect "+ socket.id)
-  })
-
 })
 
 server.listen(port, () => console.log(`server is running on ${port}`));

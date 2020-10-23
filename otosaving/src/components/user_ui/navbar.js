@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { server } from '../../constant';
 import Icon from '@material-ui/core/Icon';
 import { connect} from 'react-redux';
@@ -20,17 +20,21 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-function SimpleMenu() {
+function SimpleMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const [redirect, setRedirect] = React.useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  const setRedirectCustom = (link) => {
+    setRedirect(link);
+    handleClose();
+  }
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  if(redirect) return <Redirect push to={`/customer/${redirect}`} />
   return (
     <div>
       <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
@@ -48,10 +52,12 @@ function SimpleMenu() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}><Icon>people</Icon><p className="ml-2">Thông tin</p></MenuItem>
-        <MenuItem onClick={handleClose}><Icon>history</Icon><p className="ml-2">Lịch sử cứu hộ</p></MenuItem>
-        <MenuItem style={{borderBottom:"1px solid #e0e0e0"}} onClick={handleClose}><Icon>payment</Icon> <p className="ml-2">Hóa đơn thanh toán </p></MenuItem>
-        <MenuItem onClick={handleClose}><Icon>exit_to_app</Icon>  <p className="ml-2">Đăng xuất</p></MenuItem>
+        <MenuItem onClick={()=> setRedirectCustom('info')}><Icon>people</Icon><p className="ml-2">Thông tin</p></MenuItem>
+        <MenuItem onClick={()=> setRedirectCustom('history')}><Icon>history</Icon><p className="ml-2">Lịch sử cứu hộ</p></MenuItem>
+        <MenuItem style={{borderBottom:"1px solid #e0e0e0"}} onClick={()=> setRedirectCustom('bill')}>
+          <Icon>payment</Icon> <p className="ml-2">Hóa đơn thanh toán</p>
+        </MenuItem>
+        <MenuItem onClick={props.logout}><Icon>exit_to_app</Icon>  <p className="ml-2">Đăng xuất</p></MenuItem>
       </Menu>
     </div>
   );
@@ -61,6 +67,12 @@ function MyNavbar (props) {
   const toggle = () => setIsOpen(!isOpen);
   const [isOpenToggleInfo, setIsOpenToggleInfo] = useState(false);
   const toggleInfo = () => setIsOpenToggleInfo(!isOpenToggleInfo);
+  const [isLogin, setIsLogin] = React.useState(false);
+
+  React.useEffect(()=>{
+    if (localStorage.getItem("user_token")) setIsLogin(true);
+  },[])
+
 
   const renderMenuCategories = () =>{
     return props.categories && props.categories.map(cat=>{
@@ -75,6 +87,7 @@ function MyNavbar (props) {
     localStorage.removeItem('user_avt');
     localStorage.removeItem('user_name');
     localStorage.removeItem('user_id');
+    setIsLogin(false);
     socket.disconnect(true);
   }
 
@@ -98,7 +111,7 @@ function MyNavbar (props) {
             <Link className="custom-link nav-link" to="/cuuho">Cứu hộ</Link>
           </NavItem>
           <NavItem>
-            <Link className="custom-link nav-link" to="/service">Cửa hàng</Link>
+            <Link className="custom-link nav-link" to="/store">Cửa hàng</Link>
           </NavItem>
           <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
@@ -122,32 +135,13 @@ function MyNavbar (props) {
             placeholder="Search..."
           />
         </div>
-        {!localStorage.getItem("user_token") ? <NavbarText>
+        {!isLogin ? <NavbarText>
           <Link to="/login">Đăng nhập</Link>
         </NavbarText>
-
           :
         <div>
-          <SimpleMenu />
+          <SimpleMenu logout={logout} />
         </div>
-          // <div className="user-info-bar" onClick={toggleInfo}>
-          //   <img
-          //     src={server + "images/" + localStorage.getItem('user_avt')}
-          //     width="30px"
-          //     style={{ borderRadius: "50%" }}
-          //   />
-          //   {localStorage.getItem('user_name')}
-          //   {
-          //     isOpenToggleInfo &&
-          //     <ul className="user-info-dropdown">
-          //       <li><Icon>people</Icon> Thông tin</li>
-          //       <li><Icon>history</Icon> Lịch sử cứu hộ</li>
-          //       <li><Icon>payment</Icon> Hóa đơn thanh toán</li>
-          //       <li onClick={logout}><Icon>exit_to_app</Icon> Đăng xuất</li>
-          //     </ul>
-          //   }
-
-          // </div>
         }
       </Collapse>
     </Navbar>

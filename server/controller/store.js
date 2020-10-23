@@ -6,6 +6,8 @@ const salt = bcrypt.genSaltSync(10);
 const path = require("path");
 const Jimp = require('jimp');
 const Customer = require("../db/customer");
+const Bill = require("../db/bill");
+const { populate } = require("../db/store");
 module.exports = {
     createStore : (req, res) =>{
         const errors = validationResult(req);
@@ -94,4 +96,26 @@ module.exports = {
             throw err;
         })
     },
+    getStoreByRating :(req, res) => {
+        store.find({},"email name description latitude longtitude rating address image phone")
+        .sort({"rating.total":-1})
+        .limit(4)
+        .then(stores=> res.send(stores))
+        .catch(err=> console.log(err));
+    },
+    getStoreBySale : async (req, res) => {
+        const result = await Bill.aggregate([
+            {
+                $group: {_id:"$store_id", count: { $sum: 1 }}
+            }
+        ])
+        .sort({count:-1})
+        let stores = [];
+        for(let i=0;i<result.length;i++){
+            console.log(result[i])
+            let store_temp = await store.findById(result[i]._id, "email name description latitude longtitude rating address image phone");
+            stores.push(store_temp);
+        }
+        res.send(stores)
+    }
 }
