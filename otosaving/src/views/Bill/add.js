@@ -245,12 +245,12 @@ export default function ProvisionalBill() {
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
         <Breadcrumbs aria-label="breadcrumb">
-          <Link to="/admin/provisional_bill/" style={{color:"black"}}>
+          <Link to="/admin/bill/" style={{color:"black"}}>
             <ListIcon />
             List
           </Link>
           <Link
-            to="/admin/provisional_bill/add"
+            to="/admin/bill/add"
             style={{color:"black"}}
             className={classes.linkCustom}
           >

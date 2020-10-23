@@ -12,7 +12,7 @@ import StoreDetail from './store_detail';
 import { useSelector, useDispatch } from 'react-redux';
 import socketIOClient from "socket.io-client";
 import {server} from '../../constant';
-
+import CustomerIndex from './Customer/index';
 const socket = socketIOClient(server);
 socket.on('connect', function(){
     socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
@@ -49,6 +49,7 @@ function Index() {
       <Route path="/store/register" component={StoreRegister} />
       <Route path="/store/id/:id" component={StoreDetail} />
       <Route exact path="/service/:id/:name" component={ServiceDetail} />
+      <Route path="/customer/" component={CustomerIndex} />
       <Route exact path="/" component={Home} />
     </div>
   );

@@ -35,7 +35,18 @@ module.exports = {
             throw e;
         }
     },
-
+    confirmPayment :async (req,res) => {
+        const {bill_ids} = req.body;
+        try{
+            for(let i=0;i<bill_ids.length;i++){
+                await Bill.findByIdAndUpdate(bill_ids[i],{paid:true});
+            }
+            res.send("ok")
+        } catch(e){
+            res.sendStatus(400);
+            throw e;
+        }
+    },
     getBillByID : (req, res) => {
         const {id} = req.params;
         Bill.findById(id)
@@ -59,5 +70,16 @@ module.exports = {
             res.sendStatus(400);
             throw err;
         })
+    },
+    getCustomerBill : (req, res) => {
+        const customer_id = req.user.id;
+        Bill.find({customer_id}).populate("services.service_id")
+        .then((bills)=>{
+            res.json(bills);
+        })
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        });
     }
 }

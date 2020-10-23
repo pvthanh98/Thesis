@@ -17,31 +17,17 @@
 */
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
-import Person from "@material-ui/icons/Person";
-import LibraryBooks from "@material-ui/icons/LibraryBooks";
-import BubbleChart from "@material-ui/icons/BubbleChart";
-import LocationOn from "@material-ui/icons/LocationOn";
-import Notifications from "@material-ui/icons/Notifications";
 import StoreIcon from '@material-ui/icons/Store'
-import Unarchive from "@material-ui/icons/Unarchive";
-import Language from "@material-ui/icons/Language";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
-import UserProfile from "views/UserProfile/UserProfile.js";
-import TableList from "views/TableList/TableList.js";
-import ProvisionalBillAdd from './views/ProvisionalBill/provisional_bill_add';
-import ProvisionalList from './views/ProvisionalBill/list';
-import Typography from "views/Typography/Typography.js";
-import Icons from "views/Icons/Icons.js";
-import Maps from "views/Maps/Maps.js";
-import NotificationsPage from "views/Notifications/Notifications.js";
+import BillAdd from './views/Bill/add';
+import List from './views/Bill/list';
 import StoreInfo from './views/Storeinfo/Storeinfo.js';
 // core components/views for RTL layout
-import RTLPage from "views/RTLPage/RTLPage.js";
 import Service from "views/Service/service";
 import AddService from './views/Service/addservice';
 import ModifyService from './views/Service/modifyservice';
-import ProvisionalBillModify from './views/ProvisionalBill/modify';
+import BillModify from './views/Bill/modify';
 const dashboardRoutes = [
   {
     path: "/dashboard",
@@ -82,38 +68,28 @@ const dashboardRoutes = [
     showSidebar: true
   },
   {
+    path: "/bill/modify/:id",
+    name: "Bill",
+    icon: "business_center",
+    component: BillModify,
+    exact: true,
+    layout: "/admin",
+    showSidebar: false
+  },
+  {
+    path: "/bill/add",
+    name: "Bill",
+    icon: "business_center",
+    component: BillAdd,
+    exact: true,
+    layout: "/admin",
+    showSidebar: false
+  },
+  {
     path: "/bill",
     name: "Bill",
-    rtlName: "قائمة الجدول",
-    icon: "payment",
-    component: TableList,
-    exact: true,
-    layout: "/admin",
-    showSidebar: true
-  },
-  {
-    path: "/provisional_bill/modify/:id",
-    name: "Provisional Bill",
     icon: "business_center",
-    component: ProvisionalBillModify,
-    exact: true,
-    layout: "/admin",
-    showSidebar: false
-  },
-  {
-    path: "/provisional_bill/add",
-    name: "Provisional Bill",
-    icon: "business_center",
-    component: ProvisionalBillAdd,
-    exact: true,
-    layout: "/admin",
-    showSidebar: false
-  },
-  {
-    path: "/provisional_bill",
-    name: "Provisional Bill",
-    icon: "business_center",
-    component: ProvisionalList,
+    component: List,
     exact: true,
     layout: "/admin",
     showSidebar: true

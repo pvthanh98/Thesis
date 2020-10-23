@@ -71,7 +71,11 @@ app.get('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.get
 app.get('/api/bill/id/:id',passport.authenticate("jwt", { session: false }),BillCtl.getBillByID);
 app.post('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.postBill);
 app.post('/api/bill/delete', passport.authenticate("jwt", { session: false }), BillCtl.deleteBill);
+app.post('/api/bill/payment', passport.authenticate("jwt", { session: false }), BillCtl.confirmPayment);
 app.put('/api/bill/provisional/:id', passport.authenticate("jwt", { session: false }), BillCtl.modifyBillTemp);
+
+app.get('/api/customer/bill',user_auth,BillCtl.getCustomerBill);
+
 //USER
 app.post("/api/user", userCtl.createUser);
 

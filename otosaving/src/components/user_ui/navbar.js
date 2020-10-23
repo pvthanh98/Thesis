@@ -16,6 +16,46 @@ import {
   DropdownItem,
   NavbarText
 } from 'reactstrap';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
+function SimpleMenu() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <div>
+      <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+        <img
+          src={server + "images/" + localStorage.getItem('user_avt')}
+          width="30px"
+          style={{ borderRadius: "50%" }}
+        />
+        {localStorage.getItem('user_name')}
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}><Icon>people</Icon><p className="ml-2">Thông tin</p></MenuItem>
+        <MenuItem onClick={handleClose}><Icon>history</Icon><p className="ml-2">Lịch sử cứu hộ</p></MenuItem>
+        <MenuItem style={{borderBottom:"1px solid #e0e0e0"}} onClick={handleClose}><Icon>payment</Icon> <p className="ml-2">Hóa đơn thanh toán </p></MenuItem>
+        <MenuItem onClick={handleClose}><Icon>exit_to_app</Icon>  <p className="ml-2">Đăng xuất</p></MenuItem>
+      </Menu>
+    </div>
+  );
+}
 function MyNavbar (props) {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
@@ -87,24 +127,27 @@ function MyNavbar (props) {
         </NavbarText>
 
           :
-          <div className="user-info-bar" onClick={toggleInfo}>
-            <img
-              src={server + "images/" + localStorage.getItem('user_avt')}
-              width="30px"
-              style={{ borderRadius: "50%" }}
-            />
-            {localStorage.getItem('user_name')}
-            {
-              isOpenToggleInfo &&
-              <ul className="user-info-dropdown">
-                <li><Icon color="primary">people</Icon> Thông tin</li>
-                <li><Icon color="primary">history</Icon> Lịch sử cứu hộ</li>
-                <li><Icon color="primary">payment</Icon> Hóa đơn thanh toán</li>
-                <li onClick={logout}><Icon color="primary">exit_to_app</Icon> Đăng xuất</li>
-              </ul>
-            }
+        <div>
+          <SimpleMenu />
+        </div>
+          // <div className="user-info-bar" onClick={toggleInfo}>
+          //   <img
+          //     src={server + "images/" + localStorage.getItem('user_avt')}
+          //     width="30px"
+          //     style={{ borderRadius: "50%" }}
+          //   />
+          //   {localStorage.getItem('user_name')}
+          //   {
+          //     isOpenToggleInfo &&
+          //     <ul className="user-info-dropdown">
+          //       <li><Icon>people</Icon> Thông tin</li>
+          //       <li><Icon>history</Icon> Lịch sử cứu hộ</li>
+          //       <li><Icon>payment</Icon> Hóa đơn thanh toán</li>
+          //       <li onClick={logout}><Icon>exit_to_app</Icon> Đăng xuất</li>
+          //     </ul>
+          //   }
 
-          </div>
+          // </div>
         }
       </Collapse>
     </Navbar>

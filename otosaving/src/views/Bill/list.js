@@ -29,7 +29,8 @@ import axios from "service/axios";
 import LinearProgress from '@material-ui/core/LinearProgress';
 import ReplayIcon from '@material-ui/icons/Replay';
 import {Redirect} from 'react-router-dom';
-
+import Alert from '@material-ui/lab/Alert';
+import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
 		return -1;
@@ -66,7 +67,8 @@ const headCells = [
 	{ id: "Customer", numeric: true, disablePadding: false, label: "Customer" },
 	{ id: "Total", numeric: true, disablePadding: false, label: "Total" },
 	{ id: "Quantity", numeric: true, disablePadding: false, label: "Quantity" },
-	{ id: "State", numeric: true, disablePadding: false, label: "State" },
+	{ id: "Paid", numeric: true, disablePadding: false, label: "Paid" },
+	{ id: "Confirm", numeric: true, disablePadding: false, label: "Confirm" },
 ];
 
 function EnhancedTableHead(props) {
@@ -155,6 +157,19 @@ const EnhancedTableToolbar = (props) => {
 	const classes = useToolbarStyles();
 	const { numSelected } = props;
 
+	const checkConfirm = () => {
+		let confirm = true;
+		let billFilter = props.bills.filter(item=>item._id === props.selected[props.selected.length-1])
+
+		billFilter.forEach(item=>{
+			console.log("Giá trị của confirm ITEM ", item.confirm)
+			if(!item.confirm) confirm = false;
+			return;
+		})
+		console.log("Giá trị của confirm ", confirm)
+		return confirm;
+	}
+
 	return (
 		<Toolbar
 			className={clsx(classes.root, {
@@ -183,6 +198,14 @@ const EnhancedTableToolbar = (props) => {
 					</IconButton>
 				</Typography>
 			)}
+
+			{(numSelected >= 1 && checkConfirm()) && (
+				<Tooltip title="confirm payment">
+					<IconButton onClick={props.confirmPayment} aria-label="confirm payment">
+          				<CheckCircleIcon />
+					</IconButton>
+				</Tooltip>
+			) }
 
       		{(numSelected === 1) && (
 				<Tooltip title="modify">
@@ -231,8 +254,13 @@ const useStyles = makeStyles((theme) => ({
 		top: 20,
 		width: 1,
 	},
+	backgroundNone: {backgroundColor:"none"}
 }));
 
+const CustomAlert = (props) => {
+	const classes = useStyles();
+	return <Alert className={classes.backgroundNone} severity={props.color}>{props.message}</Alert>
+}
 
 const ProvisionalBillList = (props) => {
 	const classes = useStyles();
@@ -246,11 +274,14 @@ const ProvisionalBillList = (props) => {
 	const [ toModifyPage, setToModifyPage] =React.useState(false);
 	const dispatch = useDispatch();
   
-	const bill_temp = useSelector(state => state.bills).filter(bill=> !bill.confirm);
+	const bills = useSelector(state => state.bills);
 	
-	const rows = bill_temp.map(bill=> ({
+	const rows = bills.map(bill=> ({
 		ID:bill._id, Customer: bill.customer_id.name, Total: bill.total_cost, 
-		Quantity: bill.services.length, State : bill.paid ? "Đã thanh toán" : "Chưa thanh toán, chờ xác nhận"
+		Quantity: bill.services.length, paid : bill.paid ? <CustomAlert color="success" message="Đã thanh toán" /> 
+		: <CustomAlert color="error" message="Chưa thanh toán" />  ,
+		confirm : bill.confirm ? <CustomAlert color="success" message="Đã xác nhận" />  
+		: <CustomAlert color="error" message="Chờ xác nhận" /> 
 	}));
 
 	useEffect(()=>{
@@ -326,16 +357,26 @@ const ProvisionalBillList = (props) => {
 		.catch(err=> console.log(err));
 	}
 
+	const confirmPayment = () => {
+		axios().post('/api/bill/payment', {
+			bill_ids: selected
+		})
+		.then(()=> {
+			reloadBill();
+		})
+		.catch(err=> console.log(err));
+	}
+
 	const isSelected = (name) => selected.indexOf(name) !== -1;
 
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-	if(toModifyPage) return <Redirect to={"/admin/provisional_bill/modify/"+selected[0]} />
+	if(toModifyPage) return <Redirect to={"/admin/bill/modify/"+selected[0]} />
 	return (
 		<GridContainer>
 			<GridItem xs={12} sm={12} md={12}>
 				<Breadcrumbs aria-label="breadcrumb">
 					<Link
-						to="/admin/provisional_bill/"
+						to="/admin/bill/"
 						style={{ color: "black",borderBottom: "1px solid #d6d6d6", marginTop:"8px" }}
 						className={classes.linkCustom}
 					>
@@ -343,10 +384,10 @@ const ProvisionalBillList = (props) => {
 						List
 					</Link>
 					<Link
-						to="/admin/provisional_bill/add"
+						to="/admin/bill/add"
 						style={{ color: "black" }}
 						className={
-							props.match.url === "/admin/provisional_bill/add"
+							props.match.url === "/admin/bill/add"
 								? classes.linkCustom
 								: ""
 						}
@@ -359,7 +400,15 @@ const ProvisionalBillList = (props) => {
 			<GridItem xs={12} sm={12} md={12} style={{marginTop:"12px"}}>
 				<Paper className={classes.paper}>
 					{loading && <LinearProgress />}
-					<EnhancedTableToolbar reloadBill={reloadBill} setToModifyPage={setToModifyPage} numSelected={selected.length} deleteBill={deleteBill} />
+					<EnhancedTableToolbar 
+						reloadBill={reloadBill} 
+						setToModifyPage={setToModifyPage} 
+						numSelected={selected.length} 
+						deleteBill={deleteBill} 
+						selected={selected}
+						bills = {bills}
+						confirmPayment={confirmPayment}
+					/>
 					<TableContainer>
 						<Table
 							className={classes.table}
@@ -375,6 +424,7 @@ const ProvisionalBillList = (props) => {
 								onSelectAllClick={handleSelectAllClick}
 								onRequestSort={handleRequestSort}
 								rowCount={rows.length}
+								
 							/>
 							<TableBody>
 								{stableSort(rows, getComparator(order, orderBy))
@@ -426,7 +476,10 @@ const ProvisionalBillList = (props) => {
 													{row.Quantity}
 												</TableCell>
 												<TableCell align="right">
-													{row.State}
+													{row.paid}
+												</TableCell>
+												<TableCell align="right">
+													{row.confirm}
 												</TableCell>
 											</TableRow>
 										);

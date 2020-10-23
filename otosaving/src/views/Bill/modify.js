@@ -127,12 +127,13 @@ export default function ProvisionalBill(props) {
       setPhone(data.customer_id.phone);
       setCustomerID(data.customer_id._id)
       let bill = []
-      data.services.forEach(service => bill.push({
-        id:service.service_id._id,
-        name:service.service_id.name,
-        price: service.service_id.price,
-        quantity:service.quantity
-      }));
+      console.log(data)
+      // data.services.forEach(service => bill.push({
+      //   id:service.service_id._id,
+      //   name:service.service_id.name,
+      //   price: service.service_id.price,
+      //   quantity:service.quantity
+      // }));
       setBillTemp(bill);
     })
   }
@@ -246,12 +247,12 @@ export default function ProvisionalBill(props) {
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
         <Breadcrumbs aria-label="breadcrumb">
-          <Link to="/admin/provisional_bill/" style={{color:"black"}}>
+          <Link to="/admin/bill/" style={{color:"black"}}>
             <ListIcon />
             List
           </Link>
           <Link
-            to="/admin/provisional_bill/add"
+            to="/admin/bill/add"
             style={{color:"black"}}
           >
             <AddIcon className={classes.icon} />
