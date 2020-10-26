@@ -39,6 +39,8 @@ const authCtl = require("./controller/auth");
 const userCtl = require("./controller/user");
 const messageCtl = require('./controller/message');
 const BillCtl = require("./controller/bill");
+
+app.get('/api/welcome', (req,res)=>res.send("welcome"))
 //login
 app.post("/api/store/login", authCtl.login);
 app.post("/api/user/login", authCtl.userLogin);
