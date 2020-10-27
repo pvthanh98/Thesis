@@ -1,9 +1,12 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import axios from 'axios';
+import {View, Text, StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
-import app_style from './src/assets/styles/app_style';
+import app_style from '../assets/styles/app_style';
 import Geolocation from '@react-native-community/geolocation';
+const defaultPosition = {
+  lat: 40.712776,
+  lng: -74.005974
+}
 const styles = StyleSheet.create(app_style());
 const App = () => {
   const [currentLocation, setCurrentLocation] = React.useState(null);
@@ -11,14 +14,6 @@ const App = () => {
   useEffect(() => {
     getCurrentLocation();
   }, []);
-
-  const testServer = () => {
-    axios
-      .get('http://192.168.3.126:8080/api/welcome')
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-  };
-
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
@@ -32,7 +27,8 @@ const App = () => {
       error => {
         if(error) setError(error);
         console.log(error);
-      }
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     )
   } 
   return (
@@ -41,17 +37,17 @@ const App = () => {
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         region={{
-          latitude: currentLocation ? currentLocation.lat  : 10.022769, // 10.022769 105.765579
-          longitude: currentLocation ? currentLocation.lng : 105.765579,
+          latitude: currentLocation ? currentLocation.lat  : defaultPosition.lat, // 40.712776,-74.005974 new york
+          longitude: currentLocation ? currentLocation.lng : defaultPosition.lng,
           latitudeDelta: 0.015,
           longitudeDelta: 0.0121,
         }}>
         <Marker
           coordinate={{
-            latitude: currentLocation ? currentLocation.lat  : 10.022769,
-            longitude: currentLocation ? currentLocation.lng : 105.765579,
+            latitude: currentLocation ? currentLocation.lat  : defaultPosition.lat,
+            longitude: currentLocation ? currentLocation.lng : defaultPosition.lng,
           }}
-          image={require('./src/assets/images/car.png')}
+          image={require('../assets/images/car.png')}
         >
           <Callout tooltip>
             <View style={styles.calloutContainer}>

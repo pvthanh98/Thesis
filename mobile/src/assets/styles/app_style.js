@@ -13,7 +13,7 @@ export default function app_style () {
         },
         calloutContainer: {
           backgroundColor: 'white',
-          padding: 8,
+          padding: 12,
         },
         title: {
           fontSize: 16,
