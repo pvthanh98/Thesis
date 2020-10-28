@@ -14,14 +14,18 @@ function StackComponent(props) {
         <Stack.Screen name="rescuing" component={RescuingScreen} options={{
           title:"Oto Rescue",
           headerTitleAlign:"center",
+          headerStyle: {
+            backgroundColor: '#912c16'
+          },
           headerLeft: () => (
               <TouchableOpacity 
                 style={{marginLeft:12}}
                 onPress={()=> props.navigation.openDrawer()}
               >
-                <Icon name="bars" size={24} />
+                <Icon name="bars" size={24} color="#fff" />
               </TouchableOpacity>
             ),
+          headerTintColor:"#fff"
           }} 
         />
 
@@ -34,7 +38,6 @@ const Index = () => {
     <Drawer.Navigator 
         initialRouteName="Home" 
         overlayColor="transparent"
-        openByDefault
         drawerContent={props => <DrawerContent {...props} />}
     >
         <Drawer.Screen name="Home" component={StackComponent} />

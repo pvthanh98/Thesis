@@ -14,24 +14,25 @@ const Stack = createStackNavigator();
 const App = ({navigation}) => {
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  const [loading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(true);
   React.useEffect(() => {
     checkAuth();
+    console.log("effect")
   }, []);
 
   const checkAuth = async () => {
     try {
         const user_token = await AsyncStorage.getItem('user_token');
         console.log("AUTH CHECKING ", user_token)
+        if(user_token) dispatch({type:"SIGN_IN", user_token: user_token });
         setIsLoading(false);
-        if(user_token) dispatch({type:"SIGN_IN", user_token: user_token })
     }catch(e){
       console.log(e);
       setIsLoading(false);
       return false;
     }
   }
-  if(loading) return <SplashScreen />
+  if(isLoading) return <SplashScreen />
   return (
       <NavigationContainer>
         <Stack.Navigator>

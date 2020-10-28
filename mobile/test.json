@@ -1,0 +1,288 @@
+{
+    "geocoded_waypoints": [
+      {
+        "geocoder_status": "OK",
+        "place_id": "ChIJKTdX3SeIoDERYWpijZJkOaI",
+        "types": [
+          "establishment",
+          "point_of_interest"
+        ]
+      },
+      {
+        "geocoder_status": "OK",
+        "place_id": "ChIJT9J-I5tioDERxmnF7X_SSFs",
+        "types": [
+          "street_address"
+        ]
+      }
+    ],
+    "routes": [
+      {
+        "bounds": {
+          "northeast": {
+            "lat": 10.026462,
+            "lng": 105.7913659
+          },
+          "southwest": {
+            "lat": 10.0224473,
+            "lng": 105.7800988
+          }
+        },
+        "copyrights": "Map data ©2020",
+        "legs": [
+          {
+            "distance": {
+              "text": "1.7 km",
+              "value": 1717
+            },
+            "duration": {
+              "text": "7 mins",
+              "value": 399
+            },
+            "end_address": "80 Đường 8C2, Hưng Phú, Cái Răng, Cần Thơ, Vietnam",
+            "end_location": {
+              "lat": 10.0224473,
+              "lng": 105.790262
+            },
+            "start_address": "97 Khu Dân Cư Hưng Phú, Đường Quang Trung, Quận Cái Răng, Tp Cần Thơ, Hưng Phú, Cái Răng, Cần Thơ, Vietnam",
+            "start_location": {
+              "lat": 10.023128,
+              "lng": 105.7800988
+            },
+            "steps": [
+              {
+                "distance": {
+                  "text": "87 m",
+                  "value": 87
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 18
+                },
+                "end_location": {
+                  "lat": 10.0232191,
+                  "lng": 105.780884
+                },
+                "html_instructions": "Head <b>east</b>",
+                "polyline": {
+                  "points": "qsd|@sdsdSCa@C_@CQ?CC[Ag@"
+                },
+                "start_location": {
+                  "lat": 10.023128,
+                  "lng": 105.7800988
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "0.6 km",
+                  "value": 634
+                },
+                "duration": {
+                  "text": "3 mins",
+                  "value": 150
+                },
+                "end_location": {
+                  "lat": 10.0247266,
+                  "lng": 105.7864319
+                },
+                "html_instructions": "Continue onto <b>Khu Vực IV</b><div style=\"font-size:0.9em\">Pass by Công Ty Tnhh Một Thành Viên Thương Mại Dịch Vụ Thanh Hiền (on the right in 400&nbsp;m)</div>",
+                "polyline": {
+                  "points": "ctd|@oisdSEc@AQWiCEc@CYKqACSGy@Iu@UeBUuACQU{@YcAg@mBa@{AAAKYM][o@"
+                },
+                "start_location": {
+                  "lat": 10.0232191,
+                  "lng": 105.780884
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "0.3 km",
+                  "value": 323
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 70
+                },
+                "end_location": {
+                  "lat": 10.026462,
+                  "lng": 105.7887737
+                },
+                "html_instructions": "At Nhà Cần Thơ, continue onto <b>Khu Vực 3</b>",
+                "polyline": {
+                  "points": "q}d|@eltdSO_@Wi@c@aAOYMYa@q@QQ[]IK_AaAcAoAQS"
+                },
+                "start_location": {
+                  "lat": 10.0247266,
+                  "lng": 105.7864319
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "0.3 km",
+                  "value": 304
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 67
+                },
+                "end_location": {
+                  "lat": 10.0245107,
+                  "lng": 105.7907061
+                },
+                "html_instructions": "Turn <b>right</b> at Nu Kute - hớt tóc ráy tai<div style=\"font-size:0.9em\">Pass by Vựa gạo Bửu (on the left)</div>",
+                "maneuver": "turn-right",
+                "polyline": {
+                  "points": "khe|@yztdSzAoBf@o@jB{AdBwAn@o@"
+                },
+                "start_location": {
+                  "lat": 10.026462,
+                  "lng": 105.7887737
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "48 m",
+                  "value": 48
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 13
+                },
+                "end_location": {
+                  "lat": 10.0242447,
+                  "lng": 105.7903617
+                },
+                "html_instructions": "Turn <b>right</b> onto <b>Cầu Bê Tông</b>",
+                "maneuver": "turn-right",
+                "polyline": {
+                  "points": "e|d|@}fudST\\Zb@BB"
+                },
+                "start_location": {
+                  "lat": 10.0245107,
+                  "lng": 105.7907061
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "0.2 km",
+                  "value": 163
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 39
+                },
+                "end_location": {
+                  "lat": 10.0231687,
+                  "lng": 105.7913659
+                },
+                "html_instructions": "Turn <b>left</b> at Lâm Sport onto <b>Đường A10</b>",
+                "maneuver": "turn-left",
+                "polyline": {
+                  "points": "ozd|@wdudSXUfAcA^YrAuA"
+                },
+                "start_location": {
+                  "lat": 10.0242447,
+                  "lng": 105.7903617
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "0.1 km",
+                  "value": 110
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 27
+                },
+                "end_location": {
+                  "lat": 10.02254,
+                  "lng": 105.7905926
+                },
+                "html_instructions": "Turn <b>right</b> onto <b>Đường B29</b><div style=\"font-size:0.9em\">Pass by Phòng Khám - Bs Trần Ngọc Nguyệt (on the right)</div>",
+                "maneuver": "turn-right",
+                "polyline": {
+                  "points": "ysd|@akudSdAvAv@bA"
+                },
+                "start_location": {
+                  "lat": 10.0231687,
+                  "lng": 105.7913659
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "15 m",
+                  "value": 15
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 8
+                },
+                "end_location": {
+                  "lat": 10.0226384,
+                  "lng": 105.7904942
+                },
+                "html_instructions": "Turn <b>right</b> at Quán Cafe Sen Phố onto <b>Đường A9</b>",
+                "maneuver": "turn-right",
+                "polyline": {
+                  "points": "{od|@efudSSR"
+                },
+                "start_location": {
+                  "lat": 10.02254,
+                  "lng": 105.7905926
+                },
+                "travel_mode": "DRIVING"
+              },
+              {
+                "distance": {
+                  "text": "33 m",
+                  "value": 33
+                },
+                "duration": {
+                  "text": "1 min",
+                  "value": 7
+                },
+                "end_location": {
+                  "lat": 10.0224473,
+                  "lng": 105.790262
+                },
+                "html_instructions": "Turn <b>left</b> onto <b>Đường 8C2</b><div style=\"font-size:0.9em\">Destination will be on the left</div>",
+                "maneuver": "turn-left",
+                "polyline": {
+                  "points": "opd|@qeudSd@l@"
+                },
+                "start_location": {
+                  "lat": 10.0226384,
+                  "lng": 105.7904942
+                },
+                "travel_mode": "DRIVING"
+              }
+            ],
+            "traffic_speed_entry": [
+              
+            ],
+            "via_waypoint": [
+              
+            ]
+          }
+        ],
+        "overview_polyline": {
+          "points": "qsd|@sdsdSKwAMyBm@yGKmA_@{CYgBo@_CiAiEM[qAwCs@{Ao@kAwB}BuAcBbC_DpEsDn@o@T\\^f@`ByArBoB|BzCSRd@l@"
+        },
+        "summary": "Khu Vực IV",
+        "warnings": [
+          
+        ],
+        "waypoint_order": [
+          
+        ]
+      }
+    ],
+    "status": "OK"
+  }
