@@ -9,7 +9,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
-import {Title, Text, IconButton} from 'react-native-paper';
+import {Title, Text, IconButton,Colors } from 'react-native-paper';
 import {server} from '../constants/index';
 const defaultPosition = {
   lat: 40.712776,
@@ -17,7 +17,7 @@ const defaultPosition = {
 };
 const styles = StyleSheet.create(app_style());
 
-const Rescue = () => {
+const Rescue = ({navigation}) => {
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -168,7 +168,7 @@ const Rescue = () => {
         if (error) setError(error);
         ToastAndroid.show('Cannot access to your location', ToastAndroid.SHORT);
       },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000},
     );
   };
 
@@ -291,40 +291,37 @@ const Rescue = () => {
               <Text style={{ fontSize: 20}}>
                 <Icon name="directions-car" color="green" size={15} /> {selectedStore.distance}
               </Text>
-              <Button
-                style={{marginTop: 4}}
-                icon={() => (
-                  <Icon style={{color: '#fff'}} name="send" size={24} />
-                )}
-                mode="contained"
-                color="#dc004e"
-                onPress={() => console.log('Pressed')}>
-                SEND MESSAGE
-              </Button>
+              <View style={{flexDirection:"row"}}>
+                <Button 
+                  style={{backgroundColor:"#1976d2"}} 
+                  icon={()=> <Icon name="email" color="#fff" size={20} />}
+                  mode="contained" 
+                  onPress={()=>navigation.navigate('chat')}
+                >
+                  SEND
+                </Button>
+                <Button  
+                  style={{marginLeft:4, backgroundColor:"#dc004e"}}  
+                  icon={()=> <Icon color="#fff" name="info" size={20} />}
+                  mode="contained" 
+                >
+                  LEARN MORE
+                </Button>
+              </View>
               <View style={styles.btnContainer}>
-                <Button
-                  icon={() => (
-                    <Icon
-                      style={{color: 'black'}}
-                      name="skip-previous"
-                      size={24}
-                    />
-                  )}
-                  mode="contained"
-                  color="#e0e0e0"
-                  onPress={()=>getAllLocationAndSort(-1)}>
-                  PREV
-                </Button>
-                <Button
-                  style={{marginLeft: 8}}
-                  icon={() => (
-                    <Icon style={{color: '#fff'}} name="skip-next" size={24} />
-                  )}
-                  mode="contained"
+                <IconButton
+                  onPress={()=>getAllLocationAndSort(-1)}
+                  icon={()=> <Icon name="arrow-back" size={24}/>}
+                  size={20}
+                  color={Colors.red500}
+                />
+                <IconButton
+                  onPress={()=>getAllLocationAndSort(1)}
                   color="#0f53bf"
-                  onPress={()=>getAllLocationAndSort(1)}>
-                  NEXT
-                </Button>
+                  icon={()=> <Icon name="arrow-forward" color="red" size={24}/>}
+                  size={20}
+                
+                />
               </View>
             </View>
             <View style={styles.info_right}>

@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RescuingScreen from './rescuing';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import UserInfo from './user_info';
+import Chat from './chat';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
@@ -30,10 +31,26 @@ function StackComponent(props) {
           headerTintColor:"#fff"
           }} 
         />
-        <Stack.Screen name="info" component={UserInfo} options={{
-          title: "INFO",
-          headerTintColor:"#fff"
-        }}  />
+        <Stack.Screen 
+          name="info" 
+          component={UserInfo} 
+          options={{
+            title: "INFO",
+            headerTintColor:"#fff"
+          }}
+        />
+         <Stack.Screen 
+          name="chat" 
+          component={Chat} 
+          options={{
+            title: "Thành Phan",
+            headerTintColor:"#062743",
+            headerStyle:{
+              backgroundColor:"#fff"
+            }
+          }}
+          
+        />
     </Stack.Navigator>
   )
 }
