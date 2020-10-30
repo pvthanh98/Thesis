@@ -13,6 +13,7 @@ export default function app_style () {
         calloutContainer: {
           backgroundColor: 'white',
           padding: 12,
+          maxWidth:300
         },
         title: {
           fontSize: 16,
@@ -25,11 +26,14 @@ export default function app_style () {
           width: "100%",
           height: 80
         },
+        infoContainer: {
+          backgroundColor:"#ffffff",
+        },
         store_info : {
-           backgroundColor:"#ffffff",
-           height:200,
-           width:"97%",
-           padding:8,
+           width:"100%",
+           paddingRight:8,
+           paddingLeft:8,
+           paddingBottom:8,
            flexDirection:"row"
         },
         info_right: {
