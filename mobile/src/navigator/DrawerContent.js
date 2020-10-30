@@ -62,7 +62,7 @@ export default (props) => {
                     />
                      <DrawerItem 
                         label="Info"
-                        onPress={()=> props.navigation.navigate('rescuing')}
+                        onPress={()=> props.navigation.navigate('info')}
                         icon={()=>(
                             <Icon name="info-circle" size={25} color="black" />
                         )}

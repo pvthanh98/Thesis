@@ -5,18 +5,20 @@ import DrawerContent from '../navigator/DrawerContent';
 import { createStackNavigator } from '@react-navigation/stack';
 import RescuingScreen from './rescuing';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import UserInfo from './user_info';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 function StackComponent(props) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{
+      headerStyle: {
+        backgroundColor:'#912c16',
+      }
+    }}>
         <Stack.Screen name="rescuing" component={RescuingScreen} options={{
-          title:"Oto Rescue",
+          title:"OTO RESCUE",
           headerTitleAlign:"center",
-          headerStyle: {
-            backgroundColor: '#912c16'
-          },
           headerLeft: () => (
               <TouchableOpacity 
                 style={{marginLeft:12}}
@@ -28,7 +30,10 @@ function StackComponent(props) {
           headerTintColor:"#fff"
           }} 
         />
-
+        <Stack.Screen name="info" component={UserInfo} options={{
+          title: "INFO",
+          headerTintColor:"#fff"
+        }}  />
     </Stack.Navigator>
   )
 }

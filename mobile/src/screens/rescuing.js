@@ -10,6 +10,7 @@ import {Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
 import {Title, Text, IconButton} from 'react-native-paper';
+import {server} from '../constants/index';
 const defaultPosition = {
   lat: 40.712776,
   lng: -74.005974,
@@ -32,17 +33,15 @@ const Rescue = () => {
   const [updateStore, setUpdateStore] = React.useState(false);
   useEffect(() => {
     getCurrentLocation();
-    loadStore();
   }, []);
 
-  const getAllLocationAndSort = async (type) => { // 0 is pressing 'Looking Button'
-       // -1 'prev ubutton' // 1 is 'Next Button'                                      
-    let my_store = [...stores];
+  const updateStoreDistance = async (currentLatLng,my_store) => {
+    console.log(currentLatLng)
     try {
-      if(!updateStore) { // haven't update store distances 
+      if(currentLatLng) { // haven't update store distances 
         console.log("update distance...");
         for(let i=0;i<my_store.length;i++) {
-          let origin = `${currentLocation.lat},${currentLocation.lng}`;
+          let origin = `${currentLatLng.lat},${currentLatLng.lng}`;
           let destination = `${my_store[i].latitude},${my_store[i].longtitude}`;
           let resp = await axiosDefault.get(
             `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
@@ -52,25 +51,41 @@ const Rescue = () => {
         my_store.sort((a,b)=> a.distance.value - b.distance.value)
         dispatch({type: 'GET_STORES', stores: my_store});
         setUpdateStore(true);
+      } else{
+        for(let i=0;i<my_store.length;i++) {
+          my_store[i].distance = null
+        }
       }
+      dispatch({type:"GET_STORES", stores:my_store})
+    } catch(exception) {
+      console.log(exception);
+    }
+  } 
 
-
+  const getAllLocationAndSort = async (type) => { // 0 is pressing 'Looking Button'
+       // -1 'prev ubutton' // 1 is 'Next Button'                                      
+    let my_store = [...stores];
+    try {
       if(type===1){ // press next button
         if(storeIndex>=my_store.length-1) {
           setSelectedStore({
             id: my_store[0]._id,
             description: my_store[0].description,
             name: my_store[0].name,
-            distance: my_store[0].distance.text
+            distance: my_store[0].distance.text,
+            image: my_store[0].image
           });
+          getDirection(my_store[0].latitude, my_store[0].longtitude);
           setStoreIndex(0);
         } else {
           setSelectedStore({
             id: my_store[storeIndex+1]._id,
             description: my_store[storeIndex+1].description,
             name: my_store[storeIndex+1].name,
-            distance: my_store[storeIndex+1].distance.text
+            distance: my_store[storeIndex+1].distance.text,
+            image: my_store[storeIndex+1].image
           });
+          getDirection(my_store[storeIndex+1].latitude, my_store[storeIndex+1].longtitude);
           setStoreIndex(storeIndex+1);
         }
       } 
@@ -79,8 +94,10 @@ const Rescue = () => {
           id: my_store[0]._id,
           description: my_store[0].description,
           name: my_store[0].name,
-          distance: my_store[0].distance.text
+          distance: my_store[0].distance.text,
+          image: my_store[0].image
         });
+        getDirection(my_store[0].latitude, my_store[0].longtitude);
         setStoreIndex(0);
       }
       else if (type===-1) {
@@ -89,16 +106,20 @@ const Rescue = () => {
             id: my_store[my_store.length-1]._id,
             description: my_store[my_store.length-1].description,
             name: my_store[my_store.length-1].name,
-            distance: my_store[my_store.length-1].distance.text
+            distance: my_store[my_store.length-1].distance.text,
+            image: my_store[my_store.length-1].image
           });
+          getDirection(my_store[my_store.length-1].latitude, my_store[my_store.length-1].longtitude);
           setStoreIndex(my_store.length-1);
         } else {
           setSelectedStore({
             id: my_store[storeIndex-1]._id,
             description: my_store[storeIndex-1].description,
             name: my_store[storeIndex-1].name,
-            distance: my_store[storeIndex-1].distance.text
+            distance: my_store[storeIndex-1].distance.text,
+            image: my_store[storeIndex-1].image
           });
+          getDirection(my_store[storeIndex-1].latitude, my_store[storeIndex-1].longtitude);
           setStoreIndex(storeIndex-1);
         }
       }
@@ -140,8 +161,10 @@ const Rescue = () => {
         };
         setCurrentLocation(success);
         setSelectedLocation(success);
+        loadStore(success);
       },
       (error) => {
+        loadStore(null);
         if (error) setError(error);
         ToastAndroid.show('Cannot access to your location', ToastAndroid.SHORT);
       },
@@ -149,11 +172,11 @@ const Rescue = () => {
     );
   };
 
-  const loadStore = () => {
+  const loadStore = (currentLatLng) => {
     axios
       .get('/api/store')
       .then((res) => {
-        dispatch({type: 'GET_STORES', stores: res.data});
+          updateStoreDistance(currentLatLng, res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -166,12 +189,15 @@ const Rescue = () => {
           latitude: store.latitude,
           longitude: store.longtitude,
         }}
-        onPress={async () => {
+        onPress={() => {
           setSelectedStore({
             id: store._id,
             name: store.name,
-            description: store.description
-          })
+            description: store.description,
+            distance: store.distance.text,
+            image: store.image
+          });
+          getDirection(store.latitude, store.longtitude)
         }}>
         <Callout tooltip>
           <View style={styles.calloutContainer}>
@@ -305,7 +331,7 @@ const Rescue = () => {
               <Image
                 style={{width: 90, height: 90}}
                 source={{
-                  uri: 'https://reactnative.dev/img/tiny_logo.png',
+                  uri: `${server}/images/${selectedStore.image}`,
                 }}
               />
             </View>
