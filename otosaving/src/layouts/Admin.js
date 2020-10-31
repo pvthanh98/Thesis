@@ -112,11 +112,7 @@ export default function Admin({ ...rest }) {
     })
     
     socket.on("customer_send_msg_to_you",(data)=>{
-      console.log("RECEIVE",data.from_id, message_store.info.customer.id)
-      if(message_store.info.customer.id === data.from_id) {
-        loadMessages(data.from_id);
-        console.log("CORRECT LET'S LOAD MESSAGE")
-      }
+      loadMessages(data.from_id);
       loadListMsgOfStore()
     });
 
@@ -142,7 +138,7 @@ export default function Admin({ ...rest }) {
       }
       window.removeEventListener("resize", resizeFunction);
     };
-  }, [message_store]);
+  }, []);
 
   const loadMessages = (customer_id) => {
     axios().get(`/api/messages/store_to/${customer_id}`)

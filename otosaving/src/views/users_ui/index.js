@@ -20,16 +20,27 @@ socket.on('connect', function(){
 });
 
 function Index() {
-  const message = useSelector(state=>state.messages);
   const dispatch = useDispatch();
   useEffect(() => {
     loadCategories();
+    loadListMsgOfUser();
     socket.on("store_send_msg_to_you",({from_id})=>{
-      if(message.info.store.id === from_id) loadMessages(from_id);
-    })
-  },[message]);
+      loadMessages(from_id);
+      loadListMsgOfUser();
+    });
+    socket.on("refresh_message",()=>{
+      loadListMsgOfUser();
+    }) 
+  },[]);
 
-  
+  const loadListMsgOfUser = () => {
+    axios().get("/api/messages/user_list")
+    .then(({data})=>{
+      dispatch({type:"UPDATE_MESSAGE_LIST", messages: data})
+      console.log(data)
+    })
+    .catch(err=>console.log(err))
+  }
 
   const loadMessages = (store_id) => {
     axios().get(`/api/messages/customer_to/${store_id}`)

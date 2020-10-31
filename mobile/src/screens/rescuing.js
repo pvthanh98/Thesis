@@ -296,7 +296,7 @@ const Rescue = ({navigation}) => {
                   style={{backgroundColor:"#1976d2"}} 
                   icon={()=> <Icon name="email" color="#fff" size={20} />}
                   mode="contained" 
-                  onPress={()=>navigation.navigate('chat')}
+                  onPress={()=>navigation.navigate('chat',{store_id: selectedStore.id})}
                 >
                   SEND
                 </Button>

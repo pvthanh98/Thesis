@@ -2,6 +2,7 @@
 const Message = require("../db/message");
 const Store = require("../db/store");
 const Customer = require("../db/customer");
+const mongoose = require('mongoose');
 module.exports = {
     getCustomerStore: async (req, res) => {
         try {
@@ -10,6 +11,10 @@ module.exports = {
             let messages = await Message.find({ customer_id, store_id })
             .populate('store_id')
             .populate("customer_id")
+            .limit(10)
+            .sort({timestamp:-1});
+            messages.reverse();
+            
             if (messages.length > 0) {
                 res.json({
                     info: {
@@ -51,7 +56,7 @@ module.exports = {
         }
     },
     getStoreList: async (req, res) => {
-        try{
+        try {
             const {id} = req.user;
             const customer_id_list = await Message.aggregate([
                 {
@@ -72,7 +77,7 @@ module.exports = {
                                 .findOne({customer_id:customer_id_list[i]._id})
                                 .populate("customer_id", "name image")
                                 .sort({timestamp:-1}).limit(1);
-                if(!msg.is_read) unread++;
+                if(!msg.is_read && !msg.is_store) unread++;
                 listMessages.push(msg)
             }
             res.send({
@@ -84,6 +89,41 @@ module.exports = {
             throw e;
         }
     },
+    getUserList: async (req, res)=>{
+        try {
+            const id = mongoose.Types.ObjectId(req.user.id);
+            const store_id_list = await Message.aggregate([
+                {
+                    $match:{
+                        customer_id: id
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$store_id"
+                    }
+                }
+            ]);
+            let listMessages= [];
+            let unread =0;
+            for(let i=0;i<store_id_list.length;i++){
+                let msg = await Message
+                                .findOne({store_id:store_id_list[i]._id}, "name body is_read is_store")
+                                .populate("store_id", "name image")
+                                .sort({timestamp:-1}).limit(1);
+                if(!msg.is_read && msg.is_store) unread++;
+                listMessages.push(msg)
+            }
+            res.send({
+                unread,
+                messages:listMessages
+            })
+        } catch(e){
+            res.sendStatus(400);
+            throw e;
+        }
+            
+    },
     getStoreToCustomer: async (req, res) => {
         try {
             const { customer_id } = req.params;
@@ -91,6 +131,11 @@ module.exports = {
             let messages = await Message.find({ store_id, customer_id })
             .populate('store_id')
             .populate("customer_id")
+            .limit(10)
+            .sort({timestamp:-1});
+
+            messages.reverse();
+
             if (messages.length > 0) {
                 res.json({
                     info: {

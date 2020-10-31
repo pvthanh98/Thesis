@@ -11,6 +11,7 @@ import message_store_list from './massage_store_list';
 import message_store from './messages_store';
 import bills from './bills';
 import customer_bills from './customer/bill';
+import message_list from './message_list';
 export default combineReducers({
     stores,
     services,
@@ -24,5 +25,6 @@ export default combineReducers({
     message_store,
     bills,
     customer_bills,
+    message_list
 });
 

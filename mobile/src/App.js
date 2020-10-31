@@ -17,13 +17,11 @@ const App = ({navigation}) => {
   const [isLoading, setIsLoading] = React.useState(true);
   React.useEffect(() => {
     checkAuth();
-    console.log("effect")
   }, []);
 
   const checkAuth = async () => {
     try {
         const user_token = await AsyncStorage.getItem('user_token');
-        console.log("AUTH CHECKING ", user_token)
         if(user_token) dispatch({type:"SIGN_IN", user_token: user_token });
         setIsLoading(false);
     }catch(e){

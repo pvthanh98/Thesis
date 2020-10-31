@@ -87,7 +87,7 @@ export default function AdminNavbarLinks() {
     setOpenNotification(null);
     axios().get(`/api/messages/store_to/${customer_id}`)
     .then(({data})=>dispatch({type:"UPDATE_STORE_MESSAGES", messages:data}));
-    socket.emit("store_read_message",{message_id})
+    socket.emit("read_message",{message_id, is_store:true})
   }
   if(!isLogin) return <Redirect to = "/admin/login" />
   return (

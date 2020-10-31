@@ -87,6 +87,7 @@ app.post("/api/user", userCtl.createUser);
 //MESSAGES
 app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore);
 app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList);
+app.get('/api/messages/user_list', user_auth , messageCtl.getUserList);
 app.get('/api/messages/store_to/:customer_id', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreToCustomer)
 app.post('/api/messages/read_message', messageCtl.readMessage)
 
@@ -128,7 +129,7 @@ io.on("connection", (socket) => {
       console.log("Authenticated failed disconnecting socket ", socket.id);
       socket.disconnect('unauthorized');
     }
-  }, 1000);
+  }, 5000);
   // end authenticating for socket.io
   socket.on("customer_send_msg", async (data)=>{
     console.log("Customer send message")
@@ -170,17 +171,25 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("store_read_message", async function({message_id}){
+  socket.on("read_message", async function({message_id, is_store}){
     try {
-      const {customer_id} = await Message.findByIdAndUpdate(message_id, { is_read:true });
-      socket.emit("refresh_message");
-      Customer.findById(customer_id).then(customer=>{
-        socket.to(customer._id).emit("refresh_message");
-      })
+      const msg = await Message.findById(message_id);
+      if(msg.is_store !== is_store){
+        msg.is_read = true;
+        msg.save(()=>{
+          socket.emit("refresh_message");
+        })
+      }
     } catch(err){
       console.log(err);
     }
   });
+
+  socket.on("hello_server",function(){
+    socket.emit("hello_server","welcome")
+  })
+
+
 })
 
 server.listen(port, () => console.log(`server is running on ${port}`));
