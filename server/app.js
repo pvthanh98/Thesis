@@ -101,21 +101,22 @@ io.on("connection", (socket) => {
   socket.emit("socketID",{socket_id: socket.id})
   socket.auth = false;
   socket.on('authenticate', function(data){
-    console.log(`Data from client with socketID(${socket.id})`, data)
     jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
       if (!err && decoded) {
         socket.auth = true;
         socket.user_type=data.type;
         socket.user_id = decoded.id;
-        if(data.type==="user") Customer.findByIdAndUpdate(decoded.id,{
-          socket_id: socket.id
+        if(data.type==="user") Customer.findById(decoded.id)
+        .then((customer)=>{
+          socket.join(customer._id);
+          console.log(`join user socket to room ${customer._id}`)
         })
-        .then(()=>console.log("update USER socket_id "+ socket.id+" to dbs"))
         .catch(err=>console.log(err));
-        if(data.type==="store") Store.findByIdAndUpdate(decoded.id,{
-          socket_id: socket.id
+        if(data.type==="store") Store.findById(decoded.id)
+        .then((store)=>{
+          socket.join(store._id);
+          console.log(`join store socket to room ${store._id}`)
         })
-        .then(()=>console.log("update STORE socket_id to dbs"))
         .catch(err=>console.log(err));
       }
     })
@@ -133,41 +134,48 @@ io.on("connection", (socket) => {
     console.log("Customer send message")
     const store_id = data.to;
     const {body} = data;
-    await Message.create({
-      store_id,
-      customer_id: socket.user_type==="user"? socket.user_id: null,
-      is_store: false,
-      body
-    }).then(()=>console.log("saved message"))
-    .catch(err => console.log(err));
-    const result = await Store.findById(store_id,"socket_id");
-    console.log(`socketID to store (${result.socket_id})`)
-    socket.to(result.socket_id).emit("customer_send_msg_to_you",{from_id:socket.user_id});
+    try{
+      await Message.create({
+        store_id,
+        customer_id: socket.user_type==="user"? socket.user_id: null,
+        is_store: false,
+        body
+      }).then(()=>console.log("saved message"))
+      .catch(err => console.log(err));
+      const result = await Store.findById(store_id);
+      console.log(`customer send message to room (${result._id})`)
+      socket.to(result._id).emit("customer_send_msg_to_you",{from_id:socket.user_id});
+    } catch(exception) {
+      console.log(exception);
+    }
   });
 
   socket.on("store_send_msg", async (data)=>{
     const customer_id = data.to;
     const { body } = data;
-    await Message.create({
-      store_id: socket.user_type==="store"? socket.user_id: null,
-      customer_id,
-      is_store: true,
-      body
-    }).then(()=>{
-      console.log("saved message");
-    });
-    const result = await Customer.findById(customer_id,"socket_id");
-    console.log(`socketID to customer (${result.socket_id})`)
-    socket.to(result.socket_id).emit("store_send_msg_to_you",{from_id:socket.user_id});
+    try {
+      await Message.create({
+        store_id: socket.user_type==="store"? socket.user_id: null,
+        customer_id,
+        is_store: true,
+        body
+      }).then(()=>{
+        console.log("saved message");
+      });
+      const result = await Customer.findById(customer_id);
+      console.log(`store send message to room (${result._id})`)
+      socket.to(result._id).emit("store_send_msg_to_you",{from_id:socket.user_id});
+    } catch(error){
+      console.log(error)
+    }
   })
 
   socket.on("store_read_message", async function({message_id}){
     try {
-      console.log(message_id)
       const {customer_id} = await Message.findByIdAndUpdate(message_id, { is_read:true });
       socket.emit("refresh_message");
-      Customer.findById(customer_id,"socket_id").then(customer=>{
-        socket.to(customer.socket_id).emit("refresh_message");
+      Customer.findById(customer_id).then(customer=>{
+        socket.to(customer._id).emit("refresh_message");
       })
     } catch(err){
       console.log(err);

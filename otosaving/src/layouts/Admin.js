@@ -63,6 +63,7 @@ export default function Admin({ ...rest }) {
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const message_store_list = useSelector(state=> state.message_store_list);
+  const message_store = useSelector(state=> state.message_store);
   const dispatch = useDispatch();
   
   const handleImageClick = image => {
@@ -91,6 +92,7 @@ export default function Admin({ ...rest }) {
   };
   // initialize and destroy the PerfectScrollbar plugin
   const loadListMsgOfStore = () => {
+    console.log("load list running")
     axios().get("/api/messages/store_list")
     .then(({data})=>dispatch({type:"UPDATE_MESSAGE_STORE_LIST", messages: data}))
     .catch(err=>console.log(err))
@@ -101,18 +103,22 @@ export default function Admin({ ...rest }) {
     .then(({data})=> dispatch({type:"UPDATE_BILLS", bills: data}))
     .catch(err=>console.log(err));
   } 
+
+
   React.useEffect(() => {
     //socket io
-    socket.on("customer_send_msg_to_you",(data)=>{
-      loadMessages(data.from_id);
-      loadListMsgOfStore()
-    });
-
     socket.on("refresh_message",()=>{
       loadListMsgOfStore();
     })
     
-
+    socket.on("customer_send_msg_to_you",(data)=>{
+      console.log("RECEIVE",data.from_id, message_store.info.customer.id)
+      if(message_store.info.customer.id === data.from_id) {
+        loadMessages(data.from_id);
+        console.log("CORRECT LET'S LOAD MESSAGE")
+      }
+      loadListMsgOfStore()
+    });
 
 
 
@@ -136,7 +142,7 @@ export default function Admin({ ...rest }) {
       }
       window.removeEventListener("resize", resizeFunction);
     };
-  }, []);
+  }, [message_store]);
 
   const loadMessages = (customer_id) => {
     axios().get(`/api/messages/store_to/${customer_id}`)

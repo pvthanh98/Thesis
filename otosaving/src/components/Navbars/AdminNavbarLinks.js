@@ -161,7 +161,24 @@ export default function AdminNavbarLinks() {
               <Paper>
                 <ClickAwayListener>
                   <MenuList role="menu" style={{marginRight:"20px"}}>
-                    <RenderMessageList messages={message_store_list.messages} openChat={openChat} classes={classes} />
+                    {
+                      message_store_list.messages.map(message=>(
+                        <MenuItem
+                          onClick={()=>openChat(message.customer_id._id, message._id)}
+                          className={classes.dropdownItem}
+                          style={{width:"350px", display:"flex"}}
+                          key={message._id}
+                        > 
+                          <img style={{width:"40px", borderRadius:"50%"}} src={`${server}/images/${message.customer_id.image}`} />
+                          <div className="ml-3" >
+                            <div>{message.customer_id.name}</div>
+                            <div className={!message.is_read?"unread-message":""}>
+                              {message.body}
+                            </div>
+                          </div>
+                        </MenuItem>
+                      ))
+                    }
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

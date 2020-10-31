@@ -12,18 +12,6 @@ export default (props) => {
   const dispatch = useDispatch();
   const messages = useSelector(state => state.message_store);
   const [msgInput, setMsgInput] = React.useState("")
-  useEffect(()=>{
-    socket.on('server',(data)=>{
-      alert("server send data");
-    });
-    socket.on("customer_send_msg_to_you",(data)=>{
-      console.log("Customer send what?")
-    })
-    socket.on("disconnection",function(){
-      console.log("SOCKET DISCONECTED")
-    })
-  },[]);
-
   
   const handleForm = (e) => {
     e.preventDefault();

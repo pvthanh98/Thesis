@@ -19,17 +19,18 @@ socket.on('connect', function(){
     socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
 });
 
-
-
 function Index() {
+  const message = useSelector(state=>state.messages);
   const dispatch = useDispatch();
   useEffect(() => {
     loadCategories();
     socket.on("store_send_msg_to_you",({from_id})=>{
-      console.log("STORE SEND MESSAGE TO ME")
-      loadMessages(from_id);
+      if(message.info.store.id === from_id) loadMessages(from_id);
     })
-  },[]);
+  },[message]);
+
+  
+
   const loadMessages = (store_id) => {
     axios().get(`/api/messages/customer_to/${store_id}`)
     .then(({data})=> {
