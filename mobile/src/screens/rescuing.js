@@ -168,7 +168,7 @@ const Rescue = ({navigation}) => {
         if (error) setError(error);
         ToastAndroid.show('Cannot access to your location', ToastAndroid.SHORT);
       },
-      {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000},
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
   };
 

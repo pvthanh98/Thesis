@@ -1,8 +1,7 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity, TextInput, StatusBar, ScrollView} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, TextInput, StatusBar, FlatList} from 'react-native';
 import { Avatar, Text } from 'react-native-paper';
-import Mine from '../components/chat/mine';
-import Your from '../components/chat/yours';
+import ChatItem from '../components/chat/Item';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from '../service/axios';
 import {useSelector, useDispatch} from 'react-redux';
@@ -15,6 +14,11 @@ export default ({route, navigation}) => {
     useEffect(()=>{
       loadMessages(store_id);  
     },[])
+
+    useEffect(()=>{
+        navigation.setOptions({ title: messages.info.store.name });
+        console.log("effect running")
+    },[messages.info.store.id])
 
     const loadMessages = (store_id) => {
         axios('/api/messages/customer_to/'+store_id)
@@ -47,20 +51,17 @@ export default ({route, navigation}) => {
         dispatch({type:"UPDATE_MESSAGES", messages: newMessages});
     }
 
-    const renderMessages = () => (
-        messages.content.map(msg=>{
-            if(msg.is_store) return <Your key={msg._id} message={msg.body} />
-            else return <Mine key={msg._id} message={msg.body} />
-        })
-    )
-
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content"  />
             <View style={styles.chatContainer}>
-                <ScrollView>
-                 {renderMessages()}
-                </ScrollView>
+                <FlatList
+                    data= {messages.content}
+                    renderItem={({item})=>(
+                        <ChatItem {...item} />
+                    )}
+                    keyExtractor={item => item._id}
+                />
             </View>
             <View style={styles.inputContainer}>
                <TextInput 
