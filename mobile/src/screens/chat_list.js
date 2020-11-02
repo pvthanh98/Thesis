@@ -18,15 +18,17 @@ const ChatList = ({navigation}) => {
       })
       .catch((err) => console.log(err));
   };
-
-  console.log(message_list.messages)
   return (
     <View style={styles.container}>
       <FlatList
         data={message_list.messages}
+        keyExtractor={item=>item._id}
         renderItem={({item}) => (
           <TouchableOpacity
-            onPress={()=>navigation.navigate('chat',{store_id: item.store_id._id})}
+            onPress={()=>navigation.navigate('chat',{
+              store_id: item.store_id._id,
+              store_name: item.store_id.name
+            })}
           >
             <ListItem {...item} />
           </TouchableOpacity>

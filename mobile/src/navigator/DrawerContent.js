@@ -69,7 +69,7 @@ export default (props) => {
                     />
                     <DrawerItem 
                         label="Rescue History"
-                        onPress={()=> props.navigation.navigate('rescuing')}
+                        onPress={()=> props.navigation.navigate('history')}
                         icon={()=>(
                             <Icon name="history" size={25} color="black" />
                         )}

@@ -79,7 +79,7 @@ app.post('/api/bill/delete', passport.authenticate("jwt", { session: false }), B
 app.post('/api/bill/payment', passport.authenticate("jwt", { session: false }), BillCtl.confirmPayment);
 app.put('/api/bill/provisional/:id', passport.authenticate("jwt", { session: false }), BillCtl.modifyBillTemp);
 
-app.get('/api/customer/bill',user_auth,BillCtl.getCustomerBill);
+app.get('/api/customer/bill', user_auth, BillCtl.getCustomerBill);
 
 //USER
 app.post("/api/user", userCtl.createUser);

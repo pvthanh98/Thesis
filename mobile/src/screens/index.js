@@ -1,18 +1,22 @@
 import React from 'react';
-import {Button, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import DrawerContent from '../navigator/DrawerContent';
 import {createStackNavigator} from '@react-navigation/stack';
-import RescuingScreen from './rescuing';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import UserInfo from './user_info';
-import ChatList from './chat_list';
 import Chat from './chat';
 import io from 'socket.io-client';
 import {server} from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
 import axios from '../service/axios';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import UserInfo from './user_info';
+import ChatList from './chat_list';
+import RescuingScreen from './rescuing';
+import HistoryScreen from './history';
+import HistoryDetailScreen from './history_detail';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -28,7 +32,7 @@ function StackComponent(props) {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#912c16',
+          backgroundColor: '#295a59',
         },
       }}>
       <Stack.Screen
@@ -81,8 +85,34 @@ function StackComponent(props) {
           headerStyle: {
             backgroundColor: '#fff',
           },
+          headerRight:()=>(
+            <TouchableOpacity style={{
+              marginRight:10
+            }}>
+              <MaterialIcons name="call" size={22} />
+            </TouchableOpacity>
+          )
+          
         }}
       />
+
+      <Stack.Screen
+        name="history"
+        component={HistoryScreen}
+        options={{
+          title: 'History',
+          headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="history_detail"
+        component={HistoryDetailScreen}
+        options={{
+          title: 'History Detail',
+          headerTintColor: '#fff',
+        }}
+      />
+
     </Stack.Navigator>
   );
 }

@@ -32,11 +32,10 @@ const Rescue = ({navigation}) => {
   const markerRef = React.createRef();
   const [updateStore, setUpdateStore] = React.useState(false);
   useEffect(() => {
-    getCurrentLocation();
+   // getCurrentLocation();
   }, []);
 
   const updateStoreDistance = async (currentLatLng,my_store) => {
-    console.log(currentLatLng)
     try {
       if(currentLatLng) { // haven't update store distances 
         console.log("update distance...");
@@ -166,7 +165,7 @@ const Rescue = ({navigation}) => {
       (error) => {
         loadStore(null);
         if (error) setError(error);
-        ToastAndroid.show('Cannot access to your location', ToastAndroid.SHORT);
+        alert("cannot access to your location");
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
@@ -178,7 +177,10 @@ const Rescue = ({navigation}) => {
       .then((res) => {
           updateStoreDistance(currentLatLng, res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        alert("Failed to load stores around you")
+      });
   };
 
   const renderStore = () =>
@@ -208,13 +210,10 @@ const Rescue = ({navigation}) => {
       </Marker>
     ));
 
-  const ratingCompleted = (rating) => {
-    console.log('Rating is: ' + rating);
-  };
 
   return (
     <View style={{flex: 1}}>
-      <StatusBar backgroundColor="#912c16" barStyle="light-content" />
+      <StatusBar backgroundColor="#295a59" barStyle="light-content" />
       <View style={styles.container}>
         <MapView
           showsUserLocation
@@ -296,7 +295,10 @@ const Rescue = ({navigation}) => {
                   style={{backgroundColor:"#1976d2"}} 
                   icon={()=> <Icon name="email" color="#fff" size={20} />}
                   mode="contained" 
-                  onPress={()=>navigation.navigate('chat',{store_id: selectedStore.id})}
+                  onPress={()=>navigation.navigate('chat',{
+                    store_id: selectedStore.id,
+                    store_name: selectedStore.name
+                  })}
                 >
                   SEND
                 </Button>

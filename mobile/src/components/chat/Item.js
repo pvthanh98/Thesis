@@ -26,7 +26,7 @@ export default (props) => {
                     styles.textBody,
                     {color:isMyMsg()? "white": "black"}
                 ]}>{props.body}</Text>
-                <Text style={[styles.textTime, {color:isMyMsg()? "white": "black"}]}>{moment(props.timestamp).fromNow()}</Text>
+                <Text style={[styles.textTime, {color:isMyMsg()? "white": "black"}]}>-- {moment(props.timestamp).fromNow()} --</Text>
             </View>
         </View>
     )
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
         fontSize:16
     },
     textTime: {
-        fontSize:12
+        fontSize:12,
+        marginTop:4
     }
 });

@@ -73,7 +73,9 @@ module.exports = {
     },
     getCustomerBill : (req, res) => {
         const customer_id = req.user.id;
-        Bill.find({customer_id}).populate("services.service_id")
+        Bill.find({customer_id})
+        .populate("services.service_id","name price")
+        .populate("store_id", "name")
         .then((bills)=>{
             res.json(bills);
         })

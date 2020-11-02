@@ -3,7 +3,6 @@ import {View, StyleSheet} from 'react-native';
 import { Avatar, Title, Text  } from 'react-native-paper';
 import {server} from '../../constants/index';
 const ChatListItem = (props) => {
-    console.log(props)
     return (
       <View 
         style={styles.container}
