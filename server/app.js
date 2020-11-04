@@ -13,14 +13,15 @@ const passport = require("./config/passport");
 const multer = require("multer");
 const io = require("socket.io")(server);
 const user_auth = require("./middleware/user_auth");
+const paypal = require("paypal-rest-sdk");
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "public", "images"));
-  },
-  filename: async function (req, file, cb) {
-    const name = req.user.id + "_" + file.originalname;
-    cb(null, name);
-  },
+	destination: function (req, file, cb) {
+		cb(null, path.join(__dirname, "public", "images"));
+	},
+	filename: async function (req, file, cb) {
+		const name = req.user.id + "_" + file.originalname;
+		cb(null, name);
+	},
 });
 
 const upload = multer({ storage });
@@ -31,32 +32,51 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+paypal.configure({
+	mode: "sandbox", //sandbox or live
+	client_id: process.env.PAYPAL_CLIENT_ID,
+	client_secret: process.env.PAYPAL_CLIENT_SECRET,
+});
+
 //controller
 const storeCtl = require("./controller/store");
-const categoryCtl = require('./controller/category')
+const categoryCtl = require("./controller/category");
 const serviceCtl = require("./controller/service");
 const authCtl = require("./controller/auth");
 const userCtl = require("./controller/user");
-const messageCtl = require('./controller/message');
+const messageCtl = require("./controller/message");
 const BillCtl = require("./controller/bill");
 
-app.get('/api/welcome', (req,res)=>res.send("welcome"))
+app.get("/api/welcome", (req, res) => res.send("welcome"));
 //login
 app.post("/api/store/login", authCtl.login);
 app.post("/api/user/login", authCtl.userLogin);
 //store
 app.post("/api/store", validator.createStore(), storeCtl.createStore);
 app.get("/api/store", storeCtl.getStore);
-app.get("/api/store/id/:id", storeCtl.getStoreById)
-app.post("/api/store/modify", passport.authenticate("jwt", { session: false }), upload.single("file_store"), storeCtl.modifyStore);
-app.post("/api/store/me", passport.authenticate("jwt", { session: false }), storeCtl.getStoreInfo);
-app.get("/api/store/search_customer/:id", passport.authenticate("jwt", { session: false }), storeCtl.searchCustomer);
+app.get("/api/store/id/:id", storeCtl.getStoreById);
+app.post(
+	"/api/store/modify",
+	passport.authenticate("jwt", { session: false }),
+	upload.single("file_store"),
+	storeCtl.modifyStore
+);
+app.post(
+	"/api/store/me",
+	passport.authenticate("jwt", { session: false }),
+	storeCtl.getStoreInfo
+);
+app.get(
+	"/api/store/search_customer/:id",
+	passport.authenticate("jwt", { session: false }),
+	storeCtl.searchCustomer
+);
 //store filter
 app.get("/api/store/rating", storeCtl.getStoreByRating);
 app.get("/api/store/sell", storeCtl.getStoreBySale);
 //Service category
-app.post('/api/category', categoryCtl.postCategory);
-app.get('/api/category',categoryCtl.getCategory)
+app.post("/api/category", categoryCtl.postCategory);
+app.get("/api/category", categoryCtl.getCategory);
 
 //service
 app.get("/api/service", serviceCtl.getService);
@@ -64,135 +84,279 @@ app.get("/api/service/outstanding", serviceCtl.getOutStandingService);
 app.get("/api/service/id/:id", serviceCtl.getServiceById);
 app.get("/api/service/category/:id", serviceCtl.getServiceByCategoryID);
 
-app.post( "/api/service", passport.authenticate("jwt", { session: false }), upload.single("file"), serviceCtl.postService);
-app.put("/api/service/", passport.authenticate("jwt", { session: false }), upload.single("file"), serviceCtl.modifyService);
-app.post("/api/service/delete",passport.authenticate("jwt", { session: false }), serviceCtl.deleteServices);
+app.post(
+	"/api/service",
+	passport.authenticate("jwt", { session: false }),
+	upload.single("file"),
+	serviceCtl.postService
+);
+app.put(
+	"/api/service/",
+	passport.authenticate("jwt", { session: false }),
+	upload.single("file"),
+	serviceCtl.modifyService
+);
+app.post(
+	"/api/service/delete",
+	passport.authenticate("jwt", { session: false }),
+	serviceCtl.deleteServices
+);
 //get service of a store
 app.get("/api/service/store/:id", serviceCtl.getMyService);
-app.get("/api/service/search/:name", passport.authenticate("jwt", { session: false }), serviceCtl.getSearchSS);
+app.get(
+	"/api/service/search/:name",
+	passport.authenticate("jwt", { session: false }),
+	serviceCtl.getSearchSS
+);
 
 //BILL
-app.get('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.getBill);
-app.get('/api/bill/id/:id',passport.authenticate("jwt", { session: false }),BillCtl.getBillByID);
-app.post('/api/bill',passport.authenticate("jwt", { session: false }),BillCtl.postBill);
-app.post('/api/bill/delete', passport.authenticate("jwt", { session: false }), BillCtl.deleteBill);
-app.post('/api/bill/payment', passport.authenticate("jwt", { session: false }), BillCtl.confirmPayment);
-app.put('/api/bill/provisional/:id', passport.authenticate("jwt", { session: false }), BillCtl.modifyBillTemp);
+app.get(
+	"/api/bill",
+	passport.authenticate("jwt", { session: false }),
+	BillCtl.getBill
+);
+app.get(
+	"/api/bill/id/:id",
+	passport.authenticate("jwt", { session: false }),
+	BillCtl.getBillByID
+);
+app.post(
+	"/api/bill",
+	passport.authenticate("jwt", { session: false }),
+	BillCtl.postBill
+);
+app.post(
+	"/api/bill/delete",
+	passport.authenticate("jwt", { session: false }),
+	BillCtl.deleteBill
+);
+app.post(
+	"/api/bill/payment",
+	passport.authenticate("jwt", { session: false }),
+	BillCtl.confirmPayment
+);
+app.put(
+	"/api/bill/provisional/:id",
+	passport.authenticate("jwt", { session: false }),
+	BillCtl.modifyBillTemp
+);
 
-app.get('/api/customer/bill', user_auth, BillCtl.getCustomerBill);
+app.get("/api/customer/bill", user_auth, BillCtl.getCustomerBill);
 
 //USER
 app.post("/api/user", userCtl.createUser);
-app.get('/api/user', user_auth, userCtl.getUser);
-app.post('/api/user/update', user_auth, upload.single("file"), userCtl.updateUser);
+app.get("/api/user", user_auth, userCtl.getUser);
+app.post(
+	"/api/user/update",
+	user_auth,
+	upload.single("file"),
+	userCtl.updateUser
+);
 
 //MESSAGES
-app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore);
-app.get('/api/messages/store_list', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreList);
-app.get('/api/messages/user_list', user_auth , messageCtl.getUserList);
-app.get('/api/messages/store_to/:customer_id', passport.authenticate('jwt',{session:false}) , messageCtl.getStoreToCustomer)
-app.post('/api/messages/read_message', messageCtl.readMessage)
+app.get(
+	"/api/messages/customer_to/:store_id",
+	user_auth,
+	messageCtl.getCustomerStore
+);
+app.get(
+	"/api/messages/store_list",
+	passport.authenticate("jwt", { session: false }),
+	messageCtl.getStoreList
+);
+app.get("/api/messages/user_list", user_auth, messageCtl.getUserList);
+app.get(
+	"/api/messages/store_to/:customer_id",
+	passport.authenticate("jwt", { session: false }),
+	messageCtl.getStoreToCustomer
+);
+app.post("/api/messages/read_message", messageCtl.readMessage);
 
 //SOKET IO. CHAT
-const Message = require('./db/message');
+const Message = require("./db/message");
 const auth_user = require("./middleware/user_auth");
-const Customer = require('./db/customer');
-const Store =  require('./db/store');
-io.on("connection", (socket) => { 
-  //authenticate for socket io
-  console.log("Client connecting....")
-  socket.emit("socketID",{socket_id: socket.id})
-  socket.auth = false;
-  socket.on('authenticate', function(data){
-    jwt.verify(data.token,process.env.SECRET_KEY,function(err, decoded){
-      if (!err && decoded) {
-        socket.auth = true;
-        socket.user_type=data.type;
-        socket.user_id = decoded.id;
-        if(data.type==="user") Customer.findById(decoded.id)
-        .then((customer)=>{
-          socket.join(customer._id);
-          console.log(`join user socket to room ${customer._id}`)
-        })
-        .catch(err=>console.log(err));
-        if(data.type==="store") Store.findById(decoded.id)
-        .then((store)=>{
-          socket.join(store._id);
-          console.log(`join store socket to room ${store._id}`)
-        })
-        .catch(err=>console.log(err));
+const Customer = require("./db/customer");
+const Store = require("./db/store");
+
+//PAYPAL
+
+app.get("/api/paypal", function (req, res) {
+	var create_payment_json = {
+		intent: "sale",
+		payer: {
+			payment_method: "paypal",
+		},
+		redirect_urls: {
+			return_url: "http://localhost:8080/api/success",
+			cancel_url: "http://localhost:8080/api/cancel",
+		},
+		transactions: [
+			{
+				item_list: {
+					items: [
+						{
+							name: "item",
+							sku: "item",
+							price: "10.00",
+							currency: "USD",
+							quantity: 1,
+						},
+					],
+				},
+				amount: {
+					currency: "USD",
+					total: "10.00",
+				},
+				description: "This is the payment description.",
+			},
+		],
+	};
+
+	paypal.payment.create(create_payment_json, function (error, payment) {
+		if (error) {
+			throw error;
+		} else {
+			console.log("Create Payment Response");
+			res.redirect(payment.links[1].href);
+		}
+	});
+});
+
+app.get('/api/success', function(req, res){
+  const {paymentId, PayerID} = req.query;
+  var execute_payment_json = {
+      "payer_id": PayerID,
+      "transactions": [{
+          "amount": {
+              "currency": "USD",
+              "total": "10.00"
+          }
+      }]
+  };
+
+  paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+      if (error) {
+          console.log(error.response);
+          throw error;
+      } else {
+          console.log("Get Payment Response");
+          console.log(JSON.stringify(payment));
+          res.send("Success");
       }
-    })
   });
-  
-  setTimeout(function(){
-    //sau 1s mà client vẫn chưa dc auth, lúc đấy disconnect.
-    if (!socket.auth) {
-      console.log("Authenticated failed disconnecting socket ", socket.id);
-      socket.disconnect('unauthorized');
-    }
-  }, 5000);
-  // end authenticating for socket.io
-  socket.on("customer_send_msg", async (data)=>{
-    console.log("Customer send message")
-    const store_id = data.to;
-    const {body} = data;
-    try{
-      await Message.create({
-        store_id,
-        customer_id: socket.user_type==="user"? socket.user_id: null,
-        is_store: false,
-        body
-      }).then(()=>console.log("saved message"))
-      .catch(err => console.log(err));
-      const result = await Store.findById(store_id);
-      console.log(`customer send message to room (${result._id})`)
-      socket.to(result._id).emit("customer_send_msg_to_you",{from_id:socket.user_id});
-    } catch(exception) {
-      console.log(exception);
-    }
-  });
-
-  socket.on("store_send_msg", async (data)=>{
-    const customer_id = data.to;
-    const { body } = data;
-    try {
-      await Message.create({
-        store_id: socket.user_type==="store"? socket.user_id: null,
-        customer_id,
-        is_store: true,
-        body
-      }).then(()=>{
-        console.log("saved message");
-      });
-      const result = await Customer.findById(customer_id);
-      console.log(`store send message to room (${result._id})`)
-      socket.to(result._id).emit("store_send_msg_to_you",{from_id:socket.user_id});
-    } catch(error){
-      console.log(error)
-    }
-  })
-
-  socket.on("read_message", async function({message_id, is_store}){
-    try {
-      const msg = await Message.findById(message_id);
-      if(msg.is_store !== is_store){
-        msg.is_read = true;
-        msg.save(()=>{
-          socket.emit("refresh_message");
-        })
-      }
-    } catch(err){
-      console.log(err);
-    }
-  });
-
-  socket.on("hello_server",function(){
-    socket.emit("hello_server","welcome")
-  })
-
-
+})
+app.get('/api/cancel', function(req, res){
+  res.send("cancel");
 })
 
-server.listen(port, () => console.log(`server is running on ${port}`));
 
+io.on("connection", (socket) => {
+	//authenticate for socket io
+	console.log("Client connecting....");
+	socket.emit("socketID", { socket_id: socket.id });
+	socket.auth = false;
+	socket.on("authenticate", function (data) {
+		jwt.verify(data.token, process.env.SECRET_KEY, function (err, decoded) {
+			if (!err && decoded) {
+				socket.auth = true;
+				socket.user_type = data.type;
+				socket.user_id = decoded.id;
+				if (data.type === "user")
+					Customer.findById(decoded.id)
+						.then((customer) => {
+							socket.join(customer._id);
+							console.log(
+								`join user socket to room ${customer._id}`
+							);
+						})
+						.catch((err) => console.log(err));
+				if (data.type === "store")
+					Store.findById(decoded.id)
+						.then((store) => {
+							socket.join(store._id);
+							console.log(
+								`join store socket to room ${store._id}`
+							);
+						})
+						.catch((err) => console.log(err));
+			}
+		});
+	});
+
+	setTimeout(function () {
+		//sau 1s mà client vẫn chưa dc auth, lúc đấy disconnect.
+		if (!socket.auth) {
+			console.log(
+				"Authenticated failed disconnecting socket ",
+				socket.id
+			);
+			socket.disconnect("unauthorized");
+		}
+	}, 5000);
+	// end authenticating for socket.io
+	socket.on("customer_send_msg", async (data) => {
+		console.log("Customer send message");
+		const store_id = data.to;
+		const { body } = data;
+		try {
+			await Message.create({
+				store_id,
+				customer_id:
+					socket.user_type === "user" ? socket.user_id : null,
+				is_store: false,
+				body,
+			})
+				.then(() => console.log("saved message"))
+				.catch((err) => console.log(err));
+			const result = await Store.findById(store_id);
+			console.log(`customer send message to room (${result._id})`);
+			socket
+				.to(result._id)
+				.emit("customer_send_msg_to_you", { from_id: socket.user_id });
+		} catch (exception) {
+			console.log(exception);
+		}
+	});
+
+	socket.on("store_send_msg", async (data) => {
+		const customer_id = data.to;
+		const { body } = data;
+		try {
+			await Message.create({
+				store_id: socket.user_type === "store" ? socket.user_id : null,
+				customer_id,
+				is_store: true,
+				body,
+			}).then(() => {
+				console.log("saved message");
+			});
+			const result = await Customer.findById(customer_id);
+			console.log(`store send message to room (${result._id})`);
+			socket
+				.to(result._id)
+				.emit("store_send_msg_to_you", { from_id: socket.user_id });
+		} catch (error) {
+			console.log(error);
+		}
+	});
+
+	socket.on("read_message", async function ({ message_id, is_store }) {
+		try {
+			const msg = await Message.findById(message_id);
+			if (msg.is_store !== is_store) {
+				msg.is_read = true;
+				msg.save(() => {
+					socket.emit("refresh_message");
+				});
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	});
+
+	socket.on("hello_server", function () {
+		socket.emit("hello_server", "welcome");
+	});
+});
+
+server.listen(port, () => console.log(`server is running on ${port}`));

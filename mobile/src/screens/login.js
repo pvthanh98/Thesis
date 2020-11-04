@@ -38,7 +38,6 @@ export default function Login(props) {
     const storeData = async (key,value) => {
         try {
           await AsyncStorage.setItem(key, value)
-          console.log("token saved")
         } catch (e) {
           console.log(e)
         }
