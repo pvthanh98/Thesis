@@ -83,6 +83,8 @@ app.get('/api/customer/bill', user_auth, BillCtl.getCustomerBill);
 
 //USER
 app.post("/api/user", userCtl.createUser);
+app.get('/api/user', user_auth, userCtl.getUser);
+app.post('/api/user/update', user_auth, upload.single("file"), userCtl.updateUser);
 
 //MESSAGES
 app.get('/api/messages/customer_to/:store_id', user_auth , messageCtl.getCustomerStore);

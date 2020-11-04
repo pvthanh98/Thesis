@@ -45,6 +45,11 @@ export default function app_style () {
           flexDirection:"row",
           marginTop:8,
           justifyContent:"center"
+        },
+        someText: {
+          position:"absolute",
+          top:1,
+          left:1
         }
       }
 }

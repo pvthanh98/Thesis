@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
+import {Button} from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 const styles = StyleSheet.create(login_style())
 export default function Login(props) {
     const [email, setEmail] = React.useState("");
@@ -28,6 +30,7 @@ export default function Login(props) {
               storeData('id', res.data.id);
               storeData('name', res.data.name);
               storeData('image', res.data.image);
+              storeData('address',res.data.address)
           })
           .catch((err) => {alert("Email or password is incorrect");   setLoading(false);});
     }
@@ -43,30 +46,62 @@ export default function Login(props) {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor="#1e90ff" barStyle="light-content"/>
+            <StatusBar backgroundColor='#295a59' barStyle="light-content"/>
             <Text style={styles.welcome}>Login To Rescuing App</Text>
-            <TextInput 
-                style={styles.inputText} 
-                placeholder="Email" 
-                value={email}
-                onChangeText={text=>setEmail(text)}
-            />
-            <TextInput 
-                style={styles.inputText} 
-                placeholder="Password" 
-                value={password} 
-                secureTextEntry
-                onChangeText={text=>setPassword(text)}
-            />
-            <View style={styles.btnContainer}>
-                <TouchableOpacity style={styles.btn} onPress={handleLoginButton}>
-                    <Text style={styles.btnText}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn}>
-                    <Text style={styles.btnText}>Signup</Text>
-                </TouchableOpacity>
+            <View style={styles.inputContainer}>
+                <MaterialCommunityIcons style={styles.iconStyle} name="email" size={28} color="#fff" />
+                <TextInput 
+                    style={styles.textInputStyle} 
+                    placeholderTextColor="#fff" 
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={text=>setEmail(text)}
+                />
             </View>
-            {loading && <ActivityIndicator size="large" color="#fff" />}
+            <View style={[styles.inputContainer]}>
+                <MaterialCommunityIcons style={styles.iconStyle} name="lock-question" size={28} color="#fff" />
+                <TextInput 
+                    style={styles.textInputStyle} 
+                    placeholderTextColor="#fff" 
+                    placeholder="Password"
+                    value={password} 
+                    secureTextEntry
+                    onChangeText={text=>setPassword(text)}
+                />
+            </View>
+            <View style={[styles.inputContainer,{marginTop:20}]}>
+                <Button onPress={handleLoginButton} color="#fff" mode="contained">Login</Button>
+                <Button color="#fff" >Signup</Button>
+            </View>
+            <TouchableOpacity style={{marginTop:8}}>
+                <Text style={{color:"#69737f", textDecorationLine:"underline", textDecorationColor:"red"}}>Are you store owner ?</Text>
+            </TouchableOpacity>
         </View>
     )
 }
+
+
+
+
+{/* <TextInput 
+style={styles.inputText} 
+placeholder="Email" 
+value={email}
+onChangeText={text=>setEmail(text)}
+/>
+<TextInput 
+style={styles.inputText} 
+placeholder="Password" 
+value={password} 
+secureTextEntry
+onChangeText={text=>setPassword(text)}
+/>
+<View style={styles.btnContainer}>
+<TouchableOpacity style={styles.btn} onPress={handleLoginButton}>
+    <Text style={styles.btnText}>Login</Text>
+</TouchableOpacity>
+<TouchableOpacity style={styles.btn}>
+    <Text style={styles.btnText}>Signup</Text>
+</TouchableOpacity>
+</View>
+{loading && <ActivityIndicator size="large" color="#fff" />} */}

@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from './screens/splash_screen';
 import {Text, View} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+import WelcomeScreen from './screens/welcome';
 
 
 const Stack = createStackNavigator();
@@ -33,14 +34,29 @@ const App = ({navigation}) => {
   if(isLoading) return <SplashScreen />
   return (
       <NavigationContainer>
-        <Stack.Navigator>
+       
           {auth.isSignin === false ? (
-            <Stack.Screen name="login" component={LoginScreen} options={{headerShown:false}} hehe="Hele" />
+             <Stack.Navigator>
+                <Stack.Screen name="welcome" component={WelcomeScreen} options={{headerShown:false}} />
+                <Stack.Screen name="login" component={LoginScreen} options={{headerShown:false}}/>
+             </Stack.Navigator>
           ) : (
-             <Stack.Screen name="index" component={IndexScreen} options={{headerShown:false}} />
+            <Stack.Navigator>
+              <Stack.Screen name="index" component={IndexScreen} options={{headerShown:false}} />
+            </Stack.Navigator>
           )}
-        </Stack.Navigator>
+           
+        
       </NavigationContainer>
   );
 };
 export default App;
+
+
+{/* <Stack.Navigator>
+  {auth.isSignin === false ? (
+    <Stack.Screen name="login" component={LoginScreen} options={{headerShown:false}} hehe="Hele" />
+  ) : (
+      <Stack.Screen name="index" component={IndexScreen} options={{headerShown:false}} />
+  )}
+</Stack.Navigator> */}

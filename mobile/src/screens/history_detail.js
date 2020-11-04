@@ -8,7 +8,7 @@ const HistoryDetail = (props) => {
   console.log(params.services);
   const renderServices = () => {
     return params.services.map((service) => (
-      <DataTable.Row>
+      <DataTable.Row key={service._id}>
         <DataTable.Cell>{service.service_id.name}</DataTable.Cell>
         <DataTable.Cell>{service.quantity * service.service_id.price} VND</DataTable.Cell>
       </DataTable.Row>

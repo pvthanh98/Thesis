@@ -3,7 +3,9 @@ import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import HistoryItem from '../components/history/item';
 import axios from '../service/axios';
+import Loading from '../components/load';
 const History = (props) => {
+    const [loading, setLoading] = React.useState(true);
     const customer_bill = useSelector(state => state.customer_bill)
     const dispatch = useDispatch();
     useEffect(()=>{
@@ -14,10 +16,14 @@ const History = (props) => {
         axios.get('/api/customer/bill')
         .then(res=>{
             dispatch({type:"UPDATE_CUSTOMER_BILLS", bills:res.data});
+            setLoading(false);
         })
-        .catch(err=>console.log(err));
+        .catch(err=>{
+            console.log(err)
+            setLoading(false);
+        });
     }
-
+    if(loading) return <Loading />
     return (
         <View style={styles.container}>
             <FlatList 

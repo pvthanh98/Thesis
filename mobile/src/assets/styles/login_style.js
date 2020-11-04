@@ -4,7 +4,7 @@ export default function () {
             justifyContent:"center",
             alignItems:"center",
             flex:1,
-            backgroundColor:"#1e90ff",
+            backgroundColor:'#295a59',
             padding:12
         }, 
         welcome : {
@@ -13,25 +13,25 @@ export default function () {
             fontSize:30,
             marginBottom:24
         },
-        inputText: {
-            backgroundColor:"#fff",
-            width: "100%",
-            padding:12,
-            margin:8
+        textInputStyle : {
+            color:"#fff",
+            borderBottomColor: "#ddd",
+            borderBottomWidth:1,
+            width: "80%"
         },
-        btnContainer: {
+        inputContainer: {
+            width:"100%",
             flexDirection:"row",
-            justifyContent:"space-between"
+            justifyContent:"center",
+            alignItems:"center",
+            marginTop:8
         },
-        btn:{
-            backgroundColor:"#FFD700",
-            padding:16,
-            width:"45%",
-            margin:12
+        iconStyle: {
+            marginRight:4
         },
-        btnText : {
-            color:"black",
-            textAlign:"center",
+        btn: {
+            padding:8,
+            margin:4
         }
     }
 }

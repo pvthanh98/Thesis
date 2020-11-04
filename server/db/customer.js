@@ -11,6 +11,7 @@ const customerSchema = new Schema({
   address:   String,
   latitude: {type: Number, default:-1},
   longtitude: {type: Number, default:-1},
+  phone: {type:String, unique:true},
   socket_id: String,
   timestamp: { type: Date, default: Date.now }
 });

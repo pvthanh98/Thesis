@@ -27,7 +27,12 @@ const styles = StyleSheet.create({
         padding:10,
         flexDirection:"row",
         width:"100%",
-        justifyContent:"space-between"
+        justifyContent:"space-between",
+        backgroundColor:"#FFF",
+        margin:4,
+        shadowColor:"#000",
+        shadowOpacity:0.3,
+        shadowRadius:10
     },
     leftContainer :{
       flexDirection:"row"

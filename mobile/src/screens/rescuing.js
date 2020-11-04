@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, ToastAndroid, Image} from 'react-native';
+import {View, StyleSheet, StatusBar, Image} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import app_style from '../assets/styles/app_style';
 import Geolocation from '@react-native-community/geolocation';
@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
 import {Title, Text, IconButton,Colors } from 'react-native-paper';
 import {server} from '../constants/index';
+import GLoading from '../components/load' ;
 const defaultPosition = {
   lat: 40.712776,
   lng: -74.005974,
@@ -30,9 +31,9 @@ const Rescue = ({navigation}) => {
   const dispatch = useDispatch();
   const stores = useSelector((state) => state.store_in_area);
   const markerRef = React.createRef();
-  const [updateStore, setUpdateStore] = React.useState(false);
+  const [globalLoading, setGlobalLoading] = React.useState(true);
   useEffect(() => {
-   // getCurrentLocation();
+    getCurrentLocation();
   }, []);
 
   const updateStoreDistance = async (currentLatLng,my_store) => {
@@ -49,7 +50,6 @@ const Rescue = ({navigation}) => {
         }
         my_store.sort((a,b)=> a.distance.value - b.distance.value)
         dispatch({type: 'GET_STORES', stores: my_store});
-        setUpdateStore(true);
       } else{
         for(let i=0;i<my_store.length;i++) {
           my_store[i].distance = null
@@ -161,11 +161,13 @@ const Rescue = ({navigation}) => {
         setCurrentLocation(success);
         setSelectedLocation(success);
         loadStore(success);
+        setGlobalLoading(false)
       },
       (error) => {
         loadStore(null);
         if (error) setError(error);
         alert("cannot access to your location");
+        setGlobalLoading(false);
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
@@ -210,7 +212,7 @@ const Rescue = ({navigation}) => {
       </Marker>
     ));
 
-
+  if(globalLoading) return <GLoading />
   return (
     <View style={{flex: 1}}>
       <StatusBar backgroundColor="#295a59" barStyle="light-content" />
@@ -263,7 +265,7 @@ const Rescue = ({navigation}) => {
             icon={() => (
               <Icon style={{color: '#fff'}} name="search" size={24} />
             )}
-            color="#912c16"
+            color="#295a59"
             mode="contained"
             onPress={()=>getAllLocationAndSort(0)}>
             LOOKING FOR SOS

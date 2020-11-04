@@ -12,5 +12,31 @@ module.exports = {
         })
         .then(reslt=>{res.sendStatus(200)})
         .catch(err => {res.status(400).send(err); throw err});
+    },
+    getUser : (req, res) => {
+        const id = req.user.id;
+        User.findById(id, "email address name phone image")
+        .then(user=> {
+            res.json(user);
+        })
+        .catch(err=>{
+            res.sendStatus(500);
+            throw err;
+        })
+    },
+    updateUser : (req, res) => {
+        const id = req.user.id;
+        let data = {
+            name: req.body.name,
+            address: req.body.address,
+            phone: req.body.phone
+        };
+        if(req.file) data.image = req.file.filename;
+        User.findByIdAndUpdate(id,data)
+        .then(()=> res.sendStatus(200))
+        .catch(err=>{
+            res.sendStatus(500);
+            throw err;
+        })
     }
 }

@@ -51,7 +51,12 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         padding:8,
         justifyContent:"space-between",
-        alignItems:"center"
+        alignItems:"center",
+        backgroundColor:"#FFF",
+        margin:4,
+        shadowColor:"#000",
+        shadowOpacity:0.3,
+        shadowRadius:10
     },
     leftContainer: {
         width:"70%", 

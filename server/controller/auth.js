@@ -35,7 +35,8 @@ module.exports = {
                     id: user._id,
                     name: user.name,
                     user_token: token,
-                    image: user.image
+                    image: user.image,
+                    address: user.address
                 })
             } else res.sendStatus(401);
         })
