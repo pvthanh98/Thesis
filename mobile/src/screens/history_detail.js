@@ -1,11 +1,22 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Modal} from 'react-native';
 import {Title} from 'react-native-paper';
 import {DataTable, Button} from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { WebView } from 'react-native-webview';
+import {server} from '../constants/index';
 const HistoryDetail = (props) => {
   const params = props.route.params;
-  console.log(params.services);
+  const [showModal, setShowModal] = React.useState(false);
+  const [status, setStatus] = React.useState('pending');
+  const [paid, setPaid] = React.useState(false);
+  const [confirm, setConfirm] = React.useState(false);
+
+  React.useEffect(()=>{
+    setPaid(params.paid);
+    setConfirm(params.confirm);
+  },[])
+
   const renderServices = () => {
     return params.services.map((service) => (
       <DataTable.Row key={service._id}>
@@ -22,6 +33,17 @@ const HistoryDetail = (props) => {
       newDate.getMonth() >= 10 ? newDate.getMonth() : '0' + newDate.getMonth();
     return `${day}/${month}/${newDate.getFullYear()}`;
   };
+
+  const handleResponse = (data) => {
+    if(data.title === 'success'){ 
+      setShowModal(false);
+      setStatus('complete');
+      setPaid(true);
+    } else if(data.title === 'cancel') {
+      setShowModal(false);
+      setStatus('cancel')
+    }
+  }
   return (
     <View style={styles.container}>
       <Title>Thông tin chung</Title>
@@ -38,7 +60,7 @@ const HistoryDetail = (props) => {
         <DataTable.Row>
           <DataTable.Cell>Xác nhận</DataTable.Cell>
           <DataTable.Cell>
-            {params.confirm ? (
+            {confirm ? (
               <MaterialIcon size={20} color="green" name="check-circle" />
             ) : (
               'Chờ xác nhận'
@@ -48,7 +70,7 @@ const HistoryDetail = (props) => {
         <DataTable.Row>
           <DataTable.Cell>Thanh toán</DataTable.Cell>
           <DataTable.Cell>
-            {params.paid ? (
+            {paid ? (
               <MaterialIcon size={20} color="green" name="check-circle" />
             ) : (
               'Chờ thanh toán'
@@ -74,17 +96,31 @@ const HistoryDetail = (props) => {
           <Text>{params.total_cost} VND</Text>
       </View>
       <View>
-        {!params.confirm && (
+        {!confirm && (
           <Button style={{marginTop: 4}} mode="contained" color="#1c7534">
             xác nhận hóa đơn
           </Button>
         )}
-        {!params.paid && (
-          <Button style={{marginTop: 4}} mode="contained" color="#295a59">
+        {!paid && (
+          <Button 
+            style={{marginTop: 4}} 
+            mode="contained" 
+            color="#295a59"
+            onPress={()=> setShowModal(true)}
+          >
             Thanh Toán PAYPAL
           </Button>
         )}
       </View>
+      <Modal
+        visible={showModal}
+        onRequestClose={()=> setShowModal(false)}
+      >
+        <WebView 
+          source={{ uri: `${server}/api/pay/${params.id}/10`}} //chinh lai sau so 10
+          onNavigationStateChange={data=> handleResponse(data)}
+        />
+      </Modal>
     </View>
   );
 };

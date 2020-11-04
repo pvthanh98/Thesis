@@ -17,6 +17,7 @@ import ChatList from './chat_list';
 import RescuingScreen from './rescuing';
 import HistoryScreen from './history';
 import HistoryDetailScreen from './history_detail';
+import PaymentScreen from './paypal';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -109,6 +110,14 @@ function StackComponent(props) {
         component={HistoryDetailScreen}
         options={{
           title: 'History Detail',
+          headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="payment"
+        component={PaymentScreen}
+        options={{
+          title: 'Payment',
           headerTintColor: '#fff',
         }}
       />

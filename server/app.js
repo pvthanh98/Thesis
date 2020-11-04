@@ -13,7 +13,6 @@ const passport = require("./config/passport");
 const multer = require("multer");
 const io = require("socket.io")(server);
 const user_auth = require("./middleware/user_auth");
-const paypal = require("paypal-rest-sdk");
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, path.join(__dirname, "public", "images"));
@@ -32,11 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-paypal.configure({
-	mode: "sandbox", //sandbox or live
-	client_id: process.env.PAYPAL_CLIENT_ID,
-	client_secret: process.env.PAYPAL_CLIENT_SECRET,
-});
+
 
 //controller
 const storeCtl = require("./controller/store");
@@ -180,75 +175,9 @@ const Store = require("./db/store");
 
 //PAYPAL
 
-app.get("/api/paypal", function (req, res) {
-	var create_payment_json = {
-		intent: "sale",
-		payer: {
-			payment_method: "paypal",
-		},
-		redirect_urls: {
-			return_url: "http://localhost:8080/api/success",
-			cancel_url: "http://localhost:8080/api/cancel",
-		},
-		transactions: [
-			{
-				item_list: {
-					items: [
-						{
-							name: "item",
-							sku: "item",
-							price: "10.00",
-							currency: "USD",
-							quantity: 1,
-						},
-					],
-				},
-				amount: {
-					currency: "USD",
-					total: "10.00",
-				},
-				description: "This is the payment description.",
-			},
-		],
-	};
-
-	paypal.payment.create(create_payment_json, function (error, payment) {
-		if (error) {
-			throw error;
-		} else {
-			console.log("Create Payment Response");
-			res.redirect(payment.links[1].href);
-		}
-	});
-});
-
-app.get('/api/success', function(req, res){
-  const {paymentId, PayerID} = req.query;
-  var execute_payment_json = {
-      "payer_id": PayerID,
-      "transactions": [{
-          "amount": {
-              "currency": "USD",
-              "total": "10.00"
-          }
-      }]
-  };
-
-  paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
-      if (error) {
-          console.log(error.response);
-          throw error;
-      } else {
-          console.log("Get Payment Response");
-          console.log(JSON.stringify(payment));
-          res.send("Success");
-      }
-  });
-})
-app.get('/api/cancel', function(req, res){
-  res.send("cancel");
-})
-
+app.get("/api/pay/:bill_id/:cost", BillCtl.payment);
+app.get('/api/pay/success', BillCtl.handlePay)
+app.get('/api/pay/cancel', (req, res) =>res.send("cancel"))
 
 io.on("connection", (socket) => {
 	//authenticate for socket io

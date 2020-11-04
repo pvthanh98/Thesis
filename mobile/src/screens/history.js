@@ -10,9 +10,11 @@ const History = (props) => {
     const dispatch = useDispatch();
     useEffect(()=>{
         loadBills();
+        console.log("loading bill ")
     },[]);
 
     const loadBills = () => {
+        setLoading(true)
         axios.get('/api/customer/bill')
         .then(res=>{
             dispatch({type:"UPDATE_CUSTOMER_BILLS", bills:res.data});
