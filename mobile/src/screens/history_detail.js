@@ -5,20 +5,25 @@ import {DataTable, Button} from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { WebView } from 'react-native-webview';
 import {server} from '../constants/index';
+import axios from '../service/axios';
 const HistoryDetail = (props) => {
-  const params = props.route.params;
+  const {id} = props.route.params;
   const [showModal, setShowModal] = React.useState(false);
   const [status, setStatus] = React.useState('pending');
-  const [paid, setPaid] = React.useState(false);
-  const [confirm, setConfirm] = React.useState(false);
+  const [bill, setBill] = React.useState(null);
 
   React.useEffect(()=>{
-    setPaid(params.paid);
-    setConfirm(params.confirm);
-  },[])
+    loadBill();
+  },[]);
+
+  const loadBill = () => {
+    axios.get(`/api/user_bill/id/${id}`)
+    .then((resl)=>setBill(resl.data))
+    .catch(err=> console.log(err))
+  }
 
   const renderServices = () => {
-    return params.services.map((service) => (
+    return bill && bill.services.map((service) => (
       <DataTable.Row key={service._id}>
         <DataTable.Cell>{service.service_id.name}</DataTable.Cell>
         <DataTable.Cell>{service.quantity * service.service_id.price} VND</DataTable.Cell>
@@ -38,9 +43,8 @@ const HistoryDetail = (props) => {
     if(data.title === 'success'){ 
       setShowModal(false);
       setStatus('complete');
-      setPaid(true);
+      loadBill();
     } else if(data.title === 'cancel') {
-      setShowModal(false);
       setStatus('cancel')
     }
   }
@@ -50,17 +54,17 @@ const HistoryDetail = (props) => {
       <DataTable>
         <DataTable.Row>
           <DataTable.Cell>ID</DataTable.Cell>
-          <DataTable.Cell>{params.id}</DataTable.Cell>
+          <DataTable.Cell>{id}</DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>Ngày</DataTable.Cell>
-          <DataTable.Cell>{formatDate(params.timestamp)}</DataTable.Cell>
+          <DataTable.Cell>{bill && formatDate(bill.timestamp)}</DataTable.Cell>
         </DataTable.Row>
         <DataTable.Row>
           <DataTable.Cell>Xác nhận</DataTable.Cell>
           <DataTable.Cell>
-            {confirm ? (
+            {bill && bill.confirm ? (
               <MaterialIcon size={20} color="green" name="check-circle" />
             ) : (
               'Chờ xác nhận'
@@ -70,7 +74,7 @@ const HistoryDetail = (props) => {
         <DataTable.Row>
           <DataTable.Cell>Thanh toán</DataTable.Cell>
           <DataTable.Cell>
-            {paid ? (
+            {bill && bill.paid ? (
               <MaterialIcon size={20} color="green" name="check-circle" />
             ) : (
               'Chờ thanh toán'
@@ -93,15 +97,15 @@ const HistoryDetail = (props) => {
       </DataTable>
       <View style={{flexDirection:"row", justifyContent:"space-between",padding:8}}>
           <Text>Tổng: </Text>
-          <Text>{params.total_cost} VND</Text>
+          <Text>{bill && bill.total_cost} VND</Text>
       </View>
       <View>
-        {!confirm && (
+        {bill && !bill.confirm && (
           <Button style={{marginTop: 4}} mode="contained" color="#1c7534">
             xác nhận hóa đơn
           </Button>
         )}
-        {!paid && (
+        {bill &&!bill.paid && (
           <Button 
             style={{marginTop: 4}} 
             mode="contained" 
@@ -117,7 +121,7 @@ const HistoryDetail = (props) => {
         onRequestClose={()=> setShowModal(false)}
       >
         <WebView 
-          source={{ uri: `${server}/api/pay/${params.id}/10`}} //chinh lai sau so 10
+          source={{ uri: `${server}/api/pay/${id}/10`}} //chinh lai sau so 10
           onNavigationStateChange={data=> handleResponse(data)}
         />
       </Modal>

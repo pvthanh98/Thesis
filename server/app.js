@@ -115,6 +115,11 @@ app.get(
 	passport.authenticate("jwt", { session: false }),
 	BillCtl.getBillByID
 );
+app.get(
+	"/api/user_bill/id/:id",
+	user_auth,
+	BillCtl.getUserBillByID
+);
 app.post(
 	"/api/bill",
 	passport.authenticate("jwt", { session: false }),

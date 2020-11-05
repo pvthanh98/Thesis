@@ -34,7 +34,6 @@ const App = ({navigation}) => {
   if(isLoading) return <SplashScreen />
   return (
       <NavigationContainer>
-       
           {auth.isSignin === false ? (
              <Stack.Navigator>
                 <Stack.Screen name="welcome" component={WelcomeScreen} options={{headerShown:false}} />

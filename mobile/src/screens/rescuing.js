@@ -33,9 +33,8 @@ const Rescue = ({navigation}) => {
   const markerRef = React.createRef();
   const [globalLoading, setGlobalLoading] = React.useState(true);
   useEffect(() => {
-   // getCurrentLocation();
+   getCurrentLocation();
   }, []);
-
   const updateStoreDistance = async (currentLatLng,my_store) => {
     try {
       if(currentLatLng) { // haven't update store distances 

@@ -6,6 +6,7 @@ import axios from '../service/axios';
 import Loading from '../components/load';
 const History = (props) => {
     const [loading, setLoading] = React.useState(true);
+    const [refreshing, setRefreshing] = React.useState(false);
     const customer_bill = useSelector(state => state.customer_bill)
     const dispatch = useDispatch();
     useEffect(()=>{
@@ -13,17 +14,24 @@ const History = (props) => {
         console.log("loading bill ")
     },[]);
 
-    const loadBills = () => {
-        setLoading(true)
+    const loadBills = (isFirstTime=true) => {
+        if(isFirstTime) setLoading(true)
         axios.get('/api/customer/bill')
         .then(res=>{
             dispatch({type:"UPDATE_CUSTOMER_BILLS", bills:res.data});
-            setLoading(false);
+            if(isFirstTime) setLoading(false);
+            else setRefreshing(false)
         })
         .catch(err=>{
             console.log(err)
-            setLoading(false);
+            if(isFirstTime) setLoading(false);
+            else setRefreshing(false)
         });
+    }
+
+    const handleRefresh = () => {
+        setRefreshing(true)
+        loadBills(false);
     }
     if(loading) return <Loading />
     return (
@@ -34,6 +42,8 @@ const History = (props) => {
                     <HistoryItem {...item} navigation={props.navigation} />
                 )}
                 keyExtractor={item=>item._id}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
             />
         </View>
     )

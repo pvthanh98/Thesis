@@ -64,6 +64,22 @@ module.exports = {
 				}
 			});
 	},
+	getUserBillByID: (req, res) => {
+		const { id } = req.params;
+		Bill.findById(id)
+			.populate("services.service_id", "name price total")
+			.populate("store_id", "name")
+			.then((bill) => {
+				res.json(bill);
+			})
+			.catch((err) => {
+				if (err) {
+					res.sendStatus(400);
+					throw err;
+				}
+			});
+	},
+	
 	modifyBillTemp: (req, res) => {
 		const { id } = req.params;
 		Bill.findByIdAndUpdate(id, req.body)
@@ -155,7 +171,7 @@ module.exports = {
 			} else {
 				console.log("Get Payment Response");
                 const bill_id = payment.transactions[0].description;
-                Bill.findByIdAndUpdate(bill_id,{paid:true})
+                Bill.findByIdAndUpdate(bill_id,{paid:true, confirm:true})
                 .then(()=>{
                     res.write(
                         `<html><head><title>success</title></head><body>success</body></html>`

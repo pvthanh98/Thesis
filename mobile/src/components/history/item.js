@@ -11,11 +11,6 @@ const HistoryItem = (props) => {
                 'history_detail',
                 {
                     id: props._id,
-                    services:props.services,
-                    confirm: props.confirm,
-                    paid: props.paid,
-                    timestamp:props.timestamp,
-                    total_cost:props.total_cost
                 }
             )}
         >

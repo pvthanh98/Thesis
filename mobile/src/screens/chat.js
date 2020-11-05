@@ -10,6 +10,7 @@ import axios from '../service/axios';
 import {useSelector, useDispatch} from 'react-redux';
 import {socket} from './index';
 import Load from '../components/load';
+import {AutoScrollFlatList} from "react-native-autoscroll-flatlist"; 
 export default ({route, navigation}) => {
     const {store_id, store_name} = route.params;
     const messages = useSelector(state => state.messages);
@@ -62,7 +63,7 @@ export default ({route, navigation}) => {
         <View style={styles.container}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content"  />
             <View style={styles.chatContainer}>
-                <FlatList
+                <AutoScrollFlatList
                     data= {messages.content}
                     renderItem={({item})=>(
                         <ChatItem {...item} />
