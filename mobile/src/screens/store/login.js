@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import {server} from '../../constants/index';
-import login_style from '../../assets/styles/login_style';
 import {
     View, Text, StyleSheet, StatusBar, TextInput,
     TouchableOpacity, ActivityIndicator
@@ -10,7 +9,42 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
 import {Button} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-const styles = StyleSheet.create(login_style())
+
+const styles = StyleSheet.create({
+    container:{
+        justifyContent:"center",
+        alignItems:"center",
+        flex:1,
+        backgroundColor:'#69737f',
+        padding:12
+    }, 
+    welcome : {
+        textAlign:"center",
+        color:"#fff",
+        fontSize:30,
+        marginBottom:24
+    },
+    textInputStyle : {
+        color:"#fff",
+        borderBottomColor: "#ddd",
+        borderBottomWidth:1,
+        width: "80%"
+    },
+    inputContainer: {
+        width:"100%",
+        flexDirection:"row",
+        justifyContent:"center",
+        alignItems:"center",
+        marginTop:8
+    },
+    iconStyle: {
+        marginRight:4
+    },
+    btn: {
+        padding:8,
+        margin:4
+    }
+})
 export default function Login(props) {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -44,7 +78,7 @@ export default function Login(props) {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#295a59' barStyle="light-content"/>
+            <StatusBar backgroundColor='#69737f' barStyle="light-content"/>
             <Text style={styles.welcome}>STORE LOGIN APP</Text>
             <View style={styles.inputContainer}>
                 <MaterialCommunityIcons style={styles.iconStyle} name="email" size={28} color="#fff" />

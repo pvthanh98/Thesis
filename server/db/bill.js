@@ -11,7 +11,11 @@ const billSchema = new Schema({
   }],
   timestamp: { type: Date, default: Date.now },
   confirm:{type:Boolean, default:false},
-  paid: {type:Boolean, default:false}
+  paid: {type:Boolean, default:false},
+  coordinate: {
+    lat: {type:Number},
+    lng: {type:Number}
+  }
 });
 
 module.exports = mongoose.model('bill', billSchema);

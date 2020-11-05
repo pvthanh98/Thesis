@@ -38,5 +38,18 @@ module.exports = {
             res.sendStatus(500);
             throw err;
         })
-    }
+    },
+    updateLocation : (req, res) => {
+        const {lat,lng} = req.body;
+        console.log(req.body)
+        User.findByIdAndUpdate(req.user.id,{
+            latitude:lat,
+            longtitude: lng
+        })
+        .then(()=> res.sendStatus(200))
+        .catch(err=>{
+            res.sendStatus(500);
+            throw err;
+        })
+    },
 }

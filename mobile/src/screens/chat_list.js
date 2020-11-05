@@ -1,23 +1,17 @@
 import React from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import ListItem from '../components/chat/chat_list_item';
-import axios from '../service/axios';
 import {useSelector, useDispatch} from 'react-redux';
+import {socket} from './index';
 const ChatList = ({navigation}) => {
-  const message_list = useSelector(state => state.message_list)
-  const dispatch = useDispatch()
-
-  React.useEffect(()=> {
-    loadListMsgOfUser();
-  },[])
-  const loadListMsgOfUser = () => {
-    axios
-      .get('/api/messages/user_list')
-      .then(({data}) => {
-        dispatch({type:"UPDATE_MESSAGE_LIST", messages: data})
-      })
-      .catch((err) => console.log(err));
-  };
+  const message_list = useSelector(state => state.message_list);
+  const handleClick =(store_id,store_name,message_id) =>{
+    navigation.navigate('chat',{
+      store_id,
+      store_name
+    });
+    socket.emit("read_message",{message_id, is_store:false})
+  }
   return (
     <View style={styles.container}>
       <FlatList
@@ -25,10 +19,7 @@ const ChatList = ({navigation}) => {
         keyExtractor={item=>item._id}
         renderItem={({item}) => (
           <TouchableOpacity
-            onPress={()=>navigation.navigate('chat',{
-              store_id: item.store_id._id,
-              store_name: item.store_id.name
-            })}
+            onPress={()=>handleClick(item.store_id._id,item.store_id.name,item._id)}
           >
             <ListItem {...item} />
           </TouchableOpacity>

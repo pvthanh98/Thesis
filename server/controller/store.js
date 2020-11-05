@@ -117,5 +117,17 @@ module.exports = {
             stores.push(store_temp);
         }
         res.send(stores)
+    },
+    getRescueLocation: (req, res) => {
+        const {id} = req.user;
+        Bill.find({store_id:id},"coordinate customer_id timestamp total_cost")
+        .populate("customer_id", "name")
+        .then((bill)=> {
+            res.send(bill)
+        })
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        })
     }
 }

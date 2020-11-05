@@ -13,7 +13,10 @@ const ChatListItem = (props) => {
             }} />
             <View>
                 <Title>{props.store_id.name}</Title>
-                <Text>{props.body}</Text>
+                { (!props.is_read && props.is_store)
+                  ? <Text style={{fontWeight:"bold"}}>{props.body}</Text>
+                  : <Text>{props.body}</Text>
+                }
                 <Text style={{color:"grey"}}>a few minutes ago</Text>
             </View>
          </View>

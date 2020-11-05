@@ -66,6 +66,11 @@ app.get(
 	passport.authenticate("jwt", { session: false }),
 	storeCtl.searchCustomer
 );
+app.get(
+	"/api/store/rescue_location",
+	passport.authenticate("jwt", { session: false }),
+	storeCtl.getRescueLocation
+);
 //store filter
 app.get("/api/store/rating", storeCtl.getStoreByRating);
 app.get("/api/store/sell", storeCtl.getStoreBySale);
@@ -158,6 +163,7 @@ app.post(
 	upload.single("file"),
 	userCtl.updateUser
 );
+app.put("/api/user/update_location", user_auth, userCtl.updateLocation);
 
 //MESSAGES
 app.get(

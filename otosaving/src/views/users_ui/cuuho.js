@@ -6,7 +6,7 @@ import Rating from '../../components/user_ui/rating';
 import {Container, Row, Col} from 'reactstrap';
 import {Button} from 'reactstrap';
 import { Link } from "react-router-dom";
-import axios from "service/axios";
+import axios from "service/axios_user";
 import MediaObject from '../../components/user_ui/media_store';
 import Chat from '../../components/user_ui/chat/container';
 import {socket} from '../../views/users_ui/index';
@@ -200,7 +200,13 @@ class Map extends React.PureComponent {
 
   loadMyposition = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position)
+      console.log("finding.....................................")
+      axios().put('/api/user/update_location',{
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+      }).then(()=>console.log("position saved"))
+      .catch(err=>console.log(err));
+
       this.setState({
         myposition: {
           lat: position.coords.latitude,

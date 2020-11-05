@@ -130,10 +130,24 @@ const Index = () => {
   const messages = useSelector((state) => state.messages);
   const dispatch = useDispatch();
   React.useEffect(() => {
+    loadListMsgOfUser();
     socket.on('store_send_msg_to_you', ({from_id}) => {
       loadMessages(from_id);
+      loadListMsgOfUser();
     });
+    socket.on("refresh_message",()=>{
+      loadListMsgOfUser();
+    }) 
   }, []);
+
+  const loadListMsgOfUser = () => {
+    axios
+      .get('/api/messages/user_list')
+      .then(({data}) => {
+        dispatch({type:"UPDATE_MESSAGE_LIST", messages: data})
+      })
+      .catch((err) => console.log(err));
+  };
 
   const loadMessages = (store_id) => {
     axios('/api/messages/customer_to/' + store_id).then(({data}) => {
