@@ -89,6 +89,15 @@ module.exports = {
 				throw err;
 			});
 	},
+	confirmBillFromUser: (req, res) => {
+		const { id } = req.params;
+		Bill.findByIdAndUpdate(id, {confirm:true})
+			.then(() => res.sendStatus(200))
+			.catch((err) => {
+				res.sendStatus(400);
+				throw err;
+			});
+	},
 	getCustomerBill: (req, res) => {
 		const customer_id = req.user.id;
 		Bill.find({ customer_id })

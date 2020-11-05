@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {server} from '../constants/index';
+import {socket} from '../screens/index';
 export default (props) => {
   const [name, setName] = React.useState('');
   const [image, setImage] = React.useState(null);
@@ -21,6 +22,7 @@ export default (props) => {
     try {
       await AsyncStorage.removeItem('user_token');
       dispatch({type: 'SIGN_OUT'});
+      socket.disconnect();
       return true;
     } catch (exception) {
       console.log(exception);

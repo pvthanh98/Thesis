@@ -1,18 +1,18 @@
 const INITIAL_STATE = {
-    user_token: null,
-    isSignin : false
+    isSignin : false,
+    isStore: false
 }
 const authorReducer = (state = INITIAL_STATE, action) => {
     switch(action.type){
         case "SIGN_IN":
-            return {
-                user_token: action.user_token,
-                isSignin : true
+            return { 
+                isSignin : true,
+                isStore: action.isStore
             } 
         case "SIGN_OUT":
             return {
-                user_token: null,
-                isSignin : false
+                isSignin : false,
+                isStore: false
             } 
     }
     return state;

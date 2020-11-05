@@ -26,7 +26,9 @@ export default ({navigation}) => {
             </TouchableOpacity>
         </View>
         <View style={[styles.btnContainer,{marginTop:4}]}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={()=>navigation.navigate("store_login")}
+            >
                 <View style={[styles.btn,{backgroundColor:"#69737f"}]}>
                     <Text style={{color:"#fff"}}>
                         Login as store

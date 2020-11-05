@@ -1,18 +1,15 @@
 import React from 'react';
 import axios from 'axios';
-import {server} from '../constants/index';
-import login_style from '../assets/styles/login_style';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useSelector, useDispatch} from 'react-redux';
-import {Button} from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import {socket} from './index';
+import {server} from '../../constants/index';
+import login_style from '../../assets/styles/login_style';
 import {
     View, Text, StyleSheet, StatusBar, TextInput,
     TouchableOpacity, ActivityIndicator
 } from 'react-native';
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSelector, useDispatch} from 'react-redux';
+import {Button} from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 const styles = StyleSheet.create(login_style())
 export default function Login(props) {
     const [email, setEmail] = React.useState("");
@@ -22,19 +19,17 @@ export default function Login(props) {
     const handleLoginButton = () => {
         setLoading(true)
         axios
-          .post(`${server}/api/user/login`,{
+          .post(`${server}/api/store/login`,{
               email: email,
               password: password
           })
           .then((res) => {
               setLoading(false);  
-              dispatch({type:"SIGN_IN", isStore:false})
-              storeData('user_token', res.data.user_token);
-              storeData('id', res.data.id);
-              storeData('name', res.data.name);
-              storeData('image', res.data.image);
-              storeData('address',res.data.address)
-              socket.connect(server);
+              dispatch({type:"SIGN_IN", isStore:true})
+              storeData('admin_token', res.data.admin_token);
+              storeData('admin_name', res.data.admin_name);
+              storeData('admin_id', res.data.admin_id);
+              storeData('admin_avt', res.data.admin_avt);
           })
           .catch((err) => {alert("Email or password is incorrect");   setLoading(false);});
     }
@@ -50,7 +45,7 @@ export default function Login(props) {
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#295a59' barStyle="light-content"/>
-            <Text style={styles.welcome}>Login To Rescuing App</Text>
+            <Text style={styles.welcome}>STORE LOGIN APP</Text>
             <View style={styles.inputContainer}>
                 <MaterialCommunityIcons style={styles.iconStyle} name="email" size={28} color="#fff" />
                 <TextInput 

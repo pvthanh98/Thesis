@@ -48,6 +48,13 @@ const HistoryDetail = (props) => {
       setStatus('cancel')
     }
   }
+
+  const confirmPayment = () => {
+    axios.get(`/api/user_bill/confirm/${id}`)
+    .then(()=>loadBill())
+    .catch(err=> console.log(err))
+   
+  }
   return (
     <View style={styles.container}>
       <Title>Thông tin chung</Title>
@@ -101,7 +108,12 @@ const HistoryDetail = (props) => {
       </View>
       <View>
         {bill && !bill.confirm && (
-          <Button style={{marginTop: 4}} mode="contained" color="#1c7534">
+          <Button 
+            style={{marginTop: 4}} 
+            mode="contained" 
+            color="#1c7534"
+            onPress={confirmPayment}
+          >
             xác nhận hóa đơn
           </Button>
         )}

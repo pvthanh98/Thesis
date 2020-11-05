@@ -141,6 +141,12 @@ app.put(
 	BillCtl.modifyBillTemp
 );
 
+app.get(
+	"/api/user_bill/confirm/:id",
+	user_auth,
+	BillCtl.confirmBillFromUser
+);
+
 app.get("/api/customer/bill", user_auth, BillCtl.getCustomerBill);
 
 //USER
