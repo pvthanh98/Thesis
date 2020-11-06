@@ -145,6 +145,11 @@ app.put(
 	passport.authenticate("jwt", { session: false }),
 	BillCtl.modifyBillTemp
 );
+//statistic on admin dashboard page
+app.get('/api/bill/count/today', passport.authenticate("jwt", { session: false }), BillCtl.countBillToday);
+app.get('/api/bill/count/week', passport.authenticate("jwt", { session: false }),  BillCtl.countBillWeek);
+app.get('/api/bill/cost/today', passport.authenticate("jwt", { session: false }), BillCtl.billCostToday);
+app.get('/api/bill/cost/week', passport.authenticate("jwt", { session: false }), BillCtl.billCostWeek);
 
 app.get(
 	"/api/user_bill/confirm/:id",
@@ -153,6 +158,8 @@ app.get(
 );
 
 app.get("/api/customer/bill", user_auth, BillCtl.getCustomerBill);
+//
+
 
 //USER
 app.post("/api/user", userCtl.createUser);

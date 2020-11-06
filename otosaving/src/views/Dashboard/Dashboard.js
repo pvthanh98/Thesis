@@ -130,17 +130,55 @@ export default function Dashboard() {
   const [myStore_Lat, setMystore_Lat] = React.useState(-1);
   const [myStore_Lng, setMystore_Lng] = React.useState(-1);
   const [rescueLocation, setRescueLocation] = React.useState([]);
+  const [customerToday, setCustomerToday] = React.useState("");
+  const [customerWeek, setCustomerWeek] = React.useState("");
+  const [costToday, setCostToday] = React.useState("");
+  const [costWeek, setCostWeek] = React.useState("");
 
   React.useEffect(()=>{
     loadStore();
     loadRescueLocation();
-  })
+    loadStatisticMiddle();
+  },[])
 
   const loadStore = () => {
     axios().post('/api/store/me', { id: localStorage.getItem('admin_id') })
     .then(res => {
       setMystore_Lat(parseFloat(res.data.latitude));
       setMystore_Lng(parseFloat(res.data.longtitude));
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+
+  const loadStatisticMiddle = () => {
+    axios().get('/api/bill/count/today')
+    .then(res => {
+      setCustomerToday(res.data.count)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    axios().get('/api/bill/count/week')
+    .then(res => {
+      setCustomerWeek(res.data.count)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    axios().get('/api/bill/cost/today')
+    .then(res => {
+      console.log(res.data)
+      setCostToday(res.data.cost)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    axios().get('/api/bill/cost/week')
+    .then(res => {
+      
+      setCostWeek(res.data.cost)
     })
     .catch(err => {
       console.log(err);
@@ -184,17 +222,34 @@ export default function Dashboard() {
 							</CardIcon>
 							<p className={classes.cardCategory}>Khách hàng</p>
 							<h3 className={classes.cardTitle}>
-								49
+								{customerToday}
 							</h3>
 						</CardHeader>
 						<CardFooter stats>
               <div className={classes.stats}>
                 <DateRange />
-                Trong tuần
+                Hôm nay
               </div>
             </CardFooter>
 					</Card>
 				</GridItem>
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader color="info" stats icon>
+              <CardIcon color="info">
+                <Accessibility />
+              </CardIcon>
+              <p className={classes.cardCategory}>Khách hàng</p>
+              <h3 className={classes.cardTitle}>{customerWeek}</h3>
+            </CardHeader>
+            <CardFooter stats>
+              <div className={classes.stats}>
+                <DateRange />
+                Trong 7 ngày qua
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
         <GridItem xs={12} sm={6} md={3}>
           <Card>
             <CardHeader color="success" stats icon>
@@ -202,7 +257,7 @@ export default function Dashboard() {
                 <Store />
               </CardIcon>
               <p className={classes.cardCategory}>Doanh Thu</p>
-              <h3 className={classes.cardTitle}>$34,245</h3>
+              <h3 className={classes.cardTitle}>{costToday}</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
@@ -219,29 +274,12 @@ export default function Dashboard() {
                 <Icon>info_outline</Icon>
               </CardIcon>
               <p className={classes.cardCategory}>Doanh Thu</p>
-              <h3 className={classes.cardTitle}>$34,245</h3>
+              <h3 className={classes.cardTitle}>{costWeek}</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
                 <DateRange />
                 Trong tuần
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                <Accessibility />
-              </CardIcon>
-              <p className={classes.cardCategory}>Khách hàng</p>
-              <h3 className={classes.cardTitle}>5</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <DateRange />
-                Hôm nay
               </div>
             </CardFooter>
           </Card>

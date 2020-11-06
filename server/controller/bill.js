@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Bill = require("../db/bill");
 const paypal = require("paypal-rest-sdk");
+var mongoose = require('mongoose');
+
 module.exports = {
 	postBill: (req, res) => {
 		let data = { ...req.body };
@@ -194,4 +196,172 @@ module.exports = {
 			}
 		});
 	},
+	countBillToday : (req, res) => {
+		const date = new Date();
+		const store_id = req.user.id;
+		console.log(store_id)
+		Bill.aggregate([
+			{
+				$project: {
+					"year": {
+					  "$year": "$timestamp"
+					},
+					"month": {
+					  "$month": "$timestamp"
+					},
+					"day": {
+					  "$dayOfMonth": "$timestamp"
+					},
+					"store_id": 1
+				}
+			},
+			{
+				$match: {
+					year: date.getFullYear(),
+					month: date.getMonth()+1,
+					day: date.getDate(),
+					store_id
+				}
+			}
+		]).then(resl => {
+			res.send({count:resl.length})
+		})
+		.catch(err=> {
+			res.sendStatus(400);
+			throw err
+		})	
+	},
+	countBillWeek: (req, res) => {
+		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
+		const store_id = req.user.id;
+		Bill.aggregate([
+			{
+				$project: {
+					timestamp:1,
+					store_id:1
+				}
+			},
+			{
+				$match : {
+					timestamp : {
+						$gte: date
+					},
+					store_id:store_id
+				}
+			}
+		])
+		.then(bill=>{
+			res.send({count:bill.length})
+		})
+		.catch(err=>console.log(err))
+	},
+	countBillCostWeek : (req, res) => {
+		const store_id = req.user.id;
+		Bill.aggregate([
+			{
+				$project: {
+					timestamp:{
+						$dateToString: {
+							date: "$timestamp",
+							format: "%Y-%m-%d",
+						}
+					},
+					total_cost:1,
+					store_id: 1
+				}
+			},
+			{
+				$match:{
+					store_id:store_id
+				}
+			},
+			{
+				$group:{
+					_id: "$timestamp",
+					total_cost:{$sum:"$total_cost"}
+				}
+			}
+		])
+		.sort({_id:-1})
+		.limit(7)
+		.then(resl => {
+			res.send(resl.reverse());
+		})
+		.catch(err=> {
+			res.sendStatus(400);
+			throw err
+		})	
+	},
+	billCostToday: (req, res) => {
+		const date = new Date();
+		const store_id = req.user.id;
+		Bill.aggregate([
+			{
+				$project: {
+					"year": {
+					  "$year": "$timestamp"
+					},
+					"month": {
+					  "$month": "$timestamp"
+					},
+					"day": {
+					  "$dayOfMonth": "$timestamp"
+					},
+					"store_id": 1,
+					"total_cost":1
+				}
+			},
+			{
+				$match: {
+					year: date.getFullYear(),
+					month: date.getMonth()+1,
+					day: date.getDate(),
+					store_id
+				}
+			},
+			{
+				$group: {
+					_id: {year:"$year",month:"$month",day:"$day"},
+					cost: {$sum:"$total_cost"}
+				}
+			}
+		]).then(resl => {
+			if(resl.length>0) res.send({cost:resl[0].cost})
+			else res.send({cost:0})
+		})
+		.catch(err=> {
+			res.sendStatus(400);
+			throw err
+		})	
+	},
+	billCostWeek: (req, res) => {
+		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
+		const store_id = req.user.id;
+		Bill.aggregate([
+			{
+				$project: {
+					timestamp:1,
+					store_id:1,
+					total_cost:1
+				}
+			},
+			{
+				$match : {
+					timestamp : {
+						$gte: date
+					},
+					store_id
+				}
+			}
+		])
+		.then(bills=>{
+			let sum=0;
+			bills.forEach(bill=>{
+				sum+=bill.total_cost
+			})
+			res.json({cost:sum})
+		})
+		.catch(err=>console.log(err))
+	},
+
 };
