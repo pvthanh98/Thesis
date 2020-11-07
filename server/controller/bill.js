@@ -1,14 +1,23 @@
 const jwt = require("jsonwebtoken");
 const Bill = require("../db/bill");
 const paypal = require("paypal-rest-sdk");
+const User = require('../db/customer');
 var mongoose = require('mongoose');
 
 module.exports = {
-	postBill: (req, res) => {
+	postBill: async (req, res) => {
 		let data = { ...req.body };
+		const {customer_id} = data;
 		data.store_id = req.user.id;
-		console.log(data);
-		Bill.create(data)
+
+		const customer = await User.findById(customer_id,"latitude longtitude");
+		if(customer){
+			data.coordinate = {
+				lat: customer.latitude,
+				lng: customer.longtitude
+			}
+
+			Bill.create(data)
 			.then(() => {
 				res.sendStatus(200);
 			})
@@ -16,6 +25,7 @@ module.exports = {
 				res.sendStatus(500);
 				throw err;
 			});
+		} else res.status(403).send("User id not found")
 	},
 	getBill: (req, res) => {
 		Bill.find({ store_id: req.user.id })
@@ -363,5 +373,90 @@ module.exports = {
 		})
 		.catch(err=>console.log(err))
 	},
+	billChartCountWeek: (req, res) => {
+		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
+		const store_id = req.user.id;
+		Bill.aggregate([
+			{
+				$project: {
+					timestamp:1,
+					store_id:1,
+					total_cost:1
+				}
+			},
+			{
+				$match : {
+					timestamp : {
+						$gte: date
+					},
+					store_id
+				}
+			},
+			{
+				$project: {
+					timestamp: {
+						$dateToString: {
+							date: "$timestamp",
+							format: "%Y-%m-%d",
+						}
+					}
+				}
+			},
+			{
+				$group: {
+					_id: "$timestamp",
+					count: {$sum:1}
+				}
+			}
+		])
+		.sort({_id:1})
+		.then(bills=>{
+			res.json(bills)
+		})
+		.catch(err=>console.log(err))
+	},
+	billChartCostWeek: (req, res) => {
+		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
+		const store_id = req.user.id;
+		Bill.aggregate([
+			{
+				$project: {
+					timestamp:1,
+					store_id:1,
+					total_cost:1
+				}
+			},
+			{
+				$match : {
+					timestamp : {
+						$gte: date
+					},
+					store_id
+				}
+			},
+			{
+				$project: {
+					timestamp: {
+						$dateToString: {
+							date: "$timestamp",
+							format: "%Y-%m-%d",
+						}
+					},
+					total_cost:1
+				}
+			},
+			{
+				$group: {
+					_id: "$timestamp",
+					cost: {$sum:"$total_cost"}
+				}
+			}
+		])
+		.sort({_id:1})
+		.then(bills=>{
+			res.json(bills)
+		})
+		.catch(err=>console.log(err))
+	}
 
 };

@@ -9,7 +9,7 @@ import axios from "../../service/axios_user";
 import {useDispatch} from 'react-redux';
 import {server} from '../../constant';
 export default (props) => {
-
+  const [requestComplete, setRequestComplete] = React.useState(false);
   const dispatch = useDispatch();
   
   const scrollToTop = () =>{
@@ -39,6 +39,17 @@ export default (props) => {
     })
     .catch(err=>console.log(err));
   }
+
+  const requestRescue = () => {
+    axios().post('/api/rescue',{store_id:props.store._id})
+    .then((resl)=> {
+      setRequestComplete(true)
+    })
+    .catch(err=>{
+      if(err.response.status===401) alert("Bạn cần đăng nhập để thực hiện chức năng này")
+    })
+  }
+
   return (
     <Media className="mb-3">
       <Media left href="#" className="mr-3">
@@ -59,16 +70,18 @@ export default (props) => {
         Cách bạn {props.store.distance ? props.store.distance.distance.text : <Loading />}
       </Media>
       <Media>
-        <Button onClick={handleButtonClick}  variant="contained" color="primary" endIcon={<Icon>send</Icon>}>
+        <Button onClick={handleButtonClick} variant="contained" color="primary" endIcon={<Icon>send</Icon>}>
           Nhắn Tin
         </Button>
         <Button
+          onClick={requestRescue}
           variant="contained"
           color="success"
           className="ml-2"
+          disabled={requestComplete}  
           endIcon={<Icon>perm_phone_msg</Icon>}
         >
-          Gọi
+          {requestComplete ? "Đã gửi yêu cầu" : "Yêu cầu cứu hộ"} 
         </Button>
         <Button
           variant="contained"

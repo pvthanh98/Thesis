@@ -41,6 +41,7 @@ const authCtl = require("./controller/auth");
 const userCtl = require("./controller/user");
 const messageCtl = require("./controller/message");
 const BillCtl = require("./controller/bill");
+const RescueCtl = require("./controller/rescue");
 
 app.get("/api/welcome", (req, res) => res.send("welcome"));
 //login
@@ -150,7 +151,8 @@ app.get('/api/bill/count/today', passport.authenticate("jwt", { session: false }
 app.get('/api/bill/count/week', passport.authenticate("jwt", { session: false }),  BillCtl.countBillWeek);
 app.get('/api/bill/cost/today', passport.authenticate("jwt", { session: false }), BillCtl.billCostToday);
 app.get('/api/bill/cost/week', passport.authenticate("jwt", { session: false }), BillCtl.billCostWeek);
-
+app.get('/api/bill/chart/count/week', passport.authenticate("jwt", { session: false }), BillCtl.billChartCountWeek);
+app.get('/api/bill/chart/cost/week', passport.authenticate("jwt", { session: false }), BillCtl.billChartCostWeek);
 app.get(
 	"/api/user_bill/confirm/:id",
 	user_auth,
@@ -201,7 +203,13 @@ const Store = require("./db/store");
 
 app.get("/api/pay/:bill_id/:cost", BillCtl.payment);
 app.get('/api/pay/success', BillCtl.handlePay)
-app.get('/api/pay/cancel', (req, res) =>res.send("cancel"))
+app.get('/api/pay/cancel', (req, res) =>res.send("cancel"));
+
+
+// RESCUE
+
+app.post('/api/rescue', user_auth, RescueCtl.createRescue);
+
 
 io.on("connection", (socket) => {
 	//authenticate for socket io

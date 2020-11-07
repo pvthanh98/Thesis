@@ -10,7 +10,7 @@ class LineChart extends Component {
 		console.log(this.props.data)
 		const data = this.props.data.map(e=>({
 			x: new Date(e._id),
-			y: e.count
+			y: e.cost
 		}));
 		console.log(data)
 		const options = {
@@ -18,10 +18,10 @@ class LineChart extends Component {
 			exportEnabled: true,
 			theme: "light2", // "light1", "dark1", "dark2"
 			title:{
-				text: "Khách hàng theo tuần"
+				text: "Doanh thu theo tuần"
 			},
 			axisY: {
-				title: "Customer",
+				title: "$",
 				includeZero: false,
 			},
 			axisX: {

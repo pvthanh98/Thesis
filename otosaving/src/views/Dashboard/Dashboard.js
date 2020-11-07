@@ -42,6 +42,7 @@ import {
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Typography from '@material-ui/core/Typography';
 import Linechart from '../../components/Charts/line';
+import LineCharCost from '../../components/Charts/lineCost';
 const useStyles = makeStyles(styles);
 
 const { compose, withProps, lifecycle } = require("recompose");
@@ -134,11 +135,14 @@ export default function Dashboard() {
   const [customerWeek, setCustomerWeek] = React.useState("");
   const [costToday, setCostToday] = React.useState("");
   const [costWeek, setCostWeek] = React.useState("");
+  const [chartCountWeek, setChartCountWeek] = React.useState([]);
+  const [chartCostWeek, setChartCostWeek] = React.useState([])
 
   React.useEffect(()=>{
     loadStore();
     loadRescueLocation();
     loadStatisticMiddle();
+    loadChartData();
   },[])
 
   const loadStore = () => {
@@ -183,6 +187,16 @@ export default function Dashboard() {
     .catch(err => {
       console.log(err);
     })
+  }
+
+  const loadChartData = () => {
+    axios().get('/api/bill/chart/count/week')
+    .then(resl=> setChartCountWeek(resl.data))
+    .catch(err=>console.log(err));
+    // const
+    axios().get('/api/bill/chart/cost/week')
+    .then(resl=> setChartCostWeek(resl.data))
+    .catch(err=>console.log(err));
   }
 
   const loadRescueLocation = () => {
@@ -285,7 +299,11 @@ export default function Dashboard() {
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={12}>
-          <Linechart />
+          <Linechart data={chartCountWeek} />
+        </GridItem>
+        
+        <GridItem xs={12} sm={12} md={12}>
+          <LineCharCost data={chartCostWeek} />
         </GridItem>
 			</GridContainer>
 		</div>

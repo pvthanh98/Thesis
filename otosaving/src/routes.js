@@ -18,6 +18,7 @@
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import StoreIcon from '@material-ui/icons/Store'
+import DirectionsCarIcon from '@material-ui/icons/DirectionsCar';
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import BillAdd from './views/Bill/add';
@@ -28,6 +29,7 @@ import Service from "views/Service/service";
 import AddService from './views/Service/addservice';
 import ModifyService from './views/Service/modifyservice';
 import BillModify from './views/Bill/modify';
+import Rescue from './views/Rescue/index';
 const dashboardRoutes = [
   {
     path: "/dashboard",
@@ -56,6 +58,16 @@ const dashboardRoutes = [
     component: ModifyService,
     layout: "/admin",
     showSidebar: false
+  },
+  {
+    path: "/rescue",
+    name: "Rescue",
+    exact: true,
+    rtlName: "قائمة الجدول",
+    icon: DirectionsCarIcon,
+    component: Rescue,
+    layout: "/admin",
+    showSidebar: true
   },
   {
     path: "/service",
