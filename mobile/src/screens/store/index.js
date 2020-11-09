@@ -2,7 +2,12 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export default (props) => {
-
+    React.useEffect(()=>{
+        removeToken();
+    })
+    const removeToken = async () => {
+        await AsyncStorage.removeItem("admin_token")
+    }
     return (
         <View style={styles.container}>
             <Text>THANH PHAN THESIS</Text>

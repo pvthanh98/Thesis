@@ -179,11 +179,13 @@ class Map extends React.PureComponent {
   state = {
     selectedWindow: null,
     sort: false,// descending,
-    showChat: false
+    showChat: false,
+    problems: []
   };
   componentDidMount() {
     this.loadMyposition();
     this.loadStore();
+    this.loadCarProblems();
     socket.emit("cuuho", "Hello")
   }
 
@@ -196,6 +198,15 @@ class Map extends React.PureComponent {
       })
       .catch((err) => console.log(err));
     }
+  }
+
+  loadCarProblems = () => {
+    axios()
+      .get("/api/problem")
+      .then((res) => {
+        this.setState({problems:res.data})
+      })
+      .catch((err) => console.log(err));
   }
 
   loadMyposition = () => {
@@ -235,6 +246,7 @@ class Map extends React.PureComponent {
                 store={store}
                 setSelectedWindow={this.setSelectedWindow}
                 chatToggle={()=>this.props.setChatToggle(true)}
+                problems={this.state.problems}
               />
       
     })

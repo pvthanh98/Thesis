@@ -415,9 +415,11 @@ export default function Rescue() {
 				</ListItemIcon>
 				<ListItemText
 					primary={e.customer_id.name}
-					secondary={`${dateFormat(e.timestamp)} - ${
-						e.distance ? e.distance.text : ""
-					}`}
+					secondary={<div>
+						<div>{dateFormat(e.timestamp)}</div>
+						<div>{e.problem.name}</div>
+						<div>{e.distance ? e.distance.text : ""}</div>
+					</div>}
 				/>
 				{!e.is_complete && (
 					<div>

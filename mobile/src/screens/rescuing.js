@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Image} from 'react-native';
+import {View, StyleSheet, StatusBar, Image, Modal, Alert} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import app_style from '../assets/styles/app_style';
 import Geolocation from '@react-native-community/geolocation';
@@ -9,9 +9,10 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
-import {Title, Text, IconButton,Colors } from 'react-native-paper';
+import {Title, Text, IconButton, Colors} from 'react-native-paper';
 import {server} from '../constants/index';
-import GLoading from '../components/load' ;
+import GLoading from '../components/load';
+import RNPickerSelect from 'react-native-picker-select';
 const defaultPosition = {
   lat: 40.712776,
   lng: -74.005974,
@@ -32,99 +33,134 @@ const Rescue = ({navigation}) => {
   const stores = useSelector((state) => state.store_in_area);
   const markerRef = React.createRef();
   const [globalLoading, setGlobalLoading] = React.useState(true);
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [problemID, setProblemID] = React.useState('');
+  const [carProblems, setCarProblems] = React.useState([])
+
   useEffect(() => {
-   getCurrentLocation();
+    getCurrentLocation();
+    loadCarProblems();
   }, []);
-  const updateStoreDistance = async (currentLatLng,my_store) => {
+
+  const loadCarProblems = () => {
+    axios
+      .get("/api/problem")
+      .then((res) => {
+        setCarProblems(res.data)
+      })
+      .catch((err) => console.log(err));
+  }
+
+
+  const renderCarProblems = () => {
+    console.log("ruinning")
+    return carProblems.map(e=>({
+      label: e.name,
+      value: e._id
+    }))
+  }
+
+  const updateStoreDistance = async (currentLatLng, my_store) => {
     try {
-      if(currentLatLng) { // haven't update store distances 
-        console.log("update distance...");
-        for(let i=0;i<my_store.length;i++) {
+      if (currentLatLng) {
+        // haven't update store distances
+        console.log('update distance...');
+        for (let i = 0; i < my_store.length; i++) {
           let origin = `${currentLatLng.lat},${currentLatLng.lng}`;
           let destination = `${my_store[i].latitude},${my_store[i].longtitude}`;
           let resp = await axiosDefault.get(
             `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
           );
-          my_store[i].distance = {...resp.data.routes[0].legs[0].distance}
+          my_store[i].distance = {...resp.data.routes[0].legs[0].distance};
         }
-        my_store.sort((a,b)=> a.distance.value - b.distance.value)
+        my_store.sort((a, b) => a.distance.value - b.distance.value);
         dispatch({type: 'GET_STORES', stores: my_store});
-      } else{
-        for(let i=0;i<my_store.length;i++) {
-          my_store[i].distance = null
+      } else {
+        for (let i = 0; i < my_store.length; i++) {
+          my_store[i].distance = null;
         }
       }
-      dispatch({type:"GET_STORES", stores:my_store})
-    } catch(exception) {
+      dispatch({type: 'GET_STORES', stores: my_store});
+    } catch (exception) {
       console.log(exception);
     }
-  } 
+  };
 
-  const getAllLocationAndSort = async (type) => { // 0 is pressing 'Looking Button'
-       // -1 'prev ubutton' // 1 is 'Next Button'                                      
+  const getAllLocationAndSort = async (type) => {
+    // 0 is pressing 'Looking Button'
+    // -1 'prev ubutton' // 1 is 'Next Button'
     let my_store = [...stores];
     try {
-      if(type===1){ // press next button
-        if(storeIndex>=my_store.length-1) {
+      if (type === 1) {
+        // press next button
+        if (storeIndex >= my_store.length - 1) {
           setSelectedStore({
             id: my_store[0]._id,
             description: my_store[0].description,
             name: my_store[0].name,
             distance: my_store[0].distance.text,
-            image: my_store[0].image
+            image: my_store[0].image,
           });
           getDirection(my_store[0].latitude, my_store[0].longtitude);
           setStoreIndex(0);
         } else {
           setSelectedStore({
-            id: my_store[storeIndex+1]._id,
-            description: my_store[storeIndex+1].description,
-            name: my_store[storeIndex+1].name,
-            distance: my_store[storeIndex+1].distance.text,
-            image: my_store[storeIndex+1].image
+            id: my_store[storeIndex + 1]._id,
+            description: my_store[storeIndex + 1].description,
+            name: my_store[storeIndex + 1].name,
+            distance: my_store[storeIndex + 1].distance.text,
+            image: my_store[storeIndex + 1].image,
           });
-          getDirection(my_store[storeIndex+1].latitude, my_store[storeIndex+1].longtitude);
-          setStoreIndex(storeIndex+1);
+          getDirection(
+            my_store[storeIndex + 1].latitude,
+            my_store[storeIndex + 1].longtitude,
+          );
+          setStoreIndex(storeIndex + 1);
         }
-      } 
-      else if (type===0) {
+      } else if (type === 0) {
         setSelectedStore({
           id: my_store[0]._id,
           description: my_store[0].description,
           name: my_store[0].name,
           distance: my_store[0].distance.text,
-          image: my_store[0].image
+          image: my_store[0].image,
         });
         getDirection(my_store[0].latitude, my_store[0].longtitude);
         setStoreIndex(0);
-      }
-      else if (type===-1) {
-        if(storeIndex<=0) {
+      } else if (type === -1) {
+        if (storeIndex <= 0) {
           setSelectedStore({
-            id: my_store[my_store.length-1]._id,
-            description: my_store[my_store.length-1].description,
-            name: my_store[my_store.length-1].name,
-            distance: my_store[my_store.length-1].distance.text,
-            image: my_store[my_store.length-1].image
+            id: my_store[my_store.length - 1]._id,
+            description: my_store[my_store.length - 1].description,
+            name: my_store[my_store.length - 1].name,
+            distance: my_store[my_store.length - 1].distance.text,
+            image: my_store[my_store.length - 1].image,
           });
-          getDirection(my_store[my_store.length-1].latitude, my_store[my_store.length-1].longtitude);
-          setStoreIndex(my_store.length-1);
+          getDirection(
+            my_store[my_store.length - 1].latitude,
+            my_store[my_store.length - 1].longtitude,
+          );
+          setStoreIndex(my_store.length - 1);
         } else {
           setSelectedStore({
-            id: my_store[storeIndex-1]._id,
-            description: my_store[storeIndex-1].description,
-            name: my_store[storeIndex-1].name,
-            distance: my_store[storeIndex-1].distance.text,
-            image: my_store[storeIndex-1].image
+            id: my_store[storeIndex - 1]._id,
+            description: my_store[storeIndex - 1].description,
+            name: my_store[storeIndex - 1].name,
+            distance: my_store[storeIndex - 1].distance.text,
+            image: my_store[storeIndex - 1].image,
           });
-          getDirection(my_store[storeIndex-1].latitude, my_store[storeIndex-1].longtitude);
-          setStoreIndex(storeIndex-1);
+          getDirection(
+            my_store[storeIndex - 1].latitude,
+            my_store[storeIndex - 1].longtitude,
+          );
+          setStoreIndex(storeIndex - 1);
         }
       }
     } catch (exception) {
       console.log(exception);
     }
-  }
+  };
 
   const getDirection = async (lat, lng) => {
     setSelectedLocation({lat, lng});
@@ -160,12 +196,12 @@ const Rescue = ({navigation}) => {
         setCurrentLocation(success);
         setSelectedLocation(success);
         loadStore(success);
-        setGlobalLoading(false)
+        setGlobalLoading(false);
       },
       (error) => {
         loadStore(null);
         if (error) setError(error);
-        alert("cannot access to your location");
+        alert('cannot access to your location');
         setGlobalLoading(false);
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
@@ -176,11 +212,11 @@ const Rescue = ({navigation}) => {
     axios
       .get('/api/store')
       .then((res) => {
-          updateStoreDistance(currentLatLng, res.data);
+        updateStoreDistance(currentLatLng, res.data);
       })
       .catch((err) => {
         console.log(err);
-        alert("Failed to load stores around you")
+        alert('Failed to load stores around you');
       });
   };
 
@@ -198,9 +234,9 @@ const Rescue = ({navigation}) => {
             name: store.name,
             description: store.description,
             distance: store.distance.text,
-            image: store.image
+            image: store.image,
           });
-          getDirection(store.latitude, store.longtitude)
+          getDirection(store.latitude, store.longtitude);
         }}>
         <Callout tooltip>
           <View style={styles.calloutContainer}>
@@ -211,7 +247,7 @@ const Rescue = ({navigation}) => {
       </Marker>
     ));
 
-  if(globalLoading) return <GLoading />
+  if (globalLoading) return <GLoading />;
   return (
     <View style={{flex: 1}}>
       <StatusBar backgroundColor="#295a59" barStyle="light-content" />
@@ -259,85 +295,127 @@ const Rescue = ({navigation}) => {
             />
           )}
         </MapView>
-        {!selectedStore && <View style={styles.barContainer}>
-          <Button
-            icon={() => (
-              <Icon style={{color: '#fff'}} name="search" size={24} />
-            )}
-            color="#295a59"
-            mode="contained"
-            onPress={()=>getAllLocationAndSort(0)}>
-            LOOKING FOR SOS
-          </Button>
-        </View>}
-        {selectedStore && <View style={styles.infoContainer}>
-          <View style={{flexDirection:"row", paddingLeft:8, paddingTop:8}}>
-            <View style={{flex:2}}>
-              <Title>{selectedStore.name}</Title>
-            </View>
-            <View style={{flex:1, flexDirection:"row",justifyContent:"flex-end"}}>
-              <IconButton
-                icon="close"
-                animated
-                color="red"
-                size={20}
-                onPress={() => setSelectedStore(null)}
-              />
-            </View>
+        {!selectedStore && (
+          <View style={styles.barContainer}>
+            <Button
+              icon={() => (
+                <Icon style={{color: '#fff'}} name="search" size={24} />
+              )}
+              color="#295a59"
+              mode="contained"
+              onPress={() => getAllLocationAndSort(0)}>
+              LOOKING FOR SOS
+            </Button>
           </View>
-          <View style={styles.store_info}>
-            <View style={{flex: 2}}>
-              <Text>{selectedStore.description}</Text>
-              <Text style={{ fontSize: 20}}>
-                <Icon name="directions-car" color="green" size={15} /> {selectedStore.distance}
-              </Text>
-              <View style={{flexDirection:"row"}}>
-                <Button 
-                  style={{backgroundColor:"#1976d2"}} 
-                  icon={()=> <Icon name="email" color="#fff" size={20} />}
-                  mode="contained" 
-                  onPress={()=>navigation.navigate('chat',{
-                    store_id: selectedStore.id,
-                    store_name: selectedStore.name
-                  })}
-                >
-                  SEND
-                </Button>
-                <Button  
-                  style={{marginLeft:4, backgroundColor:"#dc004e"}}  
-                  icon={()=> <Icon color="#fff" name="info" size={20} />}
-                  mode="contained" 
-                >
-                  LEARN MORE
-                </Button>
+        )}
+        {selectedStore && (
+          <View style={styles.infoContainer}>
+            <View style={{flexDirection: 'row', paddingLeft: 8, paddingTop: 8}}>
+              <View style={{flex: 2}}>
+                <Title>{selectedStore.name}</Title>
               </View>
-              <View style={styles.btnContainer}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                }}>
                 <IconButton
-                  onPress={()=>getAllLocationAndSort(-1)}
-                  icon={()=> <Icon name="arrow-back" size={24}/>}
+                  icon="close"
+                  animated
+                  color="red"
                   size={20}
-                  color={Colors.red500}
-                />
-                <IconButton
-                  onPress={()=>getAllLocationAndSort(1)}
-                  color="#0f53bf"
-                  icon={()=> <Icon name="arrow-forward" color="red" size={24}/>}
-                  size={20}
-                
+                  onPress={() => setSelectedStore(null)}
                 />
               </View>
             </View>
-            <View style={styles.info_right}>
-              <Image
-                style={{width: 90, height: 90}}
-                source={{
-                  uri: `${server}/images/${selectedStore.image}`,
-                }}
-              />
+            <View style={styles.store_info}>
+              <View style={{flex: 2}}>
+                <Text>{selectedStore.description}</Text>
+                <Text style={{fontSize: 20}}>
+                  <Icon name="directions-car" color="green" size={15} />{' '}
+                  {selectedStore.distance}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Button
+                    style={{backgroundColor: '#1976d2'}}
+                    icon={() => <Icon name="email" color="#fff" size={20} />}
+                    mode="contained"
+                    onPress={() =>
+                      navigation.navigate('chat', {
+                        store_id: selectedStore.id,
+                        store_name: selectedStore.name,
+                      })
+                    }>
+                    Tin Nhắn
+                  </Button>
+                  <Button
+                    style={{marginLeft: 4, backgroundColor: '#dc004e'}}
+                    icon={() => <Icon color="#fff" name="info" size={20} />}
+                    mode="contained"
+                    onPress={() => setModalVisible(true)}>
+                    Cứu hộ
+                  </Button>
+                </View>
+                <View style={styles.btnContainer}>
+                  <IconButton
+                    onPress={() => getAllLocationAndSort(-1)}
+                    icon={() => <Icon name="arrow-back" size={24} />}
+                    size={20}
+                    color={Colors.red500}
+                  />
+                  <IconButton
+                    onPress={() => getAllLocationAndSort(1)}
+                    color="#0f53bf"
+                    icon={() => (
+                      <Icon name="arrow-forward" color="red" size={24} />
+                    )}
+                    size={20}
+                  />
+                </View>
+              </View>
+              <View style={styles.info_right}>
+                <Image
+                  style={{width: 90, height: 90}}
+                  source={{
+                    uri: `${server}/images/${selectedStore.image}`,
+                  }}
+                />
+              </View>
             </View>
           </View>
-        </View>}
+        )}
       </View>
+      {/* modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Title style={styles.modalText}>Công ty TNHH Ninh Bình</Title>
+            <Text>Vấn đề của bạn là gì?</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setProblemID(value)}
+                value={problemID}
+                items={renderCarProblems()}
+            />
+            <View style={{marginTop:8, flexDirection:"row-reverse"}}>
+              <Button style={{marginLeft:4}} mode="contained" onPress={() => console.log('Pressed')}>
+                Yêu cầu cứu hộ
+              </Button>
+              <Button mode="contained" color="#91063b" onPress={() => setModalVisible(false)}>
+                Hủy
+              </Button>
+            </View>
+          </View>
+         
+        </View>
+      </Modal>
     </View>
   );
 };

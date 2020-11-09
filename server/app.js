@@ -42,6 +42,7 @@ const userCtl = require("./controller/user");
 const messageCtl = require("./controller/message");
 const BillCtl = require("./controller/bill");
 const RescueCtl = require("./controller/rescue");
+const ProblemCtl = require("./controller/problem");
 
 app.get("/api/welcome", (req, res) => res.send("welcome"));
 //login
@@ -212,6 +213,10 @@ app.post('/api/rescue', user_auth, RescueCtl.createRescue);
 app.get('/api/rescue', passport.authenticate("jwt", { session: false }), RescueCtl.getRescue);
 app.put('/api/rescue', passport.authenticate("jwt", { session: false }), RescueCtl.modifyRescue);
 
+// PROBLEM
+
+app.post('/api/problem', passport.authenticate("jwt", { session: false }), ProblemCtl.create);
+app.get('/api/problem', ProblemCtl.get);
 
 io.on("connection", (socket) => {
 	//authenticate for socket io

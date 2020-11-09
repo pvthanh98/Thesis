@@ -1,10 +1,10 @@
 const Rescue = require("../db/rescue");
 module.exports = {
     createRescue: (req,res) => {
-        const {store_id} = req.body;
+        const {store_id, problem} = req.body;
         const customer_id = req.user.id
         Rescue.create({
-            customer_id, store_id
+            customer_id, store_id, problem
         })
         .then(() => res.sendStatus(200))
         .catch(err=> {
@@ -17,9 +17,10 @@ module.exports = {
             store_id: req.user.id
         })
         .populate("customer_id", "name latitude longtitude phone address image")
+        .populate("problem")
         .sort({is_complete:1})
         .then(rescuelist=> res.json(rescuelist))
-        .catch(er=>{
+        .catch(err=>{
             res.sendStatus(400);
             throw err;
         })

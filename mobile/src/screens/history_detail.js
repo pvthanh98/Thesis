@@ -33,9 +33,9 @@ const HistoryDetail = (props) => {
   const formatDate = (date) => {
     var newDate = new Date(date);
     var day =
-      newDate.getDay() >= 10 ? newDate.getDay() : '0' + newDate.getDay();
+      newDate.getDate() + 1 >= 10 ? newDate.getDate() + 1 : '0' + newDate.getDate() + 1;
     var month =
-      newDate.getMonth() >= 10 ? newDate.getMonth() : '0' + newDate.getMonth();
+      newDate.getMonth() + 1 >= 10 ? newDate.getMonth() + 1 : '0' + newDate.getMonth() + 1;
     return `${day}/${month}/${newDate.getFullYear()}`;
   };
 
