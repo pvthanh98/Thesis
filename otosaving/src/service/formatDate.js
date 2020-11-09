@@ -1,10 +1,11 @@
 export default function (date) {
 	var newDate = new Date(date);
+	console.log(date)
 	var day =
-		newDate.getDay() >= 10 ? newDate.getDay() : "0" + newDate.getDay();
+		newDate.getDate() >= 10 ? newDate.getDate() : "0" + newDate.getDate();
 	var month =
 		newDate.getMonth() >= 10
-			? newDate.getMonth()
-			: "0" + newDate.getMonth();
+			? newDate.getMonth() +1
+			: "0" + (newDate.getMonth()+1);
 	return `${day}/${month}/${newDate.getFullYear()}`;
 }

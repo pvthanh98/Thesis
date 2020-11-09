@@ -60,25 +60,9 @@ export default function Admin({ ...rest }) {
   // states and functions
   const [image, setImage] = React.useState(bgImage);
   const [color, setColor] = React.useState("blue");
-  const [fixedClasses, setFixedClasses] = React.useState("dropdown");
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const message_store_list = useSelector(state=> state.message_store_list);
-  const message_store = useSelector(state=> state.message_store);
   const dispatch = useDispatch();
   
-  const handleImageClick = image => {
-    setImage(image);
-  };
-  const handleColorClick = color => {
-    setColor(color);
-  };
-  const handleFixedClick = () => {
-    if (fixedClasses === "dropdown") {
-      setFixedClasses("dropdown show");
-    } else {
-      setFixedClasses("dropdown");
-    }
-  };
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -103,6 +87,18 @@ export default function Admin({ ...rest }) {
     .then(({data})=> dispatch({type:"UPDATE_BILLS", bills: data}))
     .catch(err=>console.log(err));
   } 
+  const loadStoreInfo = () => {
+    axios().post('/api/store/me', { id: localStorage.getItem('admin_id') })
+    .then(res => {
+      dispatch({
+        type: "GET_MYSTORE",
+        mystore: res.data
+      })
+    })
+    .catch(err => {
+      console.log(err);
+    })  
+  }
 
 
   React.useEffect(() => {
@@ -121,6 +117,7 @@ export default function Admin({ ...rest }) {
 
 
     ////////////////////////////////////////////////
+    loadStoreInfo()
     loadBill();
     loadListMsgOfStore()
     if (navigator.platform.indexOf("Win") > -1) {
