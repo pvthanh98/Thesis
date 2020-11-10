@@ -8,5 +8,4 @@ const rescueSchema = new Schema({
   is_complete: {type:Boolean, default:false},
   timestamp: { type: Date, default: Date.now },
 });
-
 module.exports = mongoose.model('rescue', rescueSchema);

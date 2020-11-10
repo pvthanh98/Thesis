@@ -16,6 +16,7 @@ const customerSchema = new Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+customerSchema.index({name:"text"});
 
 const Customer = mongoose.model('customer', customerSchema);
 module.exports = Customer;

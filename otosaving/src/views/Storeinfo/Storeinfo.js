@@ -46,6 +46,10 @@ const MyMapComponent = compose(
       lat: props.store_coordinate ? props.store_coordinate.lat : 10.0223554,
       lng: props.store_coordinate ? props.store_coordinate.lng : 105.77034019999999,
     }}
+    center={{
+      lat: props.store_coordinate ? props.store_coordinate.lat : 10.0223554,
+      lng: props.store_coordinate ? props.store_coordinate.lng : 105.77034019999999,
+    }}
     options={{
       gestureHandling:'greedy',
     }}
@@ -109,8 +113,8 @@ export default function StoreInfo() {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
-  const [mystore_lat, setMystore_Lat] = useState("");
-  const [mystore_lng, setMystore_Lng] = useState("");
+  const [mystore_lat, setMystore_Lat] = useState(-1);
+  const [mystore_lng, setMystore_Lng] = useState(-1);
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
   const [image, setImage] = useState(null);

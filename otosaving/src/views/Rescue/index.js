@@ -13,7 +13,7 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import CheckIcon from "@material-ui/icons/Check";
 import EmailIcon from "@material-ui/icons/Email";
 import GpsFixedIcon from "@material-ui/icons/GpsFixed";
-import { Tooltip } from "@material-ui/core";
+import { Grid, Tooltip } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import axios from "../../service/axios";
 import dateFormat from "../../service/formatDate";
@@ -31,15 +31,18 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import {Input} from "@material-ui/core"
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import {server} from '../../constant'
+import {server} from '../../constant';
+import DatePicker from "react-datepicker";
+import ReplayIcon from "@material-ui/icons/Replay";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import "react-datepicker/dist/react-datepicker.css";
+
 import {
 	Search,
 	AccountBox as AccountBoxIcon,
@@ -47,6 +50,7 @@ import {
 	PhoneAndroid,
 	ErrorOutlineTwoTone,
 } from "@material-ui/icons";
+import Pagination from '@material-ui/lab/Pagination';
 
 const { compose, withProps, lifecycle } = require("recompose");
 const {
@@ -69,8 +73,8 @@ const MyMapComponent = compose(
 	withScriptjs,
 	withGoogleMap,
 	lifecycle({
-		async componentDidMount() {
-			console.log("COMPONENT DID MOUNT RUNING");
+		async updateDistance () {
+			console.log("update distance")
 			const findDistance = (lat, lng) => {
 				return new Promise((resolve, reject) => {
 					const DirectionsService = new window.google.maps.DirectionsService();
@@ -114,8 +118,10 @@ const MyMapComponent = compose(
 					console.log(e);
 				}
 			}
-			console.log(this.props);
 			this.props.setCarRescue(carRescue);
+		},
+		async componentDidMount() {
+			this.updateDistance();
 		},
 		componentWillReceiveProps(nextProps) {
 			console.log("receive props");
@@ -141,7 +147,7 @@ const MyMapComponent = compose(
 						if (status === window.google.maps.DirectionsStatus.OK) {
 							this.setState({
 								directions: result,
-								distance: result.routes[0].legs[0].distance,
+								distance: {...result.routes[0].legs[0].distance},
 							});
 						} else {
 							console.error("error", result);
@@ -149,7 +155,13 @@ const MyMapComponent = compose(
 					}
 				);
 			}
-		},
+
+			if(this.props.carRescue.length>0 && !this.props.carRescue[0].distance) {
+				this.updateDistance();
+			} else console.log("no need to update distance")
+		}
+
+		
 	})
 )((props) => (
 	<GoogleMap
@@ -162,6 +174,12 @@ const MyMapComponent = compose(
 			lat: props.mapCenter.lat,
 			lng: props.mapCenter.lng,
 		}}
+		options={{
+			gestureHandling:'greedy',
+			zoomControlOptions: { position: 9 },
+			streetViewControl:false,
+			fullscreenControl:false,
+		  }}
 	>
 		<Marker
 			position={{
@@ -185,25 +203,67 @@ const MyMapComponent = compose(
 							lat: e.customer_id.latitude,
 							lng: e.customer_id.longtitude,
 						}}
+						onClick={()=>{
+							props.setSelectedCustomer({
+								customer_id: e.customer_id._id,
+								name: e.customer_id.name,
+								phone: e.customer_id.phone,
+								lat: e.customer_id.latitude,
+								lng: e.customer_id.longtitude,
+								distance: e.distance ? e.distance.text :  "Loading...",
+							})
+							console.log(props.distance)
+						}}
 					>
 						{props.selectedCustomer &&
 							e.customer_id._id ==
 								props.selectedCustomer.customer_id && (
 								<InfoWindow>
 									<div>
-										<Typography variant="subtitle1">
+										<Typography style={{fontWeight:"bold"}} variant="subtitle1">
 											{props.selectedCustomer
 												? props.selectedCustomer.name
 												: e.customer_id.name}
 										</Typography>
+										{e.is_complete
+										&& <Typography style={{color:"green"}} variant="body1">
+												Đã hoàn thành
+											</Typography>
+										}
 										<Typography variant="body1">
-											<DriveEtaIcon />
+											<DriveEtaIcon style={{marginRight:"4px", fontSize:"20px"}} />
 											{props.selectedCustomer.distance}
 										</Typography>
 										<Typography variant="body1">
-											<CallIcon />
+											<CallIcon style={{marginRight:"4px", fontSize:"20px"}} />
 											{props.selectedCustomer.phone}
 										</Typography>
+										<Typography variant="body1">
+											<Tooltip title="Nhắn tin">
+												<IconButton
+													onClick={() => props.handleOpenMessage(e.customer_id._id)}
+												>
+													<EmailIcon style={{ color: "#115293" }} />
+												</IconButton>
+											</Tooltip>
+											<Tooltip title="Thanh thêm vào hóa đơn">
+												<IconButton
+													onClick={() => props.handleClickOpen(e.customer_id, e._id)}
+												>
+													<PaymentIcon style={{ color: "#3b0957" }} />
+												</IconButton>
+											</Tooltip>
+											{!e.is_complete && <Tooltip title="Đánh dấu hoàn tất">
+												<IconButton
+													onClick={() => props.setComplete(e._id)}
+												>
+													<CheckIcon style={{ color: "#044711" }} />
+												</IconButton>
+											</Tooltip>}
+											
+										</Typography>
+										
+
 									</div>
 								</InfoWindow>
 							)}
@@ -262,6 +322,10 @@ export default function Rescue() {
 	const [billCustomerInfo, setBillCustomerInfo] = React.useState(null);
 	const [totalCost, setTotalCost] = React.useState(0);
 	const [selectedRescueId, setSelectedRescueId] = React.useState(0);
+	const [totalPage, setTotalPage] = React.useState(1);
+	const [startDate, setStartDate] = React.useState("");
+	const [customerName, setCustomerName] = React.useState("");
+	const [loading, setLoading] = React.useState(true);
 	const handleClickOpen = (customer , rescue_id) => {
 		setOpen(true);
 		setBillCustomerInfo(customer);
@@ -276,17 +340,29 @@ export default function Rescue() {
 	};
 
 	useEffect(() => {
-		loadOtoRescuing();
+		loadOtoRescuing(1);
 	}, []);
 
-	const loadOtoRescuing = () => {
+	const loadOtoRescuing = (page) => {
+		setLoading(true);
 		axios()
-			.get("/api/rescue")
-			.then((resp) => {
-				setCarRescue(resp.data);
+			.get(`/api/rescue/page/${page}`)
+			.then(async (resp) => {
+				await sleep(1000);
+				setCarRescue(resp.data.rescuelist);
+				setTotalPage(resp.data.total_page);
+				setLoading(false)
 			})
 			.catch((err) => alert("err"));
 	};
+
+	const sleep = (milisecond) => {
+		return new Promise(function(resolve, reject){
+			setTimeout(function(){
+				resolve("ok")
+			},milisecond)
+		})
+	}
 
 
 
@@ -417,10 +493,10 @@ export default function Rescue() {
 					primary={e.customer_id.name}
 					secondary={<div>
 						<div>{dateFormat(e.timestamp)}</div>
-						<div>{e.problem.name}</div>
 						<div>{e.distance ? e.distance.text : ""}</div>
 					</div>}
 				/>
+				<div>{e.problem.name}</div>
 				{!e.is_complete && (
 					<div>
 						<Tooltip title="Chuyển đến thanh toán">
@@ -449,7 +525,7 @@ export default function Rescue() {
 				)}
 				{e.is_complete && (
 					<div>
-						<Typography style={{ color: "green" }} variant="body1">
+						<Typography style={{ color: "green", marginLeft:"4px" }} variant="body1">
 							Đã hoàn thành
 						</Typography>
 					</div>
@@ -470,7 +546,7 @@ export default function Rescue() {
 									phone: e.customer_id.phone,
 									lat: e.customer_id.latitude,
 									lng: e.customer_id.longtitude,
-									distance: e.distance.text,
+									distance: e.distance ? e.distance.text : "",
 								});
 							}}
 						>
@@ -491,21 +567,40 @@ export default function Rescue() {
 			</ListItem>
 		));
 
+	const searchRescueByCustomerName = () => {
+		if(customerName!=""){
+			setLoading(true);
+			axios().get(`/api/rescue/search/name/${customerName}`)
+			.then(async (res)=>{
+				await sleep(1000);
+				setCarRescue(res.data.rescuelist)
+				setTotalPage(res.data.total_page);
+				setLoading(false)
+			})
+			.catch(err=>{console.log(err); setLoading(false)});
+			setCustomerName("");
+		} else alert("Nhập tên khách hàng")
+		
+	}
+
+	const searchRescueByCustomerDate = () => {
+		if(startDate!=""){
+			setLoading(true);
+			axios().get(`/api/rescue/search/date/${startDate}`)
+			.then(async res=>{
+				await sleep(1000);
+				setCarRescue(res.data.rescuelist)
+				setTotalPage(res.data.total_page);
+				setLoading(false)
+			})
+			.catch(err=>{console.log(err); setLoading(false)});
+			setStartDate("");
+		} else alert("Nhập ngày liệt kê")
+	}
+
 	return (
 		<GridContainer>
-			<GridItem xs={12} sm={12} md={4}>
-				<Typography variant="h5" gutterBottom>
-					Danh sách
-				</Typography>
-				<List
-					component="nav"
-					aria-labelledby="nested-list-subheader"
-					className={classes.root}
-				>
-					{renderListItem(0)}
-				</List>
-			</GridItem>
-			<GridItem xs={12} sm={12} md={8}>
+			<GridItem xs={12} sm={12} md={12}>
 				<Typography variant="h5" gutterBottom>
 					Bản đồ
 				</Typography>
@@ -521,7 +616,65 @@ export default function Rescue() {
 					}}
 					selectedCustomer={selectedCustomer}
 					setSelectedCustomer={setSelectedCustomer}
+					handleOpenMessage={handleOpenMessage}
+					setComplete={setComplete}
+					handleClickOpen={handleClickOpen}
 				/>
+			</GridItem>
+			<GridItem xs={12} sm={12} md={12}>
+				<Typography variant="h5" className="mt-3" gutterBottom>
+					Danh sách
+					<IconButton onClick={()=>loadOtoRescuing(1)} >
+						<ReplayIcon />
+					</IconButton>
+				</Typography>
+			</GridItem>
+			<GridItem xs={12} sm={12} md={8}>
+				{loading && <div style={{textAlign:"center", display:"flex", justifyContent:"center"}}>
+					<CircularProgress color="secondary" />
+				</div>}
+				<List
+					component="nav"
+					aria-labelledby="nested-list-subheader"
+					className={classes.root}
+				>	
+					{renderListItem(0)}
+				</List>
+				{totalPage==-1 && carRescue.length<=0 && <div style={{textAlign:"center", display:"flex", justifyContent:"center"}}>
+					Không tìm thấy
+				</div>}
+				{totalPage>=0 && <div style={{textAlign:"center", display:"flex", justifyContent:"center"}}>
+					<Pagination count={totalPage} onChange={(e, value)=> loadOtoRescuing(value)} color="primary" />
+				</div>}
+			</GridItem>
+			<GridItem xs={12} sm={12} md={4}>
+				<Typography variant="h5" className="mt-3" gutterBottom>
+					Bộ lọc
+				</Typography>
+				<Input
+					style={{width:"80%"}}
+					placeholder="Tìm tên khách hàng"
+					value={customerName}
+					onChange={(e)=>setCustomerName(e.target.value)}
+				/>
+				<IconButton
+					onClick={searchRescueByCustomerName}
+				>
+					<SearchIcon style={{ color: "#115293" }} />
+				</IconButton>
+				<div style={{position:"relative"}}>
+					<DatePicker 
+						placeholderText="Tìm theo ngày" 
+						selected={startDate} 
+						onChange={date => setStartDate(date)} 
+						style={{border:"none", borderBottom:"1px solid #ddd"}}
+					/>
+					<IconButton
+						onClick={searchRescueByCustomerDate}
+					>
+						<SearchIcon style={{ color: "#115293" }} />
+					</IconButton>
+				</div>
 			</GridItem>
 			<Dialog
 				open={open}

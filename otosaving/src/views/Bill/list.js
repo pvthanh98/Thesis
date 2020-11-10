@@ -31,6 +31,7 @@ import ReplayIcon from '@material-ui/icons/Replay';
 import {Redirect} from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
 import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
+import formatDate from '../../service/formatDate'
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
 		return -1;
@@ -64,6 +65,7 @@ const headCells = [
 		disablePadding: true,
 		label: "ID",
 	},
+	{ id: "Date", numeric: true, disablePadding: false, label: "Date" },
 	{ id: "Customer", numeric: true, disablePadding: false, label: "Customer" },
 	{ id: "Total", numeric: true, disablePadding: false, label: "Total" },
 	{ id: "Quantity", numeric: true, disablePadding: false, label: "Quantity" },
@@ -269,7 +271,7 @@ const ProvisionalBillList = (props) => {
 	const [selected, setSelected] = React.useState([]);
 	const [page, setPage] = React.useState(0);
 	const [dense, setDense] = React.useState(false);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [rowsPerPage, setRowsPerPage] = React.useState(10);
 	const [loading, setLoading] = React.useState(false);
 	const [ toModifyPage, setToModifyPage] =React.useState(false);
 	const dispatch = useDispatch();
@@ -277,7 +279,7 @@ const ProvisionalBillList = (props) => {
 	const bills = useSelector(state => state.bills);
 	
 	const rows = bills.map(bill=> ({
-		ID:bill._id, Customer: bill.customer_id.name, Total: bill.total_cost, 
+		ID:bill._id, Date: formatDate(bill.timestamp),Customer: bill.customer_id.name, Total: bill.total_cost, 
 		Quantity: bill.services.length, paid : bill.paid ? <CustomAlert color="success" message="Đã thanh toán" /> 
 		: <CustomAlert color="error" message="Chưa thanh toán" />  ,
 		confirm : bill.confirm ? <CustomAlert color="success" message="Đã xác nhận" />  
@@ -465,6 +467,9 @@ const ProvisionalBillList = (props) => {
 													padding="none"
 												>
 													{row.ID}
+												</TableCell>
+												<TableCell align="right">
+													{row.Date}
 												</TableCell>
 												<TableCell align="right">
 													{row.Customer}

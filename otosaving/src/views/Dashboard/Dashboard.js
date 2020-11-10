@@ -33,11 +33,6 @@ import formatDate from '../../service/formatDate';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
-import {
-	dailySalesChart,
-	emailsSubscriptionChart,
-	completedTasksChart,
-} from "variables/charts.js";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Typography from '@material-ui/core/Typography';
@@ -75,6 +70,10 @@ const MyMapComponent = compose(
   <GoogleMap
     defaultZoom={14}
     defaultCenter={{
+      lat: props.store_coordinate.lat,
+      lng: props.store_coordinate.lng
+    }}
+    center={{
       lat: props.store_coordinate.lat,
       lng: props.store_coordinate.lng
     }}

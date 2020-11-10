@@ -210,8 +210,10 @@ app.get('/api/pay/cancel', (req, res) =>res.send("cancel"));
 // RESCUE
 
 app.post('/api/rescue', user_auth, RescueCtl.createRescue);
-app.get('/api/rescue', passport.authenticate("jwt", { session: false }), RescueCtl.getRescue);
+app.get('/api/rescue/page/:page', passport.authenticate("jwt", { session: false }), RescueCtl.getRescue);
 app.put('/api/rescue', passport.authenticate("jwt", { session: false }), RescueCtl.modifyRescue);
+app.get('/api/rescue/search/name/:name', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescue);
+app.get('/api/rescue/search/date/:date', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescueByDate);
 
 // PROBLEM
 

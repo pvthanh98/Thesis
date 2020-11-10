@@ -52,6 +52,22 @@ const Rescue = ({navigation}) => {
       .catch((err) => console.log(err));
   }
 
+  const requestRescue = () => {
+    console.log(selectedStore.id,problemID );
+    if(problemID!=""){
+      axios
+			.post("/api/rescue", { store_id: selectedStore.id, problem: problemID })
+			.then((resl) => {
+				alert("Yêu cầu của bạn đã được gửi")
+			})
+			.catch((err) => {
+				console.log(err)
+			});
+    } else alert("Bạn phải chọn vấn đề")
+      setModalVisible(false);
+	};
+
+
 
   const renderCarProblems = () => {
     console.log("ruinning")
@@ -397,7 +413,7 @@ const Rescue = ({navigation}) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Title style={styles.modalText}>Công ty TNHH Ninh Bình</Title>
+            <Title style={styles.modalText}>{selectedStore && selectedStore.name}</Title>
             <Text>Vấn đề của bạn là gì?</Text>
             <RNPickerSelect
                 onValueChange={(value) => setProblemID(value)}
@@ -405,7 +421,7 @@ const Rescue = ({navigation}) => {
                 items={renderCarProblems()}
             />
             <View style={{marginTop:8, flexDirection:"row-reverse"}}>
-              <Button style={{marginLeft:4}} mode="contained" onPress={() => console.log('Pressed')}>
+              <Button style={{marginLeft:4}} mode="contained" onPress={requestRescue}>
                 Yêu cầu cứu hộ
               </Button>
               <Button mode="contained" color="#91063b" onPress={() => setModalVisible(false)}>
