@@ -33,7 +33,7 @@ const MyMapComponent = compose(
   withScriptjs,
   withGoogleMap,
   lifecycle({
-    async componentDidMount() {
+    async updateDistance() {
       const findDistance = (lat, lng) => {
         return new Promise((resolve, reject) => {
           const DirectionsService = new window.google.maps.DirectionsService();
@@ -48,11 +48,13 @@ const MyMapComponent = compose(
             },
             (result, status) => {
               if (status === window.google.maps.DirectionsStatus.OK) {
+                console.log(result.routes[0].legs[0].distance)
                 resolve({
                   directions: result,
                   distance: result.routes[0].legs[0].distance,
                 })
               } else {
+                console.log("co lou.............................");
                 console.error(`error fetching directions ${result}`);
                 reject(`error fetching directions ${result}`);
               }
@@ -61,7 +63,7 @@ const MyMapComponent = compose(
         });
       };
       let { stores } = this.props;
-      for(var i=0;i<stores.length;i++){
+        for(var i=0;i<stores.length;i++){
         try{
           let distance = await findDistance(stores[i].latitude, stores[i].longtitude)
           stores[i].distance =distance;
@@ -71,8 +73,15 @@ const MyMapComponent = compose(
       }
       this.props.updateStore(stores)
     },
+    async componentDidMount() {
+      this.updateDistance();
+    },
     componentWillReceiveProps(nextProps){
-      console.log("I RECEIVED A NEW PROP",nextProps)
+      console.log("I RECEIVED A NEW PROP",nextProps);
+      if(this.props.stores.length > 0 && !this.props.stores[0].distance) {
+        this.updateDistance();
+        console.log("update distance")
+      } else console.log("no need to update distance")
       const DirectionsService = new window.google.maps.DirectionsService();
       DirectionsService.route(
         {
@@ -224,6 +233,11 @@ class Map extends React.PureComponent {
           lng: position.coords.longitude,
         },
       });
+      console.log("my position is",{
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      }
+    )
     },function(err){
       console.log(err)
     });
@@ -268,8 +282,6 @@ class Map extends React.PureComponent {
         return  store_2.distance.distance.value - store_1.distance.distance.value  
       })
     }
-
-
   }
 
   render() {
@@ -277,17 +289,18 @@ class Map extends React.PureComponent {
       <div>
         <Navbar />
         {
-          this.state.position !==null 
+          (this.state.position !==null
+          && this.props.stores.length>0
+            ) 
           ?
           <MyMapComponent
-          myposition={this.state.myposition}
-          stores={this.state.stores}
-          setSelectedWindow={this.setSelectedWindow}
-          selectedWindow={this.state.selectedWindow}
-          stores={this.props.stores}
-          updateStore={this.props.updateStore}
-        />
-        : "Error"
+            myposition={this.state.myposition}
+            setSelectedWindow={this.setSelectedWindow}
+            selectedWindow={this.state.selectedWindow}
+            stores={this.props.stores}
+            updateStore={this.props.updateStore}
+          />
+        : "Loading..."
         }
         <Container className="custom-container">
               <Row>

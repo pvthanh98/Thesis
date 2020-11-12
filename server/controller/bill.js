@@ -136,8 +136,8 @@ module.exports = {
 				payment_method: "paypal",
 			},
 			redirect_urls: {
-				return_url: "http://192.168.1.19:8080/api/pay/success",
-				cancel_url: "http://192.168.1.19:8080/api/pay/cancel",
+				return_url: "http://34.72.53.26:8080/api/pay/success",
+				cancel_url: "http://34.72.53.26:8080/api/pay/cancel",
 			},
 			transactions: [
 				{

@@ -83,6 +83,22 @@ export default function app_style () {
         },
         modalText: {
           marginBottom: 15,
+        },
+        topBox: {
+          position:"absolute",
+          top:0,
+          backgroundColor:"#ddd",
+          width:"100%",
+          height:50,
+          justifyContent:"center",
+          alignItems:"center"
+        },
+        store_infoContainer: {
+          width:"100%"
+        },
+        ratingContainer: {
+          justifyContent:"center",
+          alignItems:"center"
         }
 
       }

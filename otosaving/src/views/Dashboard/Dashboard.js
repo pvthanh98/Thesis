@@ -1,32 +1,20 @@
 import React from "react";
 // react plugin for creating charts
-import ChartistGraph from "react-chartist";
 // @material-ui/core
 import { makeStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
 import Store from "@material-ui/icons/Store";
-import Warning from "@material-ui/icons/Warning";
 import DateRange from "@material-ui/icons/DateRange";
-import LocalOffer from "@material-ui/icons/LocalOffer";
-import Update from "@material-ui/icons/Update";
-import ArrowUpward from "@material-ui/icons/ArrowUpward";
-import AccessTime from "@material-ui/icons/AccessTime";
+
 import Accessibility from "@material-ui/icons/Accessibility";
-import BugReport from "@material-ui/icons/BugReport";
-import Code from "@material-ui/icons/Code";
-import Cloud from "@material-ui/icons/Cloud";
+
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
-import Table from "components/Table/Table.js";
-import Tasks from "components/Tasks/Tasks.js";
-import CustomTabs from "components/CustomTabs/CustomTabs.js";
-import Danger from "components/Typography/Danger.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
-import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 import axios from '../../service/axios';
 import formatDate from '../../service/formatDate';
@@ -61,10 +49,7 @@ const MyMapComponent = compose(
   withScriptjs,
   withGoogleMap,
   lifecycle({
-    componentDidMount() { 
-      console.log(this.props.store_coordinate)
-      console.log(this.props.rescueLocation)
-    }
+    componentDidMount() { }
   })
 )((props) => (
   <GoogleMap
@@ -79,8 +64,9 @@ const MyMapComponent = compose(
     }}
     options={{
       gestureHandling:'greedy',
+      scrollwheel:false,
+
     }}
-    on
   >
     {props.store_coordinate && (
       <Marker
@@ -97,6 +83,7 @@ const MyMapComponent = compose(
 
     {props.rescueLocation && props.rescueLocation.map(rescue=>(
       <Marker
+        key={rescue._id}
         position={{
           lat: rescue.coordinate.lat,
           lng: rescue.coordinate.lng
@@ -134,8 +121,8 @@ export default function Dashboard() {
   const [customerWeek, setCustomerWeek] = React.useState("");
   const [costToday, setCostToday] = React.useState("");
   const [costWeek, setCostWeek] = React.useState("");
-  const [chartCountWeek, setChartCountWeek] = React.useState([]);
-  const [chartCostWeek, setChartCostWeek] = React.useState([])
+  const [chartCountWeek, setChartCountWeek] = React.useState(null);
+  const [chartCostWeek, setChartCostWeek] = React.useState(null)
 
   React.useEffect(()=>{
     loadStore();
@@ -172,7 +159,6 @@ export default function Dashboard() {
     })
     axios().get('/api/bill/cost/today')
     .then(res => {
-      console.log(res.data)
       setCostToday(res.data.cost)
     })
     .catch(err => {
@@ -298,11 +284,11 @@ export default function Dashboard() {
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={12}>
-          <Linechart data={chartCountWeek} />
+          {chartCountWeek && <Linechart data={chartCountWeek} />}
         </GridItem>
         
         <GridItem xs={12} sm={12} md={12}>
-          <LineCharCost data={chartCostWeek} />
+          {chartCostWeek && <LineCharCost data={chartCostWeek} />}
         </GridItem>
 			</GridContainer>
 		</div>

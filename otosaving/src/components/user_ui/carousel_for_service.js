@@ -1,4 +1,5 @@
 import React,{useState} from "react";
+import {server} from '../../constant';
 import {
   Carousel,
   CarouselItem,
@@ -9,17 +10,17 @@ import {
 export default (props) => {
   const items = [
     {
-      src: "http://localhost:8080/images/keoxeoto.jpg",
+      src: `${server}/images/keoxeoto.jpg`,
       altText: "Kéo xe oto",
       caption: "Kéo xe oto",
     },
     {
-      src: "http://localhost:8080/images/thayacquy_car.jpg",
+      src: `${server}/images/thayacquy_car.jpg`,
       altText: "Thay bình ắc quy xe",
       caption: "Thay bình ắc quy xe",
     },
     {
-      src: "http://localhost:8080/images/thaylopoto.jpeg",
+      src: `${server}/images/thaylopoto.jpeg`,
       altText: "Thay lốp xe",
       caption: "Thay lốp xe",
     },

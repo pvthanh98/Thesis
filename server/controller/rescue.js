@@ -70,9 +70,10 @@ module.exports = {
     },
     searchRescueByDate : async (req, res) => {
         const date = new Date(req.params.date);
-        const day = date.getDate();
+        const day = date.getDate() +1;
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
+        console.log(day, month, year,req.params.date);
         
         const id_list = await Rescue.aggregate([
             {

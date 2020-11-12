@@ -13,6 +13,8 @@ import {Title, Text, IconButton, Colors} from 'react-native-paper';
 import {server} from '../constants/index';
 import GLoading from '../components/load';
 import RNPickerSelect from 'react-native-picker-select';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import { Rating, AirbnbRating } from 'react-native-ratings';
 const defaultPosition = {
   lat: 40.712776,
   lng: -74.005974,
@@ -36,7 +38,7 @@ const Rescue = ({navigation}) => {
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [problemID, setProblemID] = React.useState('');
-  const [carProblems, setCarProblems] = React.useState([])
+  const [carProblems, setCarProblems] = React.useState([]);
 
   useEffect(() => {
     getCurrentLocation();
@@ -45,40 +47,43 @@ const Rescue = ({navigation}) => {
 
   const loadCarProblems = () => {
     axios
-      .get("/api/problem")
+      .get('/api/problem')
       .then((res) => {
-        setCarProblems(res.data)
+        setCarProblems(res.data);
       })
       .catch((err) => console.log(err));
+  };
+
+  const ratingCompleted = (rating) => {
+    console.log("Rating is: " + rating)
   }
 
   const requestRescue = () => {
-    console.log(selectedStore.id,problemID );
-    if(problemID!=""){
+    console.log(selectedStore.id, problemID);
+    if (problemID != '') {
       axios
-			.post("/api/rescue", { store_id: selectedStore.id, problem: problemID })
-			.then((resl) => {
-				alert("Yêu cầu của bạn đã được gửi")
-			})
-			.catch((err) => {
-				console.log(err)
-			});
-    } else alert("Bạn phải chọn vấn đề")
-      setModalVisible(false);
-	};
-
-
+        .post('/api/rescue', {store_id: selectedStore.id, problem: problemID})
+        .then((resl) => {
+          alert('Yêu cầu của bạn đã được gửi');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else alert('Bạn phải chọn vấn đề');
+    setModalVisible(false);
+  };
 
   const renderCarProblems = () => {
-    console.log("ruinning")
-    return carProblems.map(e=>({
+    console.log('ruinning');
+    return carProblems.map((e) => ({
       label: e.name,
-      value: e._id
-    }))
-  }
+      value: e._id,
+    }));
+  };
 
   const updateStoreDistance = async (currentLatLng, my_store) => {
     try {
+      console.log('start loading stores...');
       if (currentLatLng) {
         // haven't update store distances
         console.log('update distance...');
@@ -203,6 +208,7 @@ const Rescue = ({navigation}) => {
   };
 
   const getCurrentLocation = () => {
+    setGlobalLoading(true);
     Geolocation.getCurrentPosition(
       (position) => {
         const success = {
@@ -213,18 +219,21 @@ const Rescue = ({navigation}) => {
         setSelectedLocation(success);
         loadStore(success);
         setGlobalLoading(false);
+        setError(false);
       },
       (error) => {
+        setError(true);
         loadStore(null);
         if (error) setError(error);
         alert('cannot access to your location');
         setGlobalLoading(false);
       },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      {enableHighAccuracy: false, timeout: 10000, maximumAge: 1000},
     );
   };
 
   const loadStore = (currentLatLng) => {
+    console.log('start loading stores...');
     axios
       .get('/api/store')
       .then((res) => {
@@ -295,7 +304,8 @@ const Rescue = ({navigation}) => {
               longitude: currentLocation
                 ? currentLocation.lng
                 : defaultPosition.lng,
-            }}>
+            }}
+            image={require('../assets/images/test.png')}>
             <Callout tooltip>
               <View style={styles.calloutContainer}>
                 <Text style={styles.title}>Vị trí của bạn?</Text>
@@ -311,6 +321,16 @@ const Rescue = ({navigation}) => {
             />
           )}
         </MapView>
+        {error && (
+          <View style={styles.topBox}>
+            <Text style={{color: 'red'}}>
+              Có lỗi, không thể tải vị trí của bạn
+            </Text>
+            <TouchableOpacity onPress={getCurrentLocation}>
+              <Text style={{textDecorationLine: 'underline'}}>Thử lại?</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {!selectedStore && (
           <View style={styles.barContainer}>
             <Button
@@ -345,57 +365,68 @@ const Rescue = ({navigation}) => {
                 />
               </View>
             </View>
-            <View style={styles.store_info}>
-              <View style={{flex: 2}}>
-                <Text>{selectedStore.description}</Text>
-                <Text style={{fontSize: 20}}>
-                  <Icon name="directions-car" color="green" size={15} />{' '}
-                  {selectedStore.distance}
-                </Text>
-                <View style={{flexDirection: 'row'}}>
-                  <Button
-                    style={{backgroundColor: '#1976d2'}}
-                    icon={() => <Icon name="email" color="#fff" size={20} />}
-                    mode="contained"
-                    onPress={() =>
-                      navigation.navigate('chat', {
-                        store_id: selectedStore.id,
-                        store_name: selectedStore.name,
-                      })
-                    }>
-                    Tin Nhắn
-                  </Button>
-                  <Button
-                    style={{marginLeft: 4, backgroundColor: '#dc004e'}}
-                    icon={() => <Icon color="#fff" name="info" size={20} />}
-                    mode="contained"
-                    onPress={() => setModalVisible(true)}>
-                    Cứu hộ
-                  </Button>
+            <View style={styles.store_infoContainer}>
+              <View style={styles.store_info}>
+                <View style={{flex: 2}}>
+                  <Text>{selectedStore.description}</Text>
+                  <Text style={{fontSize: 20}}>
+                    <Icon name="directions-car" color="green" size={15} />{' '}
+                    {selectedStore.distance}
+                  </Text>
+                  <View style={{flexDirection: 'row'}}>
+                    <Button
+                      style={{backgroundColor: '#1976d2'}}
+                      icon={() => <Icon name="email" color="#fff" size={20} />}
+                      mode="contained"
+                      onPress={() =>
+                        navigation.navigate('chat', {
+                          store_id: selectedStore.id,
+                          store_name: selectedStore.name,
+                        })
+                      }>
+                      Tin Nhắn
+                    </Button>
+                    <Button
+                      style={{marginLeft: 4, backgroundColor: '#dc004e'}}
+                      icon={() => <Icon color="#fff" name="info" size={20} />}
+                      mode="contained"
+                      onPress={() => setModalVisible(true)}>
+                      Cứu hộ
+                    </Button>
+                  </View>
                 </View>
-                <View style={styles.btnContainer}>
-                  <IconButton
-                    onPress={() => getAllLocationAndSort(-1)}
-                    icon={() => <Icon name="arrow-back" size={24} />}
-                    size={20}
-                    color={Colors.red500}
-                  />
-                  <IconButton
-                    onPress={() => getAllLocationAndSort(1)}
-                    color="#0f53bf"
-                    icon={() => (
-                      <Icon name="arrow-forward" color="red" size={24} />
-                    )}
-                    size={20}
+                <View style={styles.info_right}>
+                  <Image
+                    style={{width: 90, height: 90}}
+                    source={{
+                      uri: `${server}/images/${selectedStore.image}`,
+                    }}
                   />
                 </View>
               </View>
-              <View style={styles.info_right}>
-                <Image
-                  style={{width: 90, height: 90}}
-                  source={{
-                    uri: `${server}/images/${selectedStore.image}`,
-                  }}
+              <View style={styles.ratingContainer}>
+                <Rating
+                  startingValue={1}
+                  readonly
+                  ratingCount={5}
+                  imageSize={30}
+                  onFinishRating={ratingCompleted}
+                />
+              </View>
+              <View style={styles.btnContainer}>
+                <IconButton
+                  onPress={() => getAllLocationAndSort(-1)}
+                  icon={() => <Icon name="arrow-back" size={24} />}
+                  size={20}
+                  color={Colors.red500}
+                />
+                <IconButton
+                  onPress={() => getAllLocationAndSort(1)}
+                  color="#0f53bf"
+                  icon={() => (
+                    <Icon name="arrow-forward" color="red" size={24} />
+                  )}
+                  size={20}
                 />
               </View>
             </View>
@@ -409,27 +440,33 @@ const Rescue = ({navigation}) => {
         visible={modalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-        }}
-      >
+        }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Title style={styles.modalText}>{selectedStore && selectedStore.name}</Title>
+            <Title style={styles.modalText}>
+              {selectedStore && selectedStore.name}
+            </Title>
             <Text>Vấn đề của bạn là gì?</Text>
             <RNPickerSelect
-                onValueChange={(value) => setProblemID(value)}
-                value={problemID}
-                items={renderCarProblems()}
+              onValueChange={(value) => setProblemID(value)}
+              value={problemID}
+              items={renderCarProblems()}
             />
-            <View style={{marginTop:8, flexDirection:"row-reverse"}}>
-              <Button style={{marginLeft:4}} mode="contained" onPress={requestRescue}>
+            <View style={{marginTop: 8, flexDirection: 'row-reverse'}}>
+              <Button
+                style={{marginLeft: 4}}
+                mode="contained"
+                onPress={requestRescue}>
                 Yêu cầu cứu hộ
               </Button>
-              <Button mode="contained" color="#91063b" onPress={() => setModalVisible(false)}>
+              <Button
+                mode="contained"
+                color="#91063b"
+                onPress={() => setModalVisible(false)}>
                 Hủy
               </Button>
             </View>
           </View>
-         
         </View>
       </Modal>
     </View>

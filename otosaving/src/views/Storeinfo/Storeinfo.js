@@ -52,6 +52,7 @@ const MyMapComponent = compose(
     }}
     options={{
       gestureHandling:'greedy',
+      scrollwheel:false
     }}
   >
     {props.store_coordinate && (
@@ -226,7 +227,7 @@ export default function StoreInfo() {
                     <InputLabel >Name</InputLabel>
                     <Input fullWidth={true} name="name" onChange={onInputChange} value={name}  />
                 </Grid>
-                <Grid md={8} className={classes.customContainer}>
+                <Grid item md={8} className={classes.customContainer}>
                 <InputLabel>Description</InputLabel>
                     <Input fullWidth={true} name="description" onChange={onInputChange} value={description} />
                 </Grid>

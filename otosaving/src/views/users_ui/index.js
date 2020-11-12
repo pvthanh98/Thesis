@@ -30,7 +30,7 @@ function Index() {
     });
     socket.on("refresh_message",()=>{
       loadListMsgOfUser();
-    }) 
+    })  
   },[]);
 
   const loadListMsgOfUser = () => {

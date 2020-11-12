@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {Avatar, Title, Caption, Drawer} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {server} from '../constants/index';
@@ -64,12 +64,12 @@ export default (props) => {
         <DrawerItem
             label="Home"
             onPress={() => props.navigation.navigate('rescuing')}
-            icon={() => <Icon name="home" size={25} color="black" />}
+            icon={() => <Icon name="home-outline" size={25} color="black" />}
         />
         <DrawerItem
             label="Profile"
             onPress={() => props.navigation.navigate('info')}
-            icon={() => <Icon name="user" size={25} color="black" />}
+            icon={() => <Icon name="account-circle-outline" size={25} color="black" />}
         />
         <DrawerItem
             label="Rescue History"
@@ -82,7 +82,7 @@ export default (props) => {
         <DrawerItem
             label="Sign out"
             onPress={logout}
-            icon={() => <Icon name="sign-out" size={25} color="black" />}
+            icon={() => <Icon name="logout" size={25} color="black" />}
         />
         </Drawer.Section>
     </View>

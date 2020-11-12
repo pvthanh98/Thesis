@@ -297,13 +297,22 @@ export default function Service() {
 		}, 1000);
 	};
 
-	const rows = services.map((service) => ({
-		id: service._id,
-		name: service.name,
-		description: service.description,
-		price: service.price,
-		quantity: service.quantity,
-	}));
+	let priceOver500 = 0;
+	let priceBelow500 =0;
+	let quantityBelow50 = 0;
+	let serviceCount = 0;
+	const rows = services.map((service) => {
+		if(service.price>500) priceOver500++; else priceBelow500++;
+		if(service.quantity<50) quantityBelow50++;
+		serviceCount++;
+		return {
+			id: service._id,
+			name: service.name,
+			description: service.description,
+			price: service.price,
+			quantity: service.quantity,
+		}
+	});
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === "asc";
@@ -395,7 +404,7 @@ export default function Service() {
             <AttachMoneyIcon /> Giá dưới 500 $
           </div>
           <div style={{fontWeight:"bold", color:"#24aeb5",fontSize:"50px", textAlign:"center"}}>
-            10
+            {priceBelow500}
           </div>
         </div>
       </GridItem>  
@@ -405,7 +414,7 @@ export default function Service() {
             <AttachMoneyIcon /> Giá trên 500 $
           </div>
           <div style={{fontWeight:"bold", color:"#471b77",fontSize:"50px", textAlign:"center"}}>
-            30
+            {priceOver500}
           </div>
         </div>
       </GridItem> 
@@ -415,7 +424,7 @@ export default function Service() {
             <BusinessCenterIcon /> Số lượng ít hơn 50
           </div>
           <div style={{fontWeight:"bold", color:"red",fontSize:"50px", textAlign:"center"}}>
-            0
+            {quantityBelow50}
           </div>
         </div>
       </GridItem> 
@@ -425,7 +434,7 @@ export default function Service() {
             <BusinessCenterIcon /> Tổng số dịch vụ
           </div>
           <div style={{fontWeight:"bold", fontSize:"50px", color:"green", textAlign:"center"}}>
-            400
+            {serviceCount}
           </div>
         </div>
       </GridItem>  

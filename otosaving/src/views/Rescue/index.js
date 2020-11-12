@@ -73,8 +73,11 @@ const MyMapComponent = compose(
 	withScriptjs,
 	withGoogleMap,
 	lifecycle({
+		test(){
+			console.log("HELLO");
+		},
 		async updateDistance () {
-			console.log("update distance")
+			console.log("update distance",this.props.storeCoordinate.lat,this.props.storeCoordinate.lng)
 			const findDistance = (lat, lng) => {
 				return new Promise((resolve, reject) => {
 					const DirectionsService = new window.google.maps.DirectionsService();
@@ -121,12 +124,16 @@ const MyMapComponent = compose(
 			this.props.setCarRescue(carRescue);
 		},
 		async componentDidMount() {
+			console.log("DISDD MOUNT");
 			this.updateDistance();
+			this.props.callInsideMap(this.test);
 		},
 		componentWillReceiveProps(nextProps) {
-			console.log("receive props");
-			if (this.props.selectedCustomer) {
-				const DirectionsService = new window.google.maps.DirectionsService();
+			console.log("RECEIVE PROPS");
+			const DirectionsService = new window.google.maps.DirectionsService();
+			if((!this.props.selectedCustomer || (this.props.selectedCustomer.customer_id !== nextProps.selectedCustomer.customer_id))
+			&& this.props.inputSearchService  === nextProps.inputSearchService){
+				console.log("call API");
 				DirectionsService.route(
 					{
 						origin: new window.google.maps.LatLng(
@@ -155,13 +162,10 @@ const MyMapComponent = compose(
 					}
 				);
 			}
-
 			if(this.props.carRescue.length>0 && !this.props.carRescue[0].distance) {
 				this.updateDistance();
 			} else console.log("no need to update distance")
 		}
-
-		
 	})
 )((props) => (
 	<GoogleMap
@@ -176,6 +180,7 @@ const MyMapComponent = compose(
 		}}
 		options={{
 			gestureHandling:'greedy',
+			scrollwheel:false,
 			zoomControlOptions: { position: 9 },
 			streetViewControl:false,
 			fullscreenControl:false,
@@ -389,6 +394,7 @@ export default function Rescue() {
 			.catch((err) => console.log(err));
 	};
 
+
 	const renderResultServices = () => {
 		return resultService.map(e=>(
 			<ListItem key={e._id} style={{borderBottom:"1px solid #f1f1f1",borderRadius:"12px"}}>
@@ -491,10 +497,7 @@ export default function Rescue() {
 				</ListItemIcon>
 				<ListItemText
 					primary={e.customer_id.name}
-					secondary={<div>
-						<div>{dateFormat(e.timestamp)}</div>
-						<div>{e.distance ? e.distance.text : ""}</div>
-					</div>}
+					secondary={`${dateFormat(e.timestamp)} - ${e.distance ? e.distance.text : ""}`}
 				/>
 				<div>{e.problem.name}</div>
 				{!e.is_complete && (
@@ -568,7 +571,7 @@ export default function Rescue() {
 		));
 
 	const searchRescueByCustomerName = () => {
-		if(customerName!=""){
+		if(customerName!==""){
 			setLoading(true);
 			axios().get(`/api/rescue/search/name/${customerName}`)
 			.then(async (res)=>{
@@ -597,15 +600,22 @@ export default function Rescue() {
 			setStartDate("");
 		} else alert("Nhập ngày liệt kê")
 	}
+	
+	const callInsideMap = (f) => {
+		f();
+	}
 
 	return (
 		<GridContainer>
 			<GridItem xs={12} sm={12} md={12}>
+				<Button on>ok</Button>
 				<Typography variant="h5" gutterBottom>
 					Bản đồ
 				</Typography>
-				<MyMapComponent
-					zoom={12}
+				{
+					(carRescue.length > 0) && mystoreInfo
+					&& 
+					<MyMapComponent
 					mapCenter={mapCenter}
 					carRescue={carRescue}
 					setCarRescue={setCarRescue}
@@ -619,7 +629,10 @@ export default function Rescue() {
 					handleOpenMessage={handleOpenMessage}
 					setComplete={setComplete}
 					handleClickOpen={handleClickOpen}
+					callInsideMap={callInsideMap}
+					inputSearchService={inputSearchService}
 				/>
+				}
 			</GridItem>
 			<GridItem xs={12} sm={12} md={12}>
 				<Typography variant="h5" className="mt-3" gutterBottom>
@@ -788,17 +801,15 @@ export default function Rescue() {
 						<GridItem md={4}>
 							<Typography variant="h6">Khách hàng</Typography>
 							<Avatar src={`${server}/images/${billCustomerInfo ? billCustomerInfo.image : ""}`} />
-							<Typography>
-								<div className={classes.infoItem}>
-									<AccountBoxIcon /> {billCustomerInfo && billCustomerInfo.name}
-								</div>
-								<div className={classes.infoItem}>
-									<RoomIcon /> {billCustomerInfo && billCustomerInfo.address}
-								</div>
-								<div className={classes.infoItem}>
-									<PhoneAndroid /> {billCustomerInfo && billCustomerInfo.phone}
-								</div>
-							</Typography>
+							<div className={classes.infoItem}>
+								<AccountBoxIcon /> {billCustomerInfo && billCustomerInfo.name}
+							</div>
+							<div className={classes.infoItem}>
+								<RoomIcon /> {billCustomerInfo && billCustomerInfo.address}
+							</div>
+							<div className={classes.infoItem}>
+								<PhoneAndroid /> {billCustomerInfo && billCustomerInfo.phone}
+							</div>
 						</GridItem>
 					</GridContainer>
 				</DialogContent>

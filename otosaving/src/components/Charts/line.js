@@ -7,12 +7,10 @@ class LineChart extends Component {
 		super(props);
 	}
 	render() {
-		console.log(this.props.data)
 		const data = this.props.data.map(e=>({
 			x: new Date(e._id),
 			y: e.count
 		}));
-		console.log(data)
 		const options = {
 			animationEnabled: true,
 			exportEnabled: true,

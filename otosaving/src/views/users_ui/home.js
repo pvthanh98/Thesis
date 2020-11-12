@@ -11,7 +11,7 @@ import {connect} from 'react-redux';
 function Home(props) {
   const [outStandingService, setOutStandingService] = React.useState([]);
   const getStores = () => {
-    axios()
+    axios() 
       .get("/api/store")
       .then((res) => {
         props.updateStore(res.data);

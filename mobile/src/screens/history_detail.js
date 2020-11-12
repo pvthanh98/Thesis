@@ -26,7 +26,7 @@ const HistoryDetail = (props) => {
     return bill && bill.services.map((service) => (
       <DataTable.Row key={service._id}>
         <DataTable.Cell>{service.service_id.name}</DataTable.Cell>
-        <DataTable.Cell>{service.quantity * service.service_id.price} VND</DataTable.Cell>
+        <DataTable.Cell><Text style={{color:"red",fontWeight:"bold"}}>$ {service.quantity * service.service_id.price}</Text></DataTable.Cell>
       </DataTable.Row>
     ));
   };
@@ -104,7 +104,7 @@ const HistoryDetail = (props) => {
       </DataTable>
       <View style={{flexDirection:"row", justifyContent:"space-between",padding:8}}>
           <Text>Tổng: </Text>
-          <Text>{bill && bill.total_cost} VND</Text>
+          <Text style={{color:"red",fontWeight:"bold"}}>$ {bill && bill.total_cost}</Text>
       </View>
       <View>
         {bill && !bill.confirm && (
@@ -133,7 +133,7 @@ const HistoryDetail = (props) => {
         onRequestClose={()=> setShowModal(false)}
       >
         <WebView 
-          source={{ uri: `${server}/api/pay/${id}/10`}} //chinh lai sau so 10
+          source={{ uri: `${server}/api/pay/${id}/${bill ? bill.total_cost: 0}`}} 
           onNavigationStateChange={data=> handleResponse(data)}
         />
       </Modal>

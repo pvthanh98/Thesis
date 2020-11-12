@@ -9,8 +9,8 @@ module.exports = {
             const { store_id } = req.params;
             const customer_id = req.user.id;
             let messages = await Message.find({ customer_id, store_id })
-            .populate('store_id')
-            .populate("customer_id")
+            .populate('store_id', 'name image phone')
+            .populate("customer_id", 'name image phone')
             .limit(10)
             .sort({timestamp:-1});
             messages.reverse();
@@ -21,29 +21,33 @@ module.exports = {
                         customer:{
                             id: messages[0].customer_id._id,
                             name:messages[0].customer_id.name,
+                            phone:messages[0].customer_id.phone,
                             image:messages[0].customer_id.image
                         },
                         store: {
                             id:  messages[0].store_id._id,
                             name:  messages[0].store_id.name,
+                            phone:  messages[0].store_id.phone,
                             image:  messages[0].store_id.image 
                         }
                     },
                     content: messages
                 })
             } else {
-                let store = await Store.findById(store_id, "name image");
-                let customer = await Customer.findById(customer_id, "name image");
+                let store = await Store.findById(store_id, "name image phone");
+                let customer = await Customer.findById(customer_id, "name image phone");
                 res.json({
                     info: {
                         customer: {
                             id: customer._id,
                             name: customer.name,
+                            phone: customer.phone,
                             image: customer.image
                         },
                         store: {
                             id: store._id,
                             name:store.name,
+                            phone: store.phone,
                             image:store.image
                         }
                     },
@@ -129,8 +133,8 @@ module.exports = {
             const { customer_id } = req.params;
             const store_id = req.user.id;
             let messages = await Message.find({ store_id, customer_id })
-            .populate('store_id')
-            .populate("customer_id")
+            .populate('store_id', "name image phone")
+            .populate("customer_id", "name image phone")
             .limit(10)
             .sort({timestamp:-1});
 
@@ -142,29 +146,33 @@ module.exports = {
                         customer:{
                             id: messages[0].customer_id._id,
                             name:messages[0].customer_id.name,
+                            phone:messages[0].customer_id.phone,
                             image:messages[0].customer_id.image
                         },
                         store: {
                             id:  messages[0].store_id._id,
                             name:  messages[0].store_id.name,
+                            phone:  messages[0].store_id.phone,
                             image:  messages[0].store_id.image 
                         }
                     },
                     content: messages
                 })
             } else {
-                let store = await Store.findById(store_id, "name image");
-                let customer = await Customer.findById(customer_id, "name image");
+                let store = await Store.findById(store_id, "name image phone");
+                let customer = await Customer.findById(customer_id, "name image phone");
                 res.json({
                     info: {
                         customer: {
                             id: customer._id,
                             name: customer.name,
+                            phone: customer.phone,
                             image: customer.image
                         },
                         store: {
                             id: store._id,
                             name:store.name,
+                            phone:store.phone,
                             image:store.image
                         }
                     },

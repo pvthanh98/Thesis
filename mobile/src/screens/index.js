@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import DrawerContent from '../navigator/DrawerContent';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -18,7 +18,7 @@ import RescuingScreen from './rescuing';
 import HistoryScreen from './history';
 import HistoryDetailScreen from './history_detail';
 import PaymentScreen from './paypal';
-
+import call from 'react-native-phone-call';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
@@ -29,6 +29,8 @@ socket.on('connect', async () => {
 });
 
 function StackComponent(props) {
+  const messages = useSelector(state => state.messages);
+  console.log(messages);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -87,9 +89,16 @@ function StackComponent(props) {
             backgroundColor: '#fff',
           },
           headerRight:()=>(
-            <TouchableOpacity style={{
-              marginRight:10
-            }}>
+            <TouchableOpacity 
+              style={{
+                marginRight:10
+              }}
+              onPress={()=> call({
+                  number: messages.info.store.phone,
+                  prompt: false
+                }).catch(console.error)
+              }
+            >
               <MaterialIcons name="call" size={22} />
             </TouchableOpacity>
           )

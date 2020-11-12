@@ -60,7 +60,7 @@ export default function (props) {
           {props.description}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          Giá tham khảo: <b style={{color:"red"}}>{props.price}</b> VND
+          Giá tham khảo: $ <b style={{color:"red"}}>{props.price}</b>
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
           <Rating

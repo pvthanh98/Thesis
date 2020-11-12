@@ -19,7 +19,7 @@ export default (props) => {
             {props.name}
             <Badge color="success" style={{fontSize:"0.8rem"}}> new</Badge>
           </Media>
-          <div>Giá tham khảo: <b style={{color:"red"}}>{props.price}</b> VND </div>
+          <div>Giá tham khảo: $ <b style={{color:"red"}}>{props.price}</b> </div>
           {props.description}
           <div style={{color:"#9a9a9a", fontStyle:"italic"}}>
             - by {props.store_name}
