@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Image, Modal, Alert} from 'react-native';
+import {View, StyleSheet, StatusBar, Modal, Alert} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import app_style from '../assets/styles/app_style';
 import Geolocation from '@react-native-community/geolocation';
@@ -9,12 +9,11 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
-import {Title, Text, IconButton, Colors} from 'react-native-paper';
-import {server} from '../constants/index';
+import {Title, Text} from 'react-native-paper';
 import GLoading from '../components/load';
 import RNPickerSelect from 'react-native-picker-select';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import StoreInfo from '../components/rescue/store_info';
 const defaultPosition = {
   lat: 40.712776,
   lng: -74.005974,
@@ -25,8 +24,6 @@ const Rescue = ({navigation}) => {
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const [desLat, setDesLat] = React.useState(null);
-  const [desLng, setDesLng] = React.useState(null);
   const [storeIndex, setStoreIndex] = React.useState(0);
   const [mapInit, setMapInit] = React.useState(true);
   const [coords, setCoords] = React.useState(null);
@@ -55,8 +52,8 @@ const Rescue = ({navigation}) => {
   };
 
   const ratingCompleted = (rating) => {
-    console.log("Rating is: " + rating)
-  }
+    console.log('Rating is: ' + rating);
+  };
 
   const requestRescue = () => {
     console.log(selectedStore.id, problemID);
@@ -74,7 +71,6 @@ const Rescue = ({navigation}) => {
   };
 
   const renderCarProblems = () => {
-    console.log('ruinning');
     return carProblems.map((e) => ({
       label: e.name,
       value: e._id,
@@ -122,6 +118,11 @@ const Rescue = ({navigation}) => {
             name: my_store[0].name,
             distance: my_store[0].distance.text,
             image: my_store[0].image,
+            rating: {
+              averate: my_store[0].rating.total,
+              total: parseInt(my_store[0].rating.one) + parseInt(my_store[0].rating.two) 
+              + parseInt(my_store[0].rating.three) +parseInt(my_store[0].rating.four) +  parseInt(my_store[0].rating.five)
+            }
           });
           getDirection(my_store[0].latitude, my_store[0].longtitude);
           setStoreIndex(0);
@@ -132,6 +133,11 @@ const Rescue = ({navigation}) => {
             name: my_store[storeIndex + 1].name,
             distance: my_store[storeIndex + 1].distance.text,
             image: my_store[storeIndex + 1].image,
+            rating: {
+              averate: my_store[storeIndex + 1].rating.total,
+              total: parseInt(my_store[storeIndex + 1].rating.one) + parseInt(my_store[storeIndex + 1].rating.two) 
+              + parseInt(my_store[storeIndex + 1].rating.three) +parseInt(my_store[storeIndex + 1].rating.four) +  parseInt(my_store[storeIndex + 1].rating.five)
+            }
           });
           getDirection(
             my_store[storeIndex + 1].latitude,
@@ -146,6 +152,11 @@ const Rescue = ({navigation}) => {
           name: my_store[0].name,
           distance: my_store[0].distance.text,
           image: my_store[0].image,
+          rating: {
+            averate: my_store[0].rating.total,
+            total: parseInt(my_store[0].rating.one) + parseInt(my_store[0].rating.two) 
+            + parseInt(my_store[0].rating.three) +parseInt(my_store[0].rating.four) +  parseInt(my_store[0].rating.five)
+          }
         });
         getDirection(my_store[0].latitude, my_store[0].longtitude);
         setStoreIndex(0);
@@ -157,6 +168,11 @@ const Rescue = ({navigation}) => {
             name: my_store[my_store.length - 1].name,
             distance: my_store[my_store.length - 1].distance.text,
             image: my_store[my_store.length - 1].image,
+            rating: {
+              averate: my_store[my_store.length - 1].rating.total,
+              total: parseInt(my_store[my_store.length - 1].rating.one) + parseInt(my_store[my_store.length - 1].rating.two) 
+              + parseInt(my_store[my_store.length - 1].rating.three) +parseInt(my_store[my_store.length - 1].rating.four) +  parseInt(my_store[my_store.length - 1].rating.five)
+            }
           });
           getDirection(
             my_store[my_store.length - 1].latitude,
@@ -170,6 +186,11 @@ const Rescue = ({navigation}) => {
             name: my_store[storeIndex - 1].name,
             distance: my_store[storeIndex - 1].distance.text,
             image: my_store[storeIndex - 1].image,
+            rating: {
+              averate: my_store[storeIndex - 1].rating.total,
+              total: parseInt(my_store[storeIndex - 1].rating.one) + parseInt(my_store[storeIndex - 1].rating.two) 
+              + parseInt(my_store[storeIndex - 1].rating.three) +parseInt(my_store[storeIndex - 1].rating.four) +  parseInt(my_store[storeIndex - 1].rating.five)
+            }
           });
           getDirection(
             my_store[storeIndex - 1].latitude,
@@ -228,7 +249,7 @@ const Rescue = ({navigation}) => {
         alert('cannot access to your location');
         setGlobalLoading(false);
       },
-      {enableHighAccuracy: false, timeout: 10000, maximumAge: 1000},
+      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000},
     );
   };
 
@@ -260,6 +281,11 @@ const Rescue = ({navigation}) => {
             description: store.description,
             distance: store.distance.text,
             image: store.image,
+            rating: {
+              averate: store.rating.total,
+              total: parseInt(store.rating.one) + parseInt(store.rating.two) 
+              + parseInt(store.rating.three) +parseInt(store.rating.four) +  parseInt(store.rating.five)
+            }
           });
           getDirection(store.latitude, store.longtitude);
         }}>
@@ -345,92 +371,13 @@ const Rescue = ({navigation}) => {
           </View>
         )}
         {selectedStore && (
-          <View style={styles.infoContainer}>
-            <View style={{flexDirection: 'row', paddingLeft: 8, paddingTop: 8}}>
-              <View style={{flex: 2}}>
-                <Title>{selectedStore.name}</Title>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  justifyContent: 'flex-end',
-                }}>
-                <IconButton
-                  icon="close"
-                  animated
-                  color="red"
-                  size={20}
-                  onPress={() => setSelectedStore(null)}
-                />
-              </View>
-            </View>
-            <View style={styles.store_infoContainer}>
-              <View style={styles.store_info}>
-                <View style={{flex: 2}}>
-                  <Text>{selectedStore.description}</Text>
-                  <Text style={{fontSize: 20}}>
-                    <Icon name="directions-car" color="green" size={15} />{' '}
-                    {selectedStore.distance}
-                  </Text>
-                  <View style={{flexDirection: 'row'}}>
-                    <Button
-                      style={{backgroundColor: '#1976d2'}}
-                      icon={() => <Icon name="email" color="#fff" size={20} />}
-                      mode="contained"
-                      onPress={() =>
-                        navigation.navigate('chat', {
-                          store_id: selectedStore.id,
-                          store_name: selectedStore.name,
-                        })
-                      }>
-                      Tin Nhắn
-                    </Button>
-                    <Button
-                      style={{marginLeft: 4, backgroundColor: '#dc004e'}}
-                      icon={() => <Icon color="#fff" name="info" size={20} />}
-                      mode="contained"
-                      onPress={() => setModalVisible(true)}>
-                      Cứu hộ
-                    </Button>
-                  </View>
-                </View>
-                <View style={styles.info_right}>
-                  <Image
-                    style={{width: 90, height: 90}}
-                    source={{
-                      uri: `${server}/images/${selectedStore.image}`,
-                    }}
-                  />
-                </View>
-              </View>
-              <View style={styles.ratingContainer}>
-                <Rating
-                  startingValue={1}
-                  readonly
-                  ratingCount={5}
-                  imageSize={30}
-                  onFinishRating={ratingCompleted}
-                />
-              </View>
-              <View style={styles.btnContainer}>
-                <IconButton
-                  onPress={() => getAllLocationAndSort(-1)}
-                  icon={() => <Icon name="arrow-back" size={24} />}
-                  size={20}
-                  color={Colors.red500}
-                />
-                <IconButton
-                  onPress={() => getAllLocationAndSort(1)}
-                  color="#0f53bf"
-                  icon={() => (
-                    <Icon name="arrow-forward" color="red" size={24} />
-                  )}
-                  size={20}
-                />
-              </View>
-            </View>
-          </View>
+          <StoreInfo
+            selectedStore={selectedStore}
+            setSelectedStore={setSelectedStore}
+            getAllLocationAndSort={getAllLocationAndSort}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+          />
         )}
       </View>
       {/* modal */}

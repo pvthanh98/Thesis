@@ -17,6 +17,7 @@ import ChatList from './chat_list';
 import RescuingScreen from './rescuing';
 import HistoryScreen from './history';
 import HistoryDetailScreen from './history_detail';
+import StoreDetail from './store_detail';
 import PaymentScreen from './paypal';
 import call from 'react-native-phone-call';
 const Drawer = createDrawerNavigator();
@@ -127,6 +128,15 @@ function StackComponent(props) {
         component={PaymentScreen}
         options={{
           title: 'Payment',
+          headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="store_detail"
+        component={StoreDetail} 
+        options={{
+          title: 'Cty ABC',
+          headerShown:false,
           headerTintColor: '#fff',
         }}
       />

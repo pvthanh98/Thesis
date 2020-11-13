@@ -1,0 +1,22 @@
+import React from 'react';
+import {View} from 'react-native';
+export default (props) => {
+  const width = props.width ? props.width+"%" : "0%";
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: 12,
+        backgroundColor: '#3b3b3b',
+        borderRadius: 12,
+        ...props.style
+      }}>
+      <View
+        style={{
+          height: '100%',
+          backgroundColor: props.color ? props.color: 'blue',
+          width: width,
+        }}></View>
+    </View>
+  );
+};
