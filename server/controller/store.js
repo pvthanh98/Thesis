@@ -129,5 +129,13 @@ module.exports = {
             res.sendStatus(400);
             throw err;
         })
+    },
+    updateRating: (req, res)=> {
+        const {store_id,rating} = req.body;
+        Store.findByIdAndUpdate(store_id,{
+            rating
+        })
+        .then(()=>res.send("ok"))
+        .catch(err=>res.sendStatus(400));
     }
 }

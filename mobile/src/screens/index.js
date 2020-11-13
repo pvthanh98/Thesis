@@ -18,6 +18,7 @@ import RescuingScreen from './rescuing';
 import HistoryScreen from './history';
 import HistoryDetailScreen from './history_detail';
 import StoreDetail from './store_detail';
+import RatingScreen from './rating';
 import PaymentScreen from './paypal';
 import call from 'react-native-phone-call';
 const Drawer = createDrawerNavigator();
@@ -138,6 +139,16 @@ function StackComponent(props) {
           title: 'Cty ABC',
           headerShown:false,
           headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="rating"
+        component={RatingScreen} 
+        options={{
+          headerTintColor: '#fff',
+          headerStyle:{
+            backgroundColor:"#202125"
+          }
         }}
       />
 

@@ -7,7 +7,7 @@ export default (props) => {
       style={{
         width: '100%',
         height: 12,
-        backgroundColor: '#3b3b3b',
+        backgroundColor: '#d3e3d7',
         borderRadius: 12,
         ...props.style
       }}>

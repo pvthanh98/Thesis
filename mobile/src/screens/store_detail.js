@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, StatusBar} from 'react-native';
 import {Avatar, Title, Button} from 'react-native-paper';
 import {Rating} from 'react-native-ratings';
 import Progress from '../components/progress/progress';
@@ -7,10 +7,13 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CommentItem from '../components/store_detail/comment_item';
 import axios from '../service/axios';
 import {server} from '../constants/index';
+import SplashScreen from '../components/load';
 const StoreDetail = (props) => {
   const [store, setStore] = React.useState(null);
   const [totalRating, setTotalRating] = React.useState(null);
   const [ratingPercentage, setRatingPercentage] = React.useState(null);
+  const [comments,setComments] = React.useState([]);
+  console.log(store.rating);
   React.useEffect(()=>{ 
     const {store_id} = props.route.params
     axios.get(`/api/store/id/${store_id}`)
@@ -38,14 +41,25 @@ const StoreDetail = (props) => {
         setTotalRating(total);
     })   
     .catch(err=> console.log(err))
+
+    axios.get('/api/rating/store_id/'+store_id)
+    .then(res=>setComments(res.data))
+    .catch(err=>console.log(err))
   },[])
 
   const caculateRating  = (one,two,three,four,five) => {
     return parseInt(one)+parseInt(two)+ parseInt(three)+parseInt(four)+ parseInt(five)
   }
 
+  const renderComment = () =>{
+    return comments.map(e=>{
+      return <CommentItem key={e._id} {...e} />
+    })
+  }
+  if(!store) return <SplashScreen/>
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <View style={styles.container}>
         <Avatar.Image
           size={100}
@@ -56,10 +70,25 @@ const StoreDetail = (props) => {
         </Title>
         <Text>{store && store.description}</Text>
         <View style={styles.basisInfo}>
-          <Button mode="contained" color="blue">
+          <Button 
+            mode="contained" 
+            color="blue"
+            onPress={()=>props.navigation.navigate('rating',{
+              store_id:store._id,
+              store_name:store.name
+            })}
+          >
             GỬI ĐÁNH GIÁ
           </Button>
-          <Button mode="contained" style={{marginLeft: 8}} color="#e0e0e0">
+          <Button 
+            mode="contained" 
+            style={{marginLeft: 8}} 
+            color="#e0e0e0"
+            onPress={()=>props.navigation.navigate('chat',{
+              store_id:store._id,
+              store_name:store.name
+            })}
+          >
             NHẮN TIN
           </Button>
         </View>
@@ -78,7 +107,7 @@ const StoreDetail = (props) => {
         <View style={styles.ratingDetail}>
           <View style={styles.totalRating}>
             <Text style={{fontSize: 40}}>{store && (parseInt(store.rating.total))}</Text>
-            <Rating startingValue={4.5} ratingCount={5} imageSize={20} />
+            <Rating startingValue={store.rating.total} ratingCount={5} imageSize={20} />
             <Text >{totalRating && totalRating} đánh giá</Text>
           </View>
           <View style={{width: '70%'}}>
@@ -124,12 +153,7 @@ const StoreDetail = (props) => {
             </View>
           </View>
         </View>
-        <CommentItem />
-        <CommentItem />
-        <CommentItem />
-        <CommentItem />
-        <CommentItem />
-        <CommentItem />
+        {renderComment()}
       </View>
     </ScrollView>
   );

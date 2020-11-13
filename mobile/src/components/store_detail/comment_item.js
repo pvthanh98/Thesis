@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Avatar, Title} from 'react-native-paper';
 import {Rating} from 'react-native-ratings';
+import formatDate from '../../service/formatDate'
 export default (props) => {
   return (
     <View style={styles.commentContainer}>
@@ -10,16 +11,15 @@ export default (props) => {
           size={30}
           source={require('../../assets/images/profile.png')}
         />
-        <Title style={{marginLeft: 8}}>Thanh Phan</Title>
+        <Title style={{marginLeft: 8}}>{props.customer_id.name}</Title>
       </View>
       <View style={styles.commentBody}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Rating startingValue={3} ratingCount={5} imageSize={15} />
-          <Text> - 12/10/1998</Text>
+          <Rating startingValue={props.rating} ratingCount={5} imageSize={15} />
+          <Text> - {formatDate(props.timestamp)}</Text>
         </View>
         <Text style={{marginTop: 4}}>
-          Tôi không thể tin được thật tuyệt vời lần đầu tôi chơi chưa hiểu cách
-          chơi nhưng sau khi nó hướng dẫn xong là có thể chơi thoải mái
+          {props.content}
         </Text>
       </View>
     </View>
