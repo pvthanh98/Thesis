@@ -40,7 +40,6 @@ export default (props) => {
       setId(id);
       setImage(image);
       setAddress(address);
-      console.log(address);
     } catch (exception) {
       console.log(exception);
     }

@@ -17,7 +17,7 @@ export default ({route, navigation}) => {
     const dispatch = useDispatch();
     const [msgInput, setMsgInput] = React.useState("")
     useEffect(()=>{
-      navigation.setOptions({ title: store_name });
+      if(store_name) navigation.setOptions({ title: store_name });
       loadMessages(store_id);  
       return () => {
         navigation.setOptions({ title: ""});
@@ -31,6 +31,7 @@ export default ({route, navigation}) => {
     const loadMessages = (store_id) => {
         axios('/api/messages/customer_to/'+store_id)
         .then(({data})=>{
+            navigation.setOptions({ title: data.info.store.name });
             dispatch({type:"UPDATE_MESSAGES", messages: data})
         })
     }

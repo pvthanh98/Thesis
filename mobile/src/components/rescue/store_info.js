@@ -88,7 +88,8 @@ export default (props) => {
             mode="contained"
             onPress={()=>props.navigation.navigate('store_detail',{
               distance:props.selectedStore.distance, 
-              store_id: props.selectedStore.id
+              store_id: props.selectedStore.id,
+              store_name: props.selectedStore.name
             })}
         >
               Thông tin cửa hàng

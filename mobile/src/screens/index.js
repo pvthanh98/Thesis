@@ -20,6 +20,8 @@ import HistoryDetailScreen from './history_detail';
 import StoreDetail from './store_detail/index';
 import RatingScreen from './rating';
 import PaymentScreen from './paypal';
+import ServiceDetail from './store_detail/service_detail';
+import ServiceRating from './store_detail/service_rating';
 import call from 'react-native-phone-call';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -32,7 +34,6 @@ socket.on('connect', async () => {
 
 function StackComponent(props) {
   const messages = useSelector(state => state.messages);
-  console.log(messages);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -151,7 +152,22 @@ function StackComponent(props) {
           }
         }}
       />
-
+      <Stack.Screen
+        name="service_detail"
+        component={ServiceDetail} 
+        options={{
+          headerTintColor: '#fff',
+          title:"Service"
+        }}
+      />
+      <Stack.Screen
+        name="service_rating"
+        component={ServiceRating} 
+        options={{
+          headerTintColor: '#fff',
+          title:"Rating"
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -188,7 +204,8 @@ const Index = () => {
     <Drawer.Navigator
       initialRouteName="Home"
       overlayColor="transparent"
-      drawerContent={(props) => <DrawerContent {...props} />}>
+      drawerContent={(props) => <DrawerContent {...props} />}
+    >
       <Drawer.Screen name="Home" component={StackComponent} />
     </Drawer.Navigator>
   );

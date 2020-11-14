@@ -359,7 +359,7 @@ const Rescue = ({navigation}) => {
             if (mapInit) markerRef.current.showCallout();
             setMapInit(false);
           }}>
-          <Marker
+          {currentLocation && <Marker
             ref={markerRef}
             coordinate={{
               latitude: currentLocation
@@ -375,7 +375,7 @@ const Rescue = ({navigation}) => {
                 <Text style={styles.title}>Vị trí của bạn?</Text>
               </View>
             </Callout>
-          </Marker>
+          </Marker>}
           {renderStore()}
           {coords && (
             <MapView.Polyline
