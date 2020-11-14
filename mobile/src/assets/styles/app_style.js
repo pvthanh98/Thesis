@@ -87,11 +87,11 @@ export default function app_style() {
     topBox: {
       position: 'absolute',
       top: 0,
-      backgroundColor: '#ddd',
+      backgroundColor: '#fff',
       width: '100%',
-      height: 50,
       justifyContent: 'center',
       alignItems: 'center',
+      padding:8
     },
     store_infoContainer: {
       width: '100%',

@@ -1,5 +1,12 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Modal, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Modal,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import app_style from '../assets/styles/app_style';
 import Geolocation from '@react-native-community/geolocation';
@@ -10,13 +17,12 @@ import {Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
 import {Title, Text} from 'react-native-paper';
-import GLoading from '../components/load';
 import RNPickerSelect from 'react-native-picker-select';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import StoreInfo from '../components/rescue/store_info';
 const defaultPosition = {
-  lat: 40.712776,
-  lng: -74.005974,
+  lat: 10.860281,
+  lng: 106.650232
 };
 const styles = StyleSheet.create(app_style());
 
@@ -37,6 +43,12 @@ const Rescue = ({navigation}) => {
   const [problemID, setProblemID] = React.useState('');
   const [carProblems, setCarProblems] = React.useState([]);
 
+  const [loadingStore, setLoadingStore] = React.useState(false);
+  const [updatingDistance, setUpdatingDistance] = React.useState(false);
+  const [updatingDistanceError, setUpdatingDistanceError] = React.useState(
+    false,
+  );
+
   useEffect(() => {
     getCurrentLocation();
     loadCarProblems();
@@ -51,12 +63,8 @@ const Rescue = ({navigation}) => {
       .catch((err) => console.log(err));
   };
 
-  const ratingCompleted = (rating) => {
-    console.log('Rating is: ' + rating);
-  };
 
   const requestRescue = () => {
-    console.log(selectedStore.id, problemID);
     if (problemID != '') {
       axios
         .post('/api/rescue', {store_id: selectedStore.id, problem: problemID})
@@ -79,7 +87,7 @@ const Rescue = ({navigation}) => {
 
   const updateStoreDistance = async (currentLatLng, my_store) => {
     try {
-      console.log('start loading stores...');
+      setUpdatingDistance(true);
       if (currentLatLng) {
         // haven't update store distances
         console.log('update distance...');
@@ -92,15 +100,20 @@ const Rescue = ({navigation}) => {
           my_store[i].distance = {...resp.data.routes[0].legs[0].distance};
         }
         my_store.sort((a, b) => a.distance.value - b.distance.value);
-        dispatch({type: 'GET_STORES', stores: my_store});
+        setUpdatingDistanceError(false);
       } else {
+        setUpdatingDistanceError(true);
         for (let i = 0; i < my_store.length; i++) {
-          my_store[i].distance = null;
+          my_store[i].distance = {};
+          my_store[i].distance.text = 'không thể tải khoảng cách';
         }
+       
       }
       dispatch({type: 'GET_STORES', stores: my_store});
+      setUpdatingDistance(false);
     } catch (exception) {
       console.log(exception);
+      setUpdatingDistance(false);
     }
   };
 
@@ -120,9 +133,13 @@ const Rescue = ({navigation}) => {
             image: my_store[0].image,
             rating: {
               averate: my_store[0].rating.total,
-              total: parseInt(my_store[0].rating.one) + parseInt(my_store[0].rating.two) 
-              + parseInt(my_store[0].rating.three) +parseInt(my_store[0].rating.four) +  parseInt(my_store[0].rating.five)
-            }
+              total:
+                parseInt(my_store[0].rating.one) +
+                parseInt(my_store[0].rating.two) +
+                parseInt(my_store[0].rating.three) +
+                parseInt(my_store[0].rating.four) +
+                parseInt(my_store[0].rating.five),
+            },
           });
           getDirection(my_store[0].latitude, my_store[0].longtitude);
           setStoreIndex(0);
@@ -135,9 +152,13 @@ const Rescue = ({navigation}) => {
             image: my_store[storeIndex + 1].image,
             rating: {
               averate: my_store[storeIndex + 1].rating.total,
-              total: parseInt(my_store[storeIndex + 1].rating.one) + parseInt(my_store[storeIndex + 1].rating.two) 
-              + parseInt(my_store[storeIndex + 1].rating.three) +parseInt(my_store[storeIndex + 1].rating.four) +  parseInt(my_store[storeIndex + 1].rating.five)
-            }
+              total:
+                parseInt(my_store[storeIndex + 1].rating.one) +
+                parseInt(my_store[storeIndex + 1].rating.two) +
+                parseInt(my_store[storeIndex + 1].rating.three) +
+                parseInt(my_store[storeIndex + 1].rating.four) +
+                parseInt(my_store[storeIndex + 1].rating.five),
+            },
           });
           getDirection(
             my_store[storeIndex + 1].latitude,
@@ -154,9 +175,13 @@ const Rescue = ({navigation}) => {
           image: my_store[0].image,
           rating: {
             averate: my_store[0].rating.total,
-            total: parseInt(my_store[0].rating.one) + parseInt(my_store[0].rating.two) 
-            + parseInt(my_store[0].rating.three) +parseInt(my_store[0].rating.four) +  parseInt(my_store[0].rating.five)
-          }
+            total:
+              parseInt(my_store[0].rating.one) +
+              parseInt(my_store[0].rating.two) +
+              parseInt(my_store[0].rating.three) +
+              parseInt(my_store[0].rating.four) +
+              parseInt(my_store[0].rating.five),
+          },
         });
         getDirection(my_store[0].latitude, my_store[0].longtitude);
         setStoreIndex(0);
@@ -170,9 +195,13 @@ const Rescue = ({navigation}) => {
             image: my_store[my_store.length - 1].image,
             rating: {
               averate: my_store[my_store.length - 1].rating.total,
-              total: parseInt(my_store[my_store.length - 1].rating.one) + parseInt(my_store[my_store.length - 1].rating.two) 
-              + parseInt(my_store[my_store.length - 1].rating.three) +parseInt(my_store[my_store.length - 1].rating.four) +  parseInt(my_store[my_store.length - 1].rating.five)
-            }
+              total:
+                parseInt(my_store[my_store.length - 1].rating.one) +
+                parseInt(my_store[my_store.length - 1].rating.two) +
+                parseInt(my_store[my_store.length - 1].rating.three) +
+                parseInt(my_store[my_store.length - 1].rating.four) +
+                parseInt(my_store[my_store.length - 1].rating.five),
+            },
           });
           getDirection(
             my_store[my_store.length - 1].latitude,
@@ -188,9 +217,13 @@ const Rescue = ({navigation}) => {
             image: my_store[storeIndex - 1].image,
             rating: {
               averate: my_store[storeIndex - 1].rating.total,
-              total: parseInt(my_store[storeIndex - 1].rating.one) + parseInt(my_store[storeIndex - 1].rating.two) 
-              + parseInt(my_store[storeIndex - 1].rating.three) +parseInt(my_store[storeIndex - 1].rating.four) +  parseInt(my_store[storeIndex - 1].rating.five)
-            }
+              total:
+                parseInt(my_store[storeIndex - 1].rating.one) +
+                parseInt(my_store[storeIndex - 1].rating.two) +
+                parseInt(my_store[storeIndex - 1].rating.three) +
+                parseInt(my_store[storeIndex - 1].rating.four) +
+                parseInt(my_store[storeIndex - 1].rating.five),
+            },
           });
           getDirection(
             my_store[storeIndex - 1].latitude,
@@ -254,14 +287,16 @@ const Rescue = ({navigation}) => {
   };
 
   const loadStore = (currentLatLng) => {
-    console.log('start loading stores...');
+    setLoadingStore(true);
     axios
       .get('/api/store')
       .then((res) => {
         updateStoreDistance(currentLatLng, res.data);
+        setLoadingStore(false);
       })
       .catch((err) => {
         console.log(err);
+        setLoadingStore(false);
         alert('Failed to load stores around you');
       });
   };
@@ -283,9 +318,13 @@ const Rescue = ({navigation}) => {
             image: store.image,
             rating: {
               averate: store.rating.total,
-              total: parseInt(store.rating.one) + parseInt(store.rating.two) 
-              + parseInt(store.rating.three) +parseInt(store.rating.four) +  parseInt(store.rating.five)
-            }
+              total:
+                parseInt(store.rating.one) +
+                parseInt(store.rating.two) +
+                parseInt(store.rating.three) +
+                parseInt(store.rating.four) +
+                parseInt(store.rating.five),
+            },
           });
           getDirection(store.latitude, store.longtitude);
         }}>
@@ -298,7 +337,6 @@ const Rescue = ({navigation}) => {
       </Marker>
     ));
 
-  if (globalLoading) return <GLoading />;
   return (
     <View style={{flex: 1}}>
       <StatusBar backgroundColor="#295a59" barStyle="light-content" />
@@ -347,17 +385,33 @@ const Rescue = ({navigation}) => {
             />
           )}
         </MapView>
-        {error && (
+        {(error || updatingDistanceError) && (
           <View style={styles.topBox}>
-            <Text style={{color: 'red'}}>
-              Có lỗi, không thể tải vị trí của bạn
-            </Text>
+            {error && (
+              <Text style={{color: 'red'}}>
+                Có lỗi, không thể tải vị trí của bạn
+              </Text>
+            )}
+            {updatingDistanceError && (
+              <Text style={{color: 'red'}}>
+                Có lỗi, không thể cập nhật khoảng cách
+              </Text>
+            )}
             <TouchableOpacity onPress={getCurrentLocation}>
               <Text style={{textDecorationLine: 'underline'}}>Thử lại?</Text>
             </TouchableOpacity>
           </View>
         )}
-        {!selectedStore && (
+
+        {(loadingStore || updatingDistance || globalLoading) && (
+          <View style={styles.topBox}>
+            <ActivityIndicator color="red" />
+            {globalLoading && <Text>Tìm vị trí của bạn trên bản đồ</Text>}
+            {loadingStore && <Text>Đang tìm kiếm cửa hàng gần bạn</Text>}
+            {updatingDistance && <Text>Đang cập nhật khoảng cách</Text>}
+          </View>
+        )}
+        {(!selectedStore && stores.length>0) && (
           <View style={styles.barContainer}>
             <Button
               icon={() => (

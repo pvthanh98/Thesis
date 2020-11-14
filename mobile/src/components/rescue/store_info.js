@@ -31,8 +31,8 @@ export default (props) => {
         <View style={styles.store_info}>
           <View style={{flex: 2}}>
             <Text>{props.selectedStore.description}</Text>
-            <Text style={{fontSize: 20}}>
-              <Icon name="directions-car" color="green" size={15} />{' '}
+            <Text style={{fontSize: 20, alignItems:"center"}}>
+              <Icon name="directions-car" color="green" size={20} />{' '}
               {props.selectedStore.distance}
             </Text>
             <View style={{flexDirection: 'row'}}>

@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Avatar, Title} from 'react-native-paper';
 import {Rating} from 'react-native-ratings';
-import formatDate from '../../service/formatDate'
+import formatDate from '../../service/formatDate';
 export default (props) => {
   return (
     <View style={styles.commentContainer}>
@@ -68,6 +68,11 @@ const styles = StyleSheet.create({
     },
     commentBody:{
         marginTop:8,
-        alignItems:"flex-start"
+        alignItems:"flex-start",
+        borderColor:"#ddd",
+        borderWidth:1,
+        padding:8,
+        borderRadius:12,
+        width:"100%"
     }
   });

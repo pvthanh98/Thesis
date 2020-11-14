@@ -16,6 +16,7 @@ export default (props) => {
           height: '100%',
           backgroundColor: props.color ? props.color: 'blue',
           width: width,
+          borderRadius: 12,
         }}></View>
     </View>
   );

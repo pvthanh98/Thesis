@@ -13,7 +13,6 @@ const StoreDetail = (props) => {
   const [totalRating, setTotalRating] = React.useState(null);
   const [ratingPercentage, setRatingPercentage] = React.useState(null);
   const [comments,setComments] = React.useState([]);
-  console.log(store.rating);
   React.useEffect(()=>{ 
     const {store_id} = props.route.params
     axios.get(`/api/store/id/${store_id}`)
@@ -92,6 +91,9 @@ const StoreDetail = (props) => {
             NHẮN TIN
           </Button>
         </View>
+        <View style={{width:"100%", marginTop:16}}>
+          <Title>Thông tin</Title>
+        </View>
         <View style={styles.basisInfo_2}>
           <Text style={styles.text}>
             <MaterialIcons name="location-on" size={24} color="#0d5e18" /> Địa
@@ -104,10 +106,13 @@ const StoreDetail = (props) => {
             Cách bạn: {props.route.params.distance}
           </Text>
         </View>
+        <View style={{width:"100%", marginTop:16}}>
+          <Title>Đánh giá</Title>
+        </View>
         <View style={styles.ratingDetail}>
           <View style={styles.totalRating}>
             <Text style={{fontSize: 40}}>{store && (parseInt(store.rating.total))}</Text>
-            <Rating startingValue={store.rating.total} ratingCount={5} imageSize={20} />
+            <Rating startingValue={store?store.rating.total: 1} ratingCount={5} imageSize={20} />
             <Text >{totalRating && totalRating} đánh giá</Text>
           </View>
           <View style={{width: '70%'}}>
@@ -152,6 +157,9 @@ const StoreDetail = (props) => {
               />
             </View>
           </View>
+        </View>
+        <View style={{width:"100%", marginTop:16}}>
+          <Title>Ý kiến Khách Hàng</Title>
         </View>
         {renderComment()}
       </View>
