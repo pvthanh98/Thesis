@@ -2,12 +2,12 @@ import React from 'react';
 import {View, Text, StyleSheet, ScrollView, StatusBar} from 'react-native';
 import {Avatar, Title, Button} from 'react-native-paper';
 import {Rating} from 'react-native-ratings';
-import Progress from '../components/progress/progress';
+import Progress from '../../components/progress/progress';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import CommentItem from '../components/store_detail/comment_item';
-import axios from '../service/axios';
-import {server} from '../constants/index';
-import SplashScreen from '../components/load';
+import CommentItem from '../../components/store_detail/comment_item';
+import axios from '../../service/axios';
+import {server} from '../../constants/index';
+import SplashScreen from '../../components/load';
 const StoreDetail = (props) => {
   const [store, setStore] = React.useState(null);
   const [totalRating, setTotalRating] = React.useState(null);
@@ -58,7 +58,7 @@ const StoreDetail = (props) => {
   if(!store) return <SplashScreen/>
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
-      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <StatusBar backgroundColor="#295a59" barStyle="light-content" />
       <View style={styles.container}>
         <Avatar.Image
           size={100}

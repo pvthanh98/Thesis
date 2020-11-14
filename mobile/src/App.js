@@ -55,8 +55,6 @@ const App = ({navigation}) => {
               <Stack.Screen name="store_index" component={StoreIndexScreen} options={{headerShown:false}} />
             </Stack.Navigator>)
           )}
-           
-        
       </NavigationContainer>
   );
 };

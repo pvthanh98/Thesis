@@ -17,7 +17,7 @@ import ChatList from './chat_list';
 import RescuingScreen from './rescuing';
 import HistoryScreen from './history';
 import HistoryDetailScreen from './history_detail';
-import StoreDetail from './store_detail';
+import StoreDetail from './store_detail/index';
 import RatingScreen from './rating';
 import PaymentScreen from './paypal';
 import call from 'react-native-phone-call';
