@@ -110,5 +110,22 @@ module.exports = {
             total_page: -1
         })
 
+    },
+    getRescueMobile: (req, res) => {
+        Rescue.find({
+            store_id: req.user.id,
+            is_complete: false
+        })
+        .populate("customer_id", "name latitude longtitude phone address image")
+        .populate("problem")
+        .then(rescuelist=> {
+            res.json({
+                rescuelist
+            });
+        })
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        })    
     }
 }

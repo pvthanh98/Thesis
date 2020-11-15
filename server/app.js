@@ -60,7 +60,7 @@ app.post(
 	upload.single("file_store"),
 	storeCtl.modifyStore
 );
-app.post(
+app.get(
 	"/api/store/me",
 	passport.authenticate("jwt", { session: false }),
 	storeCtl.getStoreInfo
@@ -216,6 +216,9 @@ app.get('/api/rescue/page/:page', passport.authenticate("jwt", { session: false 
 app.put('/api/rescue', passport.authenticate("jwt", { session: false }), RescueCtl.modifyRescue);
 app.get('/api/rescue/search/name/:name', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescue);
 app.get('/api/rescue/search/date/:date', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescueByDate);
+
+//RESCUE FOR MOBILE
+app.get('/api/rescue/mobile', passport.authenticate("jwt", { session: false }), RescueCtl.getRescueMobile);
 
 // PROBLEM
 

@@ -30,7 +30,6 @@ const styles = StyleSheet.create(app_style());
 const Rescue = ({navigation}) => {
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
-  const [error, setError] = React.useState(null);
   const [storeIndex, setStoreIndex] = React.useState(0);
   const [mapInit, setMapInit] = React.useState(true);
   const [coords, setCoords] = React.useState(null);
@@ -46,9 +45,10 @@ const Rescue = ({navigation}) => {
 
   const [loadingStore, setLoadingStore] = React.useState(false);
   const [updatingDistance, setUpdatingDistance] = React.useState(false);
-  const [updatingDistanceError, setUpdatingDistanceError] = React.useState(
-    false,
-  );
+  const [updatingDistanceError, setUpdatingDistanceError] = React.useState(false);
+  const [loadStoreError, setLoadStoreError] = React.useState(null);
+
+  const [error, setError] =  React.useState(false);
 
   useEffect(() => {
     getCurrentLocation();
@@ -280,10 +280,9 @@ const Rescue = ({navigation}) => {
         setError(true);
         loadStore(null);
         if (error) setError(error);
-        alert('cannot access to your location');
         setGlobalLoading(false);
       },
-      {enableHighAccuracy: false, timeout: 10000, maximumAge: 1000},
+      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000},
     );
   };
 
@@ -294,11 +293,12 @@ const Rescue = ({navigation}) => {
       .then((res) => {
         updateStoreDistance(currentLatLng, res.data);
         setLoadingStore(false);
+        setLoadStoreError(false);
       })
       .catch((err) => {
         console.log(err);
         setLoadingStore(false);
-        alert('Failed to load stores around you');
+        setLoadStoreError(true);
       });
   };
 
@@ -370,7 +370,8 @@ const Rescue = ({navigation}) => {
                 ? currentLocation.lng
                 : defaultPosition.lng,
             }}
-            image={require('../assets/images/test.png')}>
+            image={require('../assets/images/test.png')}
+          >
             <Callout tooltip>
               <View style={styles.calloutContainer}>
                 <Text style={styles.title}>Vị trí của bạn?</Text>
@@ -386,11 +387,16 @@ const Rescue = ({navigation}) => {
             />
           )}
         </MapView>
-        {(error || updatingDistanceError) && (
+        {(error || updatingDistanceError || loadStoreError) && (
           <View style={styles.topBox}>
             {error && (
               <Text style={{color: 'red'}}>
                 Có lỗi, không thể tải vị trí của bạn
+              </Text>
+            )}
+            {loadStoreError && (
+              <Text style={{color: 'red'}}>
+                Có lỗi, không thể tải các cửa hàng gần bạn
               </Text>
             )}
             {updatingDistanceError && (

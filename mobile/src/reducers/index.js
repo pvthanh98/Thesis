@@ -5,10 +5,13 @@ import store_in_area from './store_in_area';
 import messages from './messages';
 import message_list from './message_list';
 import customer_bill from './customer_bill';
+//admin side
+import mystore from './admin_side/mystore_info';
 export default combineReducers({
     auth,
     store_in_area,
     messages,
     message_list,
-    customer_bill
+    customer_bill,
+    mystore
 });

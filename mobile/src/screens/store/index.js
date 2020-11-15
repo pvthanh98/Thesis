@@ -1,31 +1,54 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-export default (props) => {
-    React.useEffect(()=>{
-        removeToken();
-    })
-    const removeToken = async () => {
-        await AsyncStorage.removeItem("admin_token")
-    }
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import HomeScreen from './home';
+import ProfileScreen from './profile';
+import MessageListScreen from './message_list';
+import SettingScreen from './settings';
+const Tab = createMaterialBottomTabNavigator();
+export default () => {
     return (
-        <View style={styles.container}>
-            <Text>THANH PHAN THESIS</Text>
-        </View>
+        <Tab.Navigator
+            barStyle={{
+                backgroundColor:"#00786a"
+            }}
+        >
+            <Tab.Screen 
+                name="home"
+                component={HomeScreen} 
+                options={{
+                    tabBarIcon: ({color})=><MaterialIcons name="home" size={24} color={color} />,
+                    title:"Home"
+                }}
+            />
+            <Tab.Screen 
+                name="profile" 
+                component={ProfileScreen} 
+                options={{
+                    title:"Profile",
+                    tabBarIcon: ({color})=><MaterialIcons name="person" size={24} color={color} />
+                }}
+            />
+            <Tab.Screen 
+                name="message" 
+                component={MessageListScreen} 
+                options={{
+                    title:"Message",
+                    tabBarIcon: ({color})=><MaterialIcons name="message" size={24} color={color} />
+                }}
+            />
+             <Tab.Screen 
+                name="settings" 
+                component={SettingScreen} 
+                options={{
+                    title:"Settings",
+                    tabBarIcon: ({color})=><MaterialIcons name="settings" size={24} color={color} />
+                }}
+            />
+            
+        </Tab.Navigator>
     )
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex:1,
-        justifyContent:"center",
-        alignItems:"center"
-    }
-})
-
-
-
 
 
 

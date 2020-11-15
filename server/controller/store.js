@@ -66,7 +66,7 @@ module.exports = {
         })
     },
     getStoreInfo : (req, res) =>{
-        const { id } = req.body;
+        const { id } = req.user;
         if(id) {
             Store.findById(id, "email name description latitude longtitude rating address image phone")
             .then(store =>{
