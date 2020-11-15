@@ -356,10 +356,10 @@ const Rescue = ({navigation}) => {
             longitudeDelta: 0.0121,
           }}
           onRegionChangeComplete={() => {
-            if (mapInit) markerRef.current.showCallout();
+            if (mapInit && markerRef.current) markerRef.current.showCallout();
             setMapInit(false);
           }}>
-          {currentLocation && <Marker
+          {<Marker
             ref={markerRef}
             coordinate={{
               latitude: currentLocation

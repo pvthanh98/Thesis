@@ -6,9 +6,22 @@ import axios from '../../service/axios';
 export default ({route, navigation}) => {
   const [rating, setRating] = React.useState(4);
   const [comment, setComment] = React.useState('');
+  const {service_id} = route.params;
   React.useEffect(() => {
-   
+    
   });
+  const submit = () => {
+    axios.post("/api/service/rating",{
+      service_id,
+      content:comment,
+      rating
+    })
+    .then(()=>{
+      alert("Cám ơn bạn đã đóng góp ý kiến");
+      navigation.goBack();
+    })
+    .catch(err=>console.log(err));
+  }
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#202125" barStyle="light-content" />
@@ -27,7 +40,7 @@ export default ({route, navigation}) => {
         </View>
         <View style={styles.comment}>
           <TextInput
-            placeholder="Để lại nhận xét của bạn"
+            placeholder="Để lại nhận xét (không bắt buộc)"
             value={comment}
             onChangeText={(text) => setComment(text)}
             style={{
@@ -41,7 +54,7 @@ export default ({route, navigation}) => {
           />
         </View>
       </View>
-      <Button color="#02a173" mode="contained">
+      <Button color="#02a173" mode="contained" onPress={submit}>
         Đăng
       </Button>
     </View>

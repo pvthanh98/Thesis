@@ -44,6 +44,7 @@ const BillCtl = require("./controller/bill");
 const RescueCtl = require("./controller/rescue");
 const ProblemCtl = require("./controller/problem");
 const commentCtl = require("./controller/comment");
+const serviceCommentCtl = require("./controller/service_comment")
 
 app.get("/api/welcome", (req, res) => res.send("welcome"));
 //login
@@ -226,6 +227,9 @@ app.put('/api/store/rating',storeCtl.updateRating)
 //COMMENT ON STORE (RATING)
 app.post('/api/rating', user_auth, commentCtl.postComment);
 app.get('/api/rating/store_id/:store_id', commentCtl.getComment);
+//COMMENT ON SERVICE (RATING)
+app.post('/api/service/rating', user_auth, serviceCommentCtl.postComment);
+app.get('/api/service/rating/service_id/:service_id', serviceCommentCtl.getComment);
 
 io.on("connection", (socket) => {
 	//authenticate for socket io

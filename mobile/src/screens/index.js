@@ -17,11 +17,13 @@ import ChatList from './chat_list';
 import RescuingScreen from './rescuing';
 import HistoryScreen from './history';
 import HistoryDetailScreen from './history_detail';
-import StoreDetail from './store_detail/index';
+import StoreDetail from './store_detail/store_detail';
 import RatingScreen from './rating';
 import PaymentScreen from './paypal';
 import ServiceDetail from './store_detail/service_detail';
 import ServiceRating from './store_detail/service_rating';
+import ServiceScreen from './store_detail/service';
+
 import call from 'react-native-phone-call';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -168,6 +170,13 @@ function StackComponent(props) {
           title:"Rating"
         }}
       />
+       <Stack.Screen 
+          name="services" 
+          component={ServiceScreen}   
+          options={{
+            headerTintColor: '#fff',
+          }}
+        />
     </Stack.Navigator>
   );
 }

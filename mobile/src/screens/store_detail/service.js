@@ -6,12 +6,10 @@ import {server} from '../../constants/index';
 import {AirbnbRating} from 'react-native-ratings';
 import formatDate from '../../service/formatDate';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { Appbar } from 'react-native-paper';
 export default (props) => {
   const [services, setSevices] = React.useState([]);
-  const _goBack = () => console.log('Went back');
-
   React.useEffect(() => {
+    props.navigation.setOptions({ title: props.route.params.store_name });
     loadServices();
   }, []);
 
@@ -23,16 +21,10 @@ export default (props) => {
   };
   return (
     <View>
-      <Appbar.Header style={{backgroundColor:"#295a59"}}>
-        <Appbar.BackAction onPress={_goBack} />
-        <Appbar.Content 
-          title={props.route.params.store_name} subtitle="Dịch vụ" 
-        />
-      </Appbar.Header>
       <FlatList
-      data={services}
-      numColumns={2}
-      renderItem={({item}) => {
+        data={services}
+        numColumns={2}
+        renderItem={({item}) => {
         return (
           <View style={styles.itemContainer}>
             <View>
@@ -41,13 +33,16 @@ export default (props) => {
                 source={{uri: `${server}/images/${item.image}`}}
               />
               <Title>{item.name}</Title>
-              <View style={styles.itemInfo}>
+              <View style={[styles.itemInfo,{alignItems:"center"}]}>
                 <AirbnbRating
                   count={5}
                   defaultRating={4}
                   size={15}
                   showRating={false}
                 />
+                <Text>
+                  <FontAwesomeIcon name="user" color="green" size={18} /> 20
+                </Text>
               </View>
               <View style={styles.itemInfo}>
                 <Text style={styles.text}>{formatDate(item.timestamp)}</Text>
@@ -101,6 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 4,
+    alignItems:"center"
   },
   text: {
     fontSize: 16,
