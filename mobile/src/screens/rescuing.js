@@ -20,6 +20,7 @@ import {Title, Text} from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import StoreInfo from '../components/rescue/store_info';
+import Loading from '../components/load'
 const defaultPosition = {
   lat: 10.860281,
   lng: 106.650232
@@ -282,7 +283,7 @@ const Rescue = ({navigation}) => {
         alert('cannot access to your location');
         setGlobalLoading(false);
       },
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000},
+      {enableHighAccuracy: false, timeout: 10000, maximumAge: 1000},
     );
   };
 
@@ -336,7 +337,7 @@ const Rescue = ({navigation}) => {
         </Callout>
       </Marker>
     ));
-
+  if(globalLoading) return <Loading text="Đang xác định vị trí của bạn" />
   return (
     <View style={{flex: 1}}>
       <StatusBar backgroundColor="#295a59" barStyle="light-content" />
@@ -406,7 +407,6 @@ const Rescue = ({navigation}) => {
         {(loadingStore || updatingDistance || globalLoading) && (
           <View style={styles.topBox}>
             <ActivityIndicator color="red" />
-            {globalLoading && <Text>Tìm vị trí của bạn trên bản đồ</Text>}
             {loadingStore && <Text>Đang tìm kiếm cửa hàng gần bạn</Text>}
             {updatingDistance && <Text>Đang cập nhật khoảng cách</Text>}
           </View>

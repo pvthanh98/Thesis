@@ -11,6 +11,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import WelcomeScreen from './screens/welcome';
 import StoreIndexScreen from './screens/store/index';
 import StoreLoginScreen from './screens/store/login';
+import SignupScreen from './screens/signup';
 
 const Stack = createStackNavigator();
 const App = ({navigation}) => {
@@ -43,6 +44,7 @@ const App = ({navigation}) => {
              <Stack.Navigator>
                 <Stack.Screen name="welcome" component={WelcomeScreen} options={{headerShown:false}} />
                 <Stack.Screen name="login" component={LoginScreen} options={{headerShown:false}}/>
+                <Stack.Screen name="signup" component={SignupScreen} options={{headerShown:false}}/>
                 <Stack.Screen name="store_login" component={StoreLoginScreen} options={{headerShown:false}}/>
              </Stack.Navigator>
           ) : (

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, StatusBar, ActivityIndicator} from 'react-native';
 import {Avatar, Title, Button} from 'react-native-paper';
 import {Rating} from 'react-native-ratings';
 import Progress from '../../components/progress/progress';
@@ -12,7 +12,7 @@ const StoreDetail = (props) => {
   const [store, setStore] = React.useState(null);
   const [totalRating, setTotalRating] = React.useState(null);
   const [ratingPercentage, setRatingPercentage] = React.useState(null);
-  const [comments, setComments] = React.useState([]);
+  const [comments, setComments] = React.useState(null);
   React.useEffect(() => {
     const {store_id} = props.route.params;
     axios
@@ -80,9 +80,9 @@ const StoreDetail = (props) => {
   };
 
   const renderComment = () => {
-    return comments.map((e) => {
+    return (comments.length > 0) ? comments.map((e) => {
       return <CommentItem key={e._id} {...e} />;
-    });
+    }) : <Text>Chưa có bình luận cho cửa hàng này</Text>;
   };
   if (!store) return <SplashScreen />;
   return (
@@ -212,7 +212,7 @@ const StoreDetail = (props) => {
         <View style={{width: '100%', marginTop: 16}}>
           <Title>Ý kiến Khách Hàng</Title>
         </View>
-        {renderComment()}
+        {(comments===null) ? <ActivityIndicator color="blue" size={24}/> : renderComment()}
       </View>
     </ScrollView>
   );

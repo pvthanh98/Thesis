@@ -6,8 +6,9 @@ import {server} from '../../constants/index';
 import {AirbnbRating} from 'react-native-ratings';
 import formatDate from '../../service/formatDate';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Loading from '../../components/load'
 export default (props) => {
-  const [services, setSevices] = React.useState([]);
+  const [services, setSevices] = React.useState(null);
   React.useEffect(() => {
     props.navigation.setOptions({ title: props.route.params.store_name });
     loadServices();
@@ -16,9 +17,16 @@ export default (props) => {
   const loadServices = () => {
     axios
       .get(`/api/service/store/${props.route.params.store_id}`)
-      .then(({data}) => setSevices(data))
+      .then(({data}) => {
+        setSevices(data);
+      })
       .catch((err) => console.log(err));
   };
+
+  const calculateTotalRating = ({one, two, three, four, five}) => {
+    return (one + two + three + four + five);
+  }
+  if(!services) return <Loading text="Đang tải dịch vụ..." />
   return (
     <View>
       <FlatList
@@ -41,7 +49,7 @@ export default (props) => {
                   showRating={false}
                 />
                 <Text>
-                  <FontAwesomeIcon name="user" color="green" size={18} /> 20
+                  <FontAwesomeIcon name="user" color="green" size={18} /> {calculateTotalRating(item.rating)}
                 </Text>
               </View>
               <View style={styles.itemInfo}>

@@ -8,10 +8,11 @@ module.exports = {
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password, salt),
             address: req.body.address,
-            name: req.body.name
+            name: req.body.name,
+            phone: req.body.phone
         })
         .then(reslt=>{res.sendStatus(200)})
-        .catch(err => {res.status(400).send(err); throw err});
+        .catch(err => {res.status(400).send(err); throw err;});
     },
     getUser : (req, res) => {
         const id = req.user.id;

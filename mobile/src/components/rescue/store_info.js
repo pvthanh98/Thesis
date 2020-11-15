@@ -41,7 +41,7 @@ export default (props) => {
                 icon={() => <Icon name="email" color="#fff" size={20} />}
                 mode="contained"
                 onPress={() =>
-                  navigation.navigate('chat', {
+                  props.navigation.navigate('chat', {
                     store_id: props.selectedStore.id,
                     store_name: props.selectedStore.name,
                   })

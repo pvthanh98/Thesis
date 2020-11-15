@@ -18,7 +18,11 @@ export default function Login(props) {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [loading, setLoading] = React.useState(false);
-    const dispatch = useDispatch();6
+    const dispatch = useDispatch();
+    React.useEffect(()=>{
+        //from signup sreen navigate to
+        if(props.route.params && props.route.params.email) setEmail(props.route.params.email)
+    })
     const handleLoginButton = () => {
         setLoading(true)
         axios
@@ -74,7 +78,12 @@ export default function Login(props) {
             </View>
             <View style={[styles.inputContainer,{marginTop:20}]}>
                 <Button onPress={handleLoginButton} color="#fff" mode="contained">Login</Button>
-                <Button color="#fff" >Signup</Button>
+                <Button 
+                    color="#fff" 
+                    onPress={()=>props.navigation.navigate('signup')}
+                >
+                    Signup
+                </Button>
             </View>
             <TouchableOpacity style={{marginTop:8}}>
                 <Text style={{color:"#69737f", textDecorationLine:"underline", textDecorationColor:"red"}}>Are you store owner ?</Text>

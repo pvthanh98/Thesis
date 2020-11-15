@@ -1,9 +1,10 @@
 import React from 'react';
-import { ActivityIndicator, View} from 'react-native'
-export default function(){
+import { ActivityIndicator, View, Text} from 'react-native'
+export default function({text}){
     return (
         <View style={{flex:1, justifyContent:"center"}}> 
-             <ActivityIndicator size="large" color="blue" />
+            <ActivityIndicator size="large" color="blue" />
+            <Text style={{textAlign:"center"}}>{text ? text : ""}</Text>
         </View>
     )
 }
