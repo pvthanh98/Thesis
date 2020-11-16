@@ -7,15 +7,12 @@ export default (props) => {
     <Marker
         key={props._id}
         coordinate={{
-            latitude: props.customer_id.latitude,
-            longitude: props.customer_id.longtitude
+            latitude: props.otoRescue.customer_id.latitude,
+            longitude: props.otoRescue.customer_id.longtitude
         }}
         onPress={()=> {
-            props.setSelectedOto({
-                rescue_id: props._id,
-                customer: {...props.customer_id},
-                problem: {...props.problem},
-            })
+            props.setSelectedOto({...props.otoRescue});
+            props.getDirection(props.otoRescue.customer_id.latitude,props.otoRescue.customer_id.longtitude)
         }}
     >
         {/* <Callout tooltip>

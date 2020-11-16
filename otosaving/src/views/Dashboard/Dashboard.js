@@ -132,7 +132,7 @@ export default function Dashboard() {
   },[])
 
   const loadStore = () => {
-    axios().post('/api/store/me', { id: localStorage.getItem('admin_id') })
+    axios().get('/api/store/me')
     .then(res => {
       setMystore_Lat(parseFloat(res.data.latitude));
       setMystore_Lng(parseFloat(res.data.longtitude));

@@ -88,7 +88,7 @@ export default function Admin({ ...rest }) {
     .catch(err=>console.log(err));
   } 
   const loadStoreInfo = () => {
-    axios().post('/api/store/me', { id: localStorage.getItem('admin_id') })
+    axios().get('/api/store/me')
     .then(res => {
       dispatch({
         type: "GET_MYSTORE",

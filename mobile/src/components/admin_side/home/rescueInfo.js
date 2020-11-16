@@ -3,18 +3,46 @@ import {View, Text, StyleSheet} from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button,IconButton} from 'react-native-paper';
-export default ({selectedOto}) => {
+export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
+  const navigateRescueNext = () =>{ 
+    const index = rescueList.findIndex((e)=>e._id===selectedOto._id)
+    if(index>=0){
+      let nextIndex = index + 1;
+       if(nextIndex===rescueList.length) {
+          setSelectedOto({...rescueList[0]});
+          getDirection(rescueList[0].customer_id.latitude,rescueList[0].customer_id.longtitude)
+       }
+       if(nextIndex < rescueList.length) {
+          setSelectedOto({...rescueList[nextIndex]});
+          getDirection(rescueList[nextIndex].customer_id.latitude,rescueList[nextIndex].customer_id.longtitude)
+       }
+    }
+  }
+  const navigateRescuePrevious = () =>{ 
+    const index = rescueList.findIndex((e)=>e._id===selectedOto._id)
+    if(index>=0){
+      let previousIndex = index - 1;
+       if(previousIndex<0) {
+        setSelectedOto({...rescueList[rescueList.length-1]});
+        getDirection(rescueList[rescueList.length-1].customer_id.latitude,rescueList[rescueList.length-1].customer_id.longtitude)
+       }
+       if(previousIndex >=0) {
+        setSelectedOto({...rescueList[previousIndex]})
+        getDirection(rescueList[previousIndex].customer_id.latitude, rescueList[previousIndex].customer_id.longtitude)
+       }
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.topBox}>
         <View style={styles.info}>
           <View style={styles.itemInfo}>
             <MaterialIcon name="person" color="#962803" size={22} />
-            <Text style={styles.text}>{selectedOto.customer.name}</Text>
+            <Text style={styles.text}>{selectedOto.customer_id.name}</Text>
           </View>
           <View style={styles.itemInfo}>
-            <MaterialIcon name="phone" color="#962803" size={22} />
-            <Text style={styles.text}>{selectedOto.customer.phone}</Text>
+            <MaterialIcon name="directions-car" color="#962803" size={22} />
+            <Text style={styles.text}>{selectedOto.distance ? selectedOto.distance.text: ""}</Text>
           </View>
           <View style={styles.itemInfo}>
             <MaterialIcon
@@ -36,7 +64,7 @@ export default ({selectedOto}) => {
           </Button>
           <Button
             icon={() => <MaterialIcon color="#fff" name="message" size={24} />}
-            onPress={() => console.log('send messgage', selectedOto.customer)}
+            onPress={() => console.log('send messgage', selectedOto.customer_id)}
             mode="contained"
             color="#69737f"
             style={{marginTop: 4}}
@@ -49,12 +77,12 @@ export default ({selectedOto}) => {
       <View style={styles.pagination}>
         <IconButton
           icon={()=><MaterialCommunityIcon size={28}  color="black" name="skip-previous-circle" />}
-          onPress={()=>console.log("ok")}
+          onPress={navigateRescuePrevious}
           size={20}
         />
         <IconButton
           icon={()=><MaterialCommunityIcon size={28} color="green" name="skip-next-circle" />}
-          onPress={()=>console.log("ok")}
+          onPress={navigateRescueNext}
           size={16}
         />    
       </View>

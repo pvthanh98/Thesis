@@ -3,10 +3,34 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HomeScreen from './home';
 import ProfileScreen from './profile';
-import MessageListScreen from './message_list';
+import MessageListScreen from './messages/index';
 import SettingScreen from './settings';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {server} from '../../constants/index';
+import {useSelector, useDispatch} from 'react-redux'
+import io from 'socket.io-client';
+import axios from '../../service/store_axios'
+const socket = io(server);
+socket.on('connect', async () => {
+  const admin_token = await AsyncStorage.getItem('admin_token');
+  socket.emit('authenticate', {token: admin_token, type: 'store'});
+});
+
 const Tab = createMaterialBottomTabNavigator();
 export default () => {
+    const [notification, setNotification] = React.useState(0);
+    const dispatch = useDispatch()
+    React.useEffect(()=>{
+        loadListMessages();
+    })
+    const loadListMessages = () => {
+        axios.get("/api/messages/store_list")
+        .then(({data})=>{
+            dispatch({type:"UPDATE_MESSAGE_STORE_LIST", messages: data})
+            setNotification(data.unread);
+        })
+        .catch(err=>console.log(err))
+    }
     return (
         <Tab.Navigator
             barStyle={{
@@ -22,19 +46,20 @@ export default () => {
                 }}
             />
             <Tab.Screen 
+                name="message" 
+                component={MessageListScreen} 
+                options={{
+                    title:"Message",
+                    tabBarBadge: notification,
+                    tabBarIcon: ({color})=><MaterialIcons name="message" size={24} color={color} />
+                }}
+            />
+            <Tab.Screen 
                 name="profile" 
                 component={ProfileScreen} 
                 options={{
                     title:"Profile",
                     tabBarIcon: ({color})=><MaterialIcons name="person" size={24} color={color} />
-                }}
-            />
-            <Tab.Screen 
-                name="message" 
-                component={MessageListScreen} 
-                options={{
-                    title:"Message",
-                    tabBarIcon: ({color})=><MaterialIcons name="message" size={24} color={color} />
                 }}
             />
              <Tab.Screen 
@@ -50,6 +75,7 @@ export default () => {
     )
 }
 
+export {socket}
 
 
 
