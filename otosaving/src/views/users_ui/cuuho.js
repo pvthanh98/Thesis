@@ -261,6 +261,7 @@ class Map extends React.PureComponent {
                 setSelectedWindow={this.setSelectedWindow}
                 chatToggle={()=>this.props.setChatToggle(true)}
                 problems={this.state.problems}
+                myposition={this.state.myposition}
               />
       
     })

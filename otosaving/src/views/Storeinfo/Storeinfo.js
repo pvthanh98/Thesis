@@ -128,7 +128,7 @@ export default function StoreInfo() {
 
   const loadStore = () => {
     setLoading(true);
-    axios().post('/api/store/me', { id: localStorage.getItem('admin_id') })
+    axios().get('/api/store/me')
     .then(res => {
       dispatch({
         type: "GET_MYSTORE",

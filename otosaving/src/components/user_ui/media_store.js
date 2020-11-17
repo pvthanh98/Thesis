@@ -66,7 +66,7 @@ export default (props) => {
 	const requestRescue = () => {
     if(problemID!=""){
       axios()
-			.post("/api/rescue", { store_id: props.store._id, problem: problemID })
+			.post("/api/rescue", { store_id: props.store._id, problem: problemID, coordinate: props.myposition })
 			.then((resl) => {
 				setRequestComplete(true);
 			})

@@ -68,7 +68,7 @@ const Rescue = ({navigation}) => {
   const requestRescue = () => {
     if (problemID != '') {
       axios
-        .post('/api/rescue', {store_id: selectedStore.id, problem: problemID})
+        .post('/api/rescue', {store_id: selectedStore.id, problem: problemID, coordinate:currentLocation})
         .then((resl) => {
           alert('Yêu cầu của bạn đã được gửi');
         })

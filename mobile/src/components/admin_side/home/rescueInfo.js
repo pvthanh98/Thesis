@@ -10,11 +10,11 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
       let nextIndex = index + 1;
        if(nextIndex===rescueList.length) {
           setSelectedOto({...rescueList[0]});
-          getDirection(rescueList[0].customer_id.latitude,rescueList[0].customer_id.longtitude)
+          getDirection(rescueList[0].coordinate.lat,rescueList[0].coordinate.lng)
        }
        if(nextIndex < rescueList.length) {
           setSelectedOto({...rescueList[nextIndex]});
-          getDirection(rescueList[nextIndex].customer_id.latitude,rescueList[nextIndex].customer_id.longtitude)
+          getDirection(rescueList[nextIndex].coordinate.lat,rescueList[nextIndex].coordinate.lng)
        }
     }
   }
@@ -24,11 +24,11 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
       let previousIndex = index - 1;
        if(previousIndex<0) {
         setSelectedOto({...rescueList[rescueList.length-1]});
-        getDirection(rescueList[rescueList.length-1].customer_id.latitude,rescueList[rescueList.length-1].customer_id.longtitude)
+        getDirection(rescueList[rescueList.length-1].coordinate.lat, rescueList[rescueList.length-1].coordinate.lng)
        }
        if(previousIndex >=0) {
         setSelectedOto({...rescueList[previousIndex]})
-        getDirection(rescueList[previousIndex].customer_id.latitude, rescueList[previousIndex].customer_id.longtitude)
+        getDirection(rescueList[previousIndex].coordinate.lat, rescueList[previousIndex].coordinate.lng)
        }
     }
   }
@@ -85,12 +85,20 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
           onPress={navigateRescueNext}
           size={16}
         />    
+        <View style={{position:"absolute", right:-10, bottom:-15}}>
+          <IconButton
+            icon={()=><MaterialIcon size={18} color="red" name="cancel" />}
+            onPress={()=>setSelectedOto(null)}
+            size={16}
+          />  
+        </View>
       </View>
+
     </View>
   );
 };
 const styles = StyleSheet.create({
-  container:{width:"100%",backgroundColor:"#fff", padding: 8},
+  container:{width:"100%",backgroundColor:"#fff"},
   topBox: {
     flexDirection: 'row',
     width: '100%',
@@ -110,6 +118,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"center",
     borderTopWidth:1,
-    borderTopColor:"#ddd"
+    borderTopColor:"#ddd",
+    position:"relative",
   }
 });

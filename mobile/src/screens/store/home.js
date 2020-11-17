@@ -15,6 +15,8 @@ import RescueTopInfo from '../../components/admin_side/home/rescueInfo';
 import OtoMarker from '../../components/admin_side/home/oto_marker';
 import Polyline from '@mapbox/polyline';
 import axiosDefault from 'axios';
+import {Button} from 'react-native-paper';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 const defaultPosition = {
   lat: 10.860281,
@@ -92,7 +94,7 @@ export default function Home(props) {
         console.log('update distance...');
         for (let i = 0; i < otoList.length; i++) {
           let origin = `${storeLatLng.lat},${storeLatLng.lng}`;
-          let destination = `${otoList[i].customer_id.latitude},${otoList[i].customer_id.longtitude}`;
+          let destination = `${otoList[i].coordinate.lat},${otoList[i].coordinate.lng}`;
           let resp = await axiosDefault.get(
             `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
           );
@@ -126,12 +128,8 @@ export default function Home(props) {
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
           style={styles.map}
           region={{
-            latitude: selectedOto
-              ? selectedOto.customer_id.latitude
-              : mystore.latitude,
-            longitude: selectedOto
-              ? selectedOto.customer_id.longtitude
-              : mystore.longtitude,
+            latitude:  mystore.latitude,
+            longitude: mystore.longtitude,
             latitudeDelta: 0.1,
             longitudeDelta: 0.0121,
           }}
@@ -152,6 +150,7 @@ export default function Home(props) {
           )}
         </MapView>
       )}
+
       {(!mystore || !rescueList) && (
         <View
           style={{
@@ -172,6 +171,22 @@ export default function Home(props) {
           getDirection={getDirection}
         />
       )}
+
+      {
+        !selectedOto &&
+        <View style={{marginTop:4, flexDirection:"row", alignItems:"center"}}>
+        <Button 
+          mode="contained" 
+          icon={()=><MaterialIcon name="search" size={20} color="#fff" />}
+          onPress={()=>setSelectedOto({...rescueList[0]})}
+        >
+          LOOK UP REQUESTS
+        </Button>
+          <MaterialIcon name="person" size={20}/>
+          <Text>{rescueList.length}</Text>
+
+      </View>
+      }
     </View>
   );
 }

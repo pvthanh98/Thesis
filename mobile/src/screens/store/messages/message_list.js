@@ -11,6 +11,7 @@ const MessageList = ({navigation,route}) => {
     const {setOptions} = route.params
     React.useEffect(()=>{
         socket.on("customer_send_msg_to_you",(data)=>{
+          console.log("receuv");
           loadListMessages()
           loadMessages(data.from_id);
         });

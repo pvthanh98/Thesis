@@ -217,6 +217,7 @@ app.put('/api/rescue', passport.authenticate("jwt", { session: false }), RescueC
 app.get('/api/rescue/search/name/:name', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescue);
 app.get('/api/rescue/search/date/:date', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescueByDate);
 
+app.put('/api/rescue/id/:id', passport.authenticate("jwt", { session: false }), RescueCtl.modifyAllRescue);
 //RESCUE FOR MOBILE
 app.get('/api/rescue/mobile', passport.authenticate("jwt", { session: false }), RescueCtl.getRescueMobile);
 

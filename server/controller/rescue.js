@@ -3,10 +3,11 @@ const User = require("../db/customer");
 const user = require("./user");
 module.exports = {
     createRescue: (req,res) => {
-        const {store_id, problem} = req.body;
+        console.log("controller/rescue.js",req.body);
+        const {store_id, problem, coordinate} = req.body;
         const customer_id = req.user.id
         Rescue.create({
-            customer_id, store_id, problem
+            customer_id, store_id, problem,coordinate
         })
         .then(() => res.sendStatus(200))
         .catch(err=> {
@@ -48,6 +49,14 @@ module.exports = {
                 res.sendStatus(200)
             })
         } else res.sendStatus(400)
+    },
+    modifyAllRescue: async (req, res) => {
+        const rescue_id  = req.params.id;
+        Rescue.findByIdAndUpdate(rescue_id,req.body)
+        .then(function(){
+            res.sendStatus(200)
+        })
+        .catch(err=>res.sendStatus(400))
     },
     searchRescue: async (req, res) => {
         try{

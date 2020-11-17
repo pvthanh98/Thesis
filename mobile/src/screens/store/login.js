@@ -9,8 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector, useDispatch} from 'react-redux';
 import {Button} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import socket from './index';
-
+import {socket} from './index';
 const styles = StyleSheet.create({
     container:{
         justifyContent:"center",
@@ -66,11 +65,12 @@ export default function Login(props) {
               storeData('admin_id', res.data.admin_id);
               storeData('admin_avt', res.data.admin_avt);
               socket.connect(server);
-              socket.on('connect', async () => {
-                socket.emit('authenticate', {token: res.data.admin_token, type: 'store'});
-              });
           })
-          .catch((err) => {alert("Email or password is incorrect");   setLoading(false);});
+          .catch((err) => {
+              console.log(err);
+            {alert("Email or password is incorrect");  
+             setLoading(false);}
+          });
     }
 
     const storeData = async (key,value) => {
