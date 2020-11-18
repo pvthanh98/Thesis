@@ -13,7 +13,7 @@ import Load from '../components/load';
 import {AutoScrollFlatList} from 'react-native-autoscroll-flatlist';
 export default ({route, navigation}) => {
     const {store_id, store_name} = route.params;
-    const messages = useSelector(state => state.messages);
+    const messages = useSelector(state => state.messages,);
     const dispatch = useDispatch();
     const [msgInput, setMsgInput] = React.useState("")
     useEffect(()=>{

@@ -22,7 +22,7 @@ const defaultPosition = {
   lat: 10.860281,
   lng: 106.650232,
 };
-export default function Home(props) {
+export default function Home({navigation}) {
   const mystore = useSelector((state) => state.mystore);
   const dispatch = useDispatch();
   const markerRef = React.createRef();
@@ -96,10 +96,10 @@ export default function Home(props) {
           let origin = `${storeLatLng.lat},${storeLatLng.lng}`;
           let destination = `${otoList[i].coordinate.lat},${otoList[i].coordinate.lng}`;
           let resp = await axiosDefault.get(
-            `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
-          );
+            `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`);
           otoList[i].distance = {...resp.data.routes[0].legs[0].distance};
         }
+        
         otoList.sort((a, b) => a.distance.value - b.distance.value);
         setRescueList([...otoList]);
       } else {
@@ -160,7 +160,7 @@ export default function Home(props) {
             backgroundColor: '#fff',
           }}>
           <ActivityIndicator color="blue" style={{marginTop: 4}} />
-          {!mystore && <Text>Đang tải yêu cầu cứu hộ</Text>}
+          {!rescueList && <Text>Đang tải yêu cầu cứu hộ</Text>}
         </View>
       )}
       {selectedOto && (
@@ -169,6 +169,7 @@ export default function Home(props) {
           selectedOto={selectedOto}
           setSelectedOto={setSelectedOto}
           getDirection={getDirection}
+          navigation={navigation}
         />
       )}
 
@@ -183,7 +184,7 @@ export default function Home(props) {
           LOOK UP REQUESTS
         </Button>
           <MaterialIcon name="person" size={20}/>
-          <Text>{rescueList.length}</Text>
+          <Text>{rescueList && rescueList.length}</Text>
 
       </View>
       }

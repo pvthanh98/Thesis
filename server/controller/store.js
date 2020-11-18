@@ -46,6 +46,7 @@ module.exports = {
             longtitude : req.body.coordinate.split(",")[1]
         }
         if(req.file) data.image = req.user.id+"_"+req.file.originalname
+        console.log(data);
         Store.findByIdAndUpdate(req.user.id,data)
         .then(reslt=> {
             if(req.file){

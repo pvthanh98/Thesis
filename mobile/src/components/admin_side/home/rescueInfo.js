@@ -3,7 +3,8 @@ import {View, Text, StyleSheet} from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button,IconButton} from 'react-native-paper';
-export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
+import call from 'react-native-phone-call';
+export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigation}) => {
   const navigateRescueNext = () =>{ 
     const index = rescueList.findIndex((e)=>e._id===selectedOto._id)
     if(index>=0){
@@ -56,7 +57,10 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
         <View style={styles.btnContainer}>
           <Button
             icon={() => <MaterialIcon color="#fff" name="phone" size={24} />}
-            onPress={() => console.log('ok')}
+            onPress={()=> call({
+              number: selectedOto.customer_id.phone,
+              prompt: false
+            }).catch(console.error)}
             mode="contained"
             color="#2266b7"
           >
@@ -64,7 +68,10 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection}) => {
           </Button>
           <Button
             icon={() => <MaterialIcon color="#fff" name="message" size={24} />}
-            onPress={() => console.log('send messgage', selectedOto.customer_id)}
+            onPress={() => navigation.navigate('store_chat',{
+              customer_id:selectedOto.customer_id._id,
+              customer_name: selectedOto.customer_id.name
+            })}
             mode="contained"
             color="#69737f"
             style={{marginTop: 4}}

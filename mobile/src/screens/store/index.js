@@ -2,7 +2,7 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HomeScreen from './home';
-import ProfileScreen from './profile';
+import ProfileScreen from './profile/index';
 import MessageListScreen from './messages/index';
 import SettingScreen from './settings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
