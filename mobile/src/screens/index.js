@@ -31,6 +31,7 @@ const Stack = createStackNavigator();
 const socket = io(server);
 socket.on('connect', async () => {
   const user_token = await AsyncStorage.getItem('user_token');
+  console.log(user_token);
   socket.emit('authenticate', {token: user_token, type: 'user'});
 });
 
