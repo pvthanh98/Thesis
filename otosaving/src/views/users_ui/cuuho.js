@@ -34,6 +34,7 @@ const MyMapComponent = compose(
   withGoogleMap,
   lifecycle({
     async updateDistance() {
+      console.log("updating distance ")
       const findDistance = (lat, lng) => {
         return new Promise((resolve, reject) => {
           const DirectionsService = new window.google.maps.DirectionsService();
@@ -151,7 +152,7 @@ const MyMapComponent = compose(
                 description: store.description,
                 lat: store.latitude,
                 lng: store.longtitude,
-                distance:store.distance.distance,
+                distance:store.distance ? store.distance.distance: "",
                 rating: store.rating.total
               });
             }}
@@ -189,7 +190,8 @@ class Map extends React.PureComponent {
     selectedWindow: null,
     sort: false,// descending,
     showChat: false,
-    problems: []
+    problems: [],
+    myposition:null
   };
   componentDidMount() {
     this.loadMyposition();
@@ -290,7 +292,7 @@ class Map extends React.PureComponent {
       <div>
         <Navbar />
         {
-          (this.state.position !==null
+          (this.state.myposition !==null
           && this.props.stores.length>0
             ) 
           ?
