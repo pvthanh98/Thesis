@@ -112,9 +112,8 @@ export default (props) => {
 					Nhắn Tin
 				</Button>
 				<Button
-          onClick={handleClickOpen}
-          variant="contained"
-					color="success"
+					onClick={handleClickOpen}
+					variant="contained"
 					className="ml-2"
 					disabled={requestComplete}
 					endIcon={<Icon>perm_phone_msg</Icon>}
@@ -123,7 +122,6 @@ export default (props) => {
 				</Button>
 				<Button
 					variant="contained"
-					color="success"
 					className="ml-2"
 					endIcon={<Icon>alt_route</Icon>}
 					onClick={setSelectedWindow}

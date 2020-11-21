@@ -62,13 +62,11 @@ export default function (props) {
         <Typography variant="body2" color="textSecondary" component="p">
           Giá tham khảo: $ <b style={{color:"red"}}>{props.price}</b>
         </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          <Rating
-            value={props.star}
-            max={5}
-            onChange={(i) => console.log('onChange ' + i)}
-          />
-        </Typography>
+        <Rating
+          value={props.star}
+          max={5}
+          onChange={(i) => console.log('onChange ' + i)}
+        />
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">

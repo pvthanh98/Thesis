@@ -28,7 +28,6 @@ const Service = (props) => {
     return (
       props.services &&
       props.services.map((service) => {
-        console.log(service.rating.total)
         return (
           <Col md="3" className="pading-custom-8 mt-3" key={service._id}>
             <Card

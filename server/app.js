@@ -273,7 +273,7 @@ io.on("connection", (socket) => {
 		if (!socket.auth) {
 			console.log(
 				"Authenticated failed disconnecting socket ",
-				socket.id
+				socket.id, "type: ", socket.user_type
 			);
 			socket.disconnect("unauthorized");
 		}

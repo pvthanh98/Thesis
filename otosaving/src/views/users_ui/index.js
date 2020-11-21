@@ -37,7 +37,6 @@ function Index() {
     axios().get("/api/messages/user_list")
     .then(({data})=>{
       dispatch({type:"UPDATE_MESSAGE_LIST", messages: data})
-      console.log(data)
     })
     .catch(err=>console.log(err))
   }

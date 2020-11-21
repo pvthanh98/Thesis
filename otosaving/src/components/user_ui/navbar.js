@@ -65,20 +65,16 @@ function SimpleMenu(props) {
     })
     .catch(err=>console.log(err));
   }
-
+console.log(message_list.unread);
   if(redirect) return <Redirect push to={`/customer/${redirect}`} />
   return (
     <div>
       <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-        <img
-          src={server + "images/" + localStorage.getItem('user_avt')}
-          width="30px"
-          style={{ borderRadius: "50%" }}
-        />
+        <Avatar size={{height:"100px", width:"100px"}} src={server + "images/" + localStorage.getItem('user_avt')} />
         {localStorage.getItem('user_name')}
       </Button>
       <Menu
-        id="simple-menu"
+        id="simple-menu"  
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
@@ -93,7 +89,7 @@ function SimpleMenu(props) {
       </Menu>
 
       <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick_2}>
-        <StyledBadge badgeContent={message_list.unread} color="secondary">
+        <StyledBadge badgeContent={(message_list.unread!==null) ? message_list.unread : ""} color="secondary">
           <EmailIcon />
         </StyledBadge>
       </Button>
@@ -106,9 +102,12 @@ function SimpleMenu(props) {
         style={{minWidth:"400px"}}
       >
         {message_list.messages.map(message=>(
-          <MenuItem onClick={()=>openChat(message.store_id._id, message._id)}>
+          <MenuItem 
+            key={message._id}
+            onClick={()=>openChat(message.store_id._id, message._id)}
+          >
             <div style={{display:"flex"}}>
-              <Avatar src="http://localhost:8080/images/default.png" />
+              <Avatar src={`${server}/images/${message.store_id.image}`} />
               <div style={{width:"300px", marginLeft:"8px"}}>
                 <Typography>{message.store_id.name}</Typography>
                 <Typography variant="body2" style={{fontWeight: !message.is_read ? "bold" : "200"}}>
@@ -170,13 +169,7 @@ function MyNavbar (props) {
       <Collapse isOpen={isOpen} navbar>
         <Nav className="mr-auto" navbar>
         <UncontrolledDropdown nav inNavbar>
-            <DropdownToggle nav caret>
-              Dịch vụ
-              </DropdownToggle>
-            <DropdownMenu right>
-            {renderMenuCategories()}
-            </DropdownMenu>
-          </UncontrolledDropdown>
+        </UncontrolledDropdown>
           <NavItem>
             <Link className="custom-link nav-link" to="/cuuho">Cứu hộ</Link>
           </NavItem>

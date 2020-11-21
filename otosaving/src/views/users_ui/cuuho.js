@@ -3,13 +3,13 @@ import Navbar from "../../components/user_ui/navbar";
 import Footer from "../../components/user_ui/footer";
 import { connect } from "react-redux";
 import Rating from '../../components/user_ui/rating';
-import {Container, Row, Col} from 'reactstrap';
-import {Button} from 'reactstrap';
+import { Container, Row, Col } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { Link } from "react-router-dom";
 import axios from "service/axios_user";
 import MediaObject from '../../components/user_ui/media_store';
 import Chat from '../../components/user_ui/chat/container';
-import {socket} from '../../views/users_ui/index';
+import { socket } from '../../views/users_ui/index';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -44,12 +44,11 @@ const MyMapComponent = compose(
                 this.props.myposition.lat,
                 this.props.myposition.lng
               ),
-              destination: new window.google.maps.LatLng(lat,lng),
+              destination: new window.google.maps.LatLng(lat, lng),
               travelMode: window.google.maps.TravelMode.DRIVING,
             },
             (result, status) => {
               if (status === window.google.maps.DirectionsStatus.OK) {
-                console.log(result.routes[0].legs[0].distance)
                 resolve({
                   directions: result,
                   distance: result.routes[0].legs[0].distance,
@@ -64,24 +63,30 @@ const MyMapComponent = compose(
         });
       };
       let { stores } = this.props;
-        for(var i=0;i<stores.length;i++){
-        try{
+      for (var i = 0; i < stores.length; i++) {
+        try {
           let distance = await findDistance(stores[i].latitude, stores[i].longtitude)
-          stores[i].distance =distance;
-        } catch(e){
+          stores[i].distance = distance;
+        } catch (e) {
           console.log(e);
         }
       }
+
+      //sort
+
+      stores.sort((a,b)=>{
+        return (a.distance.distance.value - b.distance.distance.value)
+      })
+
       this.props.updateStore(stores)
     },
     async componentDidMount() {
       this.updateDistance();
     },
-    componentWillReceiveProps(nextProps){
-      console.log("I RECEIVED A NEW PROP",nextProps);
-      if(this.props.stores.length > 0 && !this.props.stores[0].distance) {
+    componentWillReceiveProps(nextProps) {
+      console.log("I RECEIVED A NEW PROP", nextProps);
+      if (this.props.stores.length > 0 && !this.props.stores[0].distance) {
         this.updateDistance();
-        console.log("update distance")
       } else console.log("no need to update distance")
       const DirectionsService = new window.google.maps.DirectionsService();
       DirectionsService.route(
@@ -91,8 +96,8 @@ const MyMapComponent = compose(
             this.props.myposition.lng
           ),
           destination: new window.google.maps.LatLng(
-            nextProps.selectedWindow ? nextProps.selectedWindow.lat: 0,
-            nextProps.selectedWindow ? nextProps.selectedWindow.lng: 0
+            nextProps.selectedWindow ? nextProps.selectedWindow.lat : 0,
+            nextProps.selectedWindow ? nextProps.selectedWindow.lng : 0
           ),
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
@@ -103,7 +108,7 @@ const MyMapComponent = compose(
               distance: result.routes[0].legs[0].distance,
             });
           } else {
-            console.error('error',result);
+            console.error('error', result);
           }
         }
       )
@@ -152,7 +157,7 @@ const MyMapComponent = compose(
                 description: store.description,
                 lat: store.latitude,
                 lng: store.longtitude,
-                distance:store.distance ? store.distance.distance: "",
+                distance: store.distance ? store.distance.distance : "",
                 rating: store.rating.total
               });
             }}
@@ -168,7 +173,7 @@ const MyMapComponent = compose(
                     <p>{props.selectedWindow.description}</p>
                     <p>Click vào biểu tượng 1 lần để xem đường đi</p>
                     {props.selectedWindow.distance && (
-                    <p>Khoảng cách: {props.selectedWindow.distance.text}</p>
+                      <p>Khoảng cách: {props.selectedWindow.distance.text}</p>
                     )}
                     <Rating star={props.selectedWindow.rating} />
                     <div className="mt-2">
@@ -191,7 +196,7 @@ class Map extends React.PureComponent {
     sort: false,// descending,
     showChat: false,
     problems: [],
-    myposition:null
+    myposition: null
   };
   componentDidMount() {
     this.loadMyposition();
@@ -201,13 +206,13 @@ class Map extends React.PureComponent {
   }
 
   loadStore = () => {
-    if(this.props.stores.length === 0){
+    if (this.props.stores.length === 0) {
       axios()
-      .get("/api/store")
-      .then((res) => {
-        this.props.updateStore(res.data);
-      })
-      .catch((err) => console.log(err));
+        .get("/api/store")
+        .then((res) => {
+          this.props.updateStore(res.data);
+        })
+        .catch((err) => console.log(err));
     }
   }
 
@@ -215,7 +220,7 @@ class Map extends React.PureComponent {
     axios()
       .get("/api/problem")
       .then((res) => {
-        this.setState({problems:res.data})
+        this.setState({ problems: res.data })
       })
       .catch((err) => console.log(err));
   }
@@ -223,11 +228,11 @@ class Map extends React.PureComponent {
   loadMyposition = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       console.log("finding.....................................")
-      axios().put('/api/user/update_location',{
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-      }).then(()=>console.log("position saved"))
-      .catch(err=>console.log(err));
+      axios().put('/api/user/update_location', {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      }).then(() => console.log("position saved"))
+        .catch(err => console.log(err));
 
       this.setState({
         myposition: {
@@ -235,54 +240,56 @@ class Map extends React.PureComponent {
           lng: position.coords.longitude,
         },
       });
-      console.log("my position is",{
+      console.log("my position is", {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
-    )
-    },function(err){
+      )
+    }, function (err) {
       console.log(err)
     });
   };
 
   setSelectedWindow = (window) => {
-    console.log(window);
     this.setState({
       selectedWindow: window,
     });
   };
 
   chatToggle = () => {
-    this.setState({showChat: !this.state.showChat})
+    this.setState({ showChat: !this.state.showChat })
   }
 
   renderStore = () => {
-    return this.props.stores && this.props.stores.map(store =>{
-      return  <MediaObject 
-                store={store}
-                setSelectedWindow={this.setSelectedWindow}
-                chatToggle={()=>this.props.setChatToggle(true)}
-                problems={this.state.problems}
-                myposition={this.state.myposition}
-              />
-      
+    return this.props.stores && this.props.stores.map(store => {
+      return (
+        <MediaObject
+          key={store._id}
+          store={store}
+          setSelectedWindow={this.setSelectedWindow}
+          chatToggle={() => this.props.setChatToggle(true)}
+          problems={this.state.problems}
+          myposition={this.state.myposition}
+        />
+      )
+
     })
   }
 
   sortStore = () => {
     this.setState({
-      sortStore:!this.state.sortStore
+      sortStore: !this.state.sortStore
     })
     let { stores } = this.props;
-    if(!this.state.sortStore) {
+    if (!this.state.sortStore) {
       console.log("case1");
-       stores.sort((store_1, store_2)=>{
-         return store_1.distance.distance.value - store_2.distance.distance.value
-       })
+      stores.sort((store_1, store_2) => {
+        return store_1.distance.distance.value - store_2.distance.distance.value
+      })
     } else {
       console.log("case 2")
-      stores.sort((store_1, store_2)=>{
-        return  store_2.distance.distance.value - store_1.distance.distance.value  
+      stores.sort((store_1, store_2) => {
+        return store_2.distance.distance.value - store_1.distance.distance.value
       })
     }
   }
@@ -292,49 +299,49 @@ class Map extends React.PureComponent {
       <div>
         <Navbar />
         {
-          (this.state.myposition !==null
-          && this.props.stores.length>0
-            ) 
-          ?
-          <MyMapComponent
-            myposition={this.state.myposition}
-            setSelectedWindow={this.setSelectedWindow}
-            selectedWindow={this.state.selectedWindow}
-            stores={this.props.stores}
-            updateStore={this.props.updateStore}
-          />
-        : "Loading..."
+          (this.state.myposition !== null
+            && this.props.stores.length > 0
+          )
+            ?
+            <MyMapComponent
+              myposition={this.state.myposition}
+              setSelectedWindow={this.setSelectedWindow}
+              selectedWindow={this.state.selectedWindow}
+              stores={this.props.stores}
+              updateStore={this.props.updateStore}
+            />
+            : "Loading..."
         }
         <Container className="custom-container">
-              <Row>
-                  <Col md="12 mt-3">
-                      <div style={{display:"flex", justifyContent:"space-between"}}>
-                        <h4>Cửa hàng oto gần bạn</h4>
-                        <div style={{
-                          cursor:"pointer",
-                          height:"50px", 
-                          width:"50px",
-                          textAlign:"center",
-                          lineHeight:"50px",
-                          fontSize:"42px"
-                        }}
-                        onClick ={this.sortStore}
-                        >
-                          {this.state.sortStore ? <i className="fas fa-sort-down"></i> 
-                          :  <i className="fas fa-sort-up"></i>
-                          }
-                        </div>
-                      </div>
-                      <hr />
-                  </Col>
-                  <Col md="12">
-                      <div style={{height:"500px", overflow:"scroll"}}>
-                        {this.renderStore()}
-                      </div>
-                  </Col>
-              </Row>
-              {this.props.chat_toggle && <Chat where="customer" />}
-          </Container>
+          <Row>
+            <Col md="12 mt-3">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h4>Cửa hàng oto gần bạn</h4>
+                <div style={{
+                  cursor: "pointer",
+                  height: "50px",
+                  width: "50px",
+                  textAlign: "center",
+                  lineHeight: "50px",
+                  fontSize: "42px"
+                }}
+                  onClick={this.sortStore}
+                >
+                  {this.state.sortStore ? <i className="fas fa-sort-down"></i>
+                    : <i className="fas fa-sort-up"></i>
+                  }
+                </div>
+              </div>
+              <hr />
+            </Col>
+            <Col md="12">
+              <div style={{ height: "500px", overflow: "scroll" }}>
+                {this.renderStore()}
+              </div>
+            </Col>
+          </Row>
+          {this.props.chat_toggle && <Chat where="customer" />}
+        </Container>
         <Footer />
       </div>
     );

@@ -38,14 +38,9 @@ export default (props) => {
               <Typography variant="body2" color="textSecondary" component="p">
                {props.address}
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                <Rating star={props.star} align="center" />
-              </Typography>
+              <Rating star={props.star} align="center" />
             </CardContent>
           </CardActionArea>
-          <CardActions>
-            <Link className="ml-2" to= {`/store/id/${props._id}`}>Learn more</Link>
-          </CardActions>
         </Card>
       );
 }

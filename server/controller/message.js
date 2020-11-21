@@ -8,6 +8,7 @@ module.exports = {
         try {
             const { store_id } = req.params;
             const customer_id = req.user.id;
+            console.log({ customer_id, store_id });
             let messages = await Message.find({ customer_id, store_id })
             .populate('store_id', 'name image phone')
             .populate("customer_id", 'name image phone')

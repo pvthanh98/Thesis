@@ -36,7 +36,7 @@ function Home(props) {
  
   const loadMessages = () => {
     if(localStorage.getItem('user_id')){
-        axios().get(`/api/messages/customer/${localStorage.getItem('user_id')}`)
+        axios().get(`/api/messages/customer_to/${localStorage.getItem('user_id')}`)
         .then(({data})=>props.updateMessages(data))
         .catch(err=>console.log(err));
     }
@@ -45,7 +45,7 @@ function Home(props) {
     getStores();
     getServices();
     getOutStandingService();
-    loadMessages();
+ //   loadMessages(); there're some errors in this task, we need to fix later
   },[]);
   return (
     <div className="App">

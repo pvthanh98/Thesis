@@ -7,7 +7,7 @@ export default (props) => {
   return (
     <Link className="link-media-service" to={"/service/"+props.id+"/"+props.name} style={{color:"black", textDecoration:"none"}}>
       <Media className="mb-3">
-        <Media left href="#" className="mr-3">
+        <Media left className="mr-3">
           <img
             src={server + "images/" + props.image}
             style={{ borderRadius: "12px" }}

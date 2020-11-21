@@ -1,5 +1,5 @@
 let initState ={
-    unread: -1,
+    unread: null,
     messages: []
 }
 export default function(state = initState, action){
