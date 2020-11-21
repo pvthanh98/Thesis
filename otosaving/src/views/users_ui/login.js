@@ -2,52 +2,61 @@ import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from '../../service/axios';
 import { Spinner } from 'reactstrap';
-import {server} from '../../constant';
-import {socket} from '../users_ui/index';
+import { server } from '../../constant';
+import { socket } from '../users_ui/index';
+import {useDispatch} from 'react-redux';
 
 function Login(props) {
 	const [email, setEmail] = React.useState("");
-	const [isLogin, setLogin] = React.useState(false); 
+	const [isLogin, setLogin] = React.useState(false);
 	const [password, setPassword] = React.useState("");
 	const [isFailed, setFailed] = React.useState(false);
-	const [loading, setLoading] =React.useState(false);
+	const [loading, setLoading] = React.useState(false);
+	const dispatch = useDispatch();
 	const onChangeInput = (e) => {
 		switch (e.target.name) {
 			case "email": {
-                setEmail(e.target.value)
-                return;
-            }
-            case "password": {
-                setPassword(e.target.value)
-                return;
-            }
+				setEmail(e.target.value)
+				return;
+			}
+			case "password": {
+				setPassword(e.target.value)
+				return;
+			}
 		}
-    };
-    const onFormSubmit = e => {
+	};
+	const onFormSubmit = e => {
 		e.preventDefault();
 		setLoading(true)
-        axios().post('/api/user/login',{
-            email: email,
+		axios().post('/api/user/login', {
+			email: email,
 			password: password
-        })
-        .then(res => {
-			if(res.status===200){
-				localStorage.setItem('user_token', res.data.user_token);
-				localStorage.setItem('user_name', res.data.name);
-				localStorage.setItem('user_id', res.data.id);
-				localStorage.setItem('user_avt', res.data.image)
-				setLogin(true);
+		})
+			.then(res => {
+				if (res.status === 200) {
+					localStorage.setItem('user_token', res.data.user_token);
+					localStorage.setItem('user_name', res.data.name);
+					localStorage.setItem('user_id', res.data.id);
+					localStorage.setItem('user_avt', res.data.image)
+					setLogin(true);
+					setLoading(false);
+					socket.connect(server);
+				}
+			})
+			.catch(err => {
+				setFailed(true);
 				setLoading(false);
-				socket.connect(server);
-			}
-		})
-		.catch(err=> {
-			setFailed(true);
-			setLoading(false);
-		})
+			})
 	};
+	const loadListMsgOfUser = () => {
+		axios().get("/api/messages/user_list")
+			.then(({ data }) => {
+				dispatch({ type: "UPDATE_MESSAGE_LIST", messages: data })
+			})
+			.catch(err => console.log(err))
+	}
 
-	if(isLogin) return <Redirect to="/"/>
+	if (isLogin) return <Redirect to="/" />
 
 	return (
 		<div className="login-background">
@@ -94,12 +103,12 @@ function Login(props) {
 										onChange={onChangeInput}
 									/>
 								</div>
-								{isFailed && <div className="form-group" style={{color:"red"}}>
+								{isFailed && <div className="form-group" style={{ color: "red" }}>
 									Tên đăng nhập hoặc mật khẩu sai
 								</div>}
 
-								{loading && <div className="form-group" style={{color:"red", textAlign:"center"}}>
-									<Spinner color="light"/>
+								{loading && <div className="form-group" style={{ color: "red", textAlign: "center" }}>
+									<Spinner color="light" />
 								</div>}
 
 								<div className="form-check">

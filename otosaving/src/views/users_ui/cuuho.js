@@ -10,6 +10,11 @@ import axios from "service/axios_user";
 import MediaObject from '../../components/user_ui/media_store';
 import Chat from '../../components/user_ui/chat/container';
 import { socket } from '../../views/users_ui/index';
+import CitySelection from '../../components/user_ui/selectCity';
+import Loading from '../../components/user_ui/loading'
+import Alert from '@material-ui/lab/Alert';
+import { IconButton } from '@material-ui/core';
+import CreateIcon from '@material-ui/icons/Create';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -74,7 +79,7 @@ const MyMapComponent = compose(
 
       //sort
 
-      stores.sort((a,b)=>{
+      stores.sort((a, b) => {
         return (a.distance.distance.value - b.distance.distance.value)
       })
 
@@ -196,24 +201,24 @@ class Map extends React.PureComponent {
     sort: false,// descending,
     showChat: false,
     problems: [],
-    myposition: null
+    myposition: null,
+    city: [],
+    citySelected: null,
+    cityNameSelected: null
   };
   componentDidMount() {
     this.loadMyposition();
-    this.loadStore();
     this.loadCarProblems();
-    socket.emit("cuuho", "Hello")
+    this.getCity();
   }
 
-  loadStore = () => {
-    if (this.props.stores.length === 0) {
-      axios()
-        .get("/api/store")
-        .then((res) => {
-          this.props.updateStore(res.data);
-        })
-        .catch((err) => console.log(err));
-    }
+  loadStore = (city_id) => {
+    axios()
+      .get("/api/store/from_city/" + city_id)
+      .then((res) => {
+        this.props.updateStore(res.data);
+      })
+      .catch((err) => console.log(err));
   }
 
   loadCarProblems = () => {
@@ -294,13 +299,29 @@ class Map extends React.PureComponent {
     }
   }
 
+  getCity = () => {
+    axios().get('/api/city').then(({ data }) => this.setState({ city: data }))
+      .catch(err => console.log(err))
+  }
+
+  getCitySelected = (value) => {
+    this.loadStore(value);
+    const index = this.state.city.findIndex(e=>(e._id===value));
+
+    this.setState({
+      citySelected: value,
+      cityNameSelected: this.state.city[index].name
+    })
+  }
+
   render() {
+    if (this.state.citySelected === null) return <CitySelection city={this.state.city} getCitySelected={this.getCitySelected} />
     return (
       <div>
         <Navbar />
         {
           (this.state.myposition !== null
-            && this.props.stores.length > 0
+            && this.props.stores !== null
           )
             ?
             <MyMapComponent
@@ -310,13 +331,20 @@ class Map extends React.PureComponent {
               stores={this.props.stores}
               updateStore={this.props.updateStore}
             />
-            : "Loading..."
+            : <Loading message="Đang tải vị trí của bạn" />
         }
-        <Container className="custom-container">
+        {this.props.stores && <Container className="custom-container">
           <Row>
             <Col md="12 mt-3">
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <h4>Cửa hàng oto gần bạn</h4>
+                <div>
+                  <h4>Cửa hàng oto gần bạn</h4>
+                  <p>Thành Phố: {this.state.cityNameSelected} <IconButton onClick={()=>{this.setState({
+                    citySelected:null,
+                    cityNameSelected:null
+                  })}}> <CreateIcon/> </IconButton>
+                  </p>
+                </div>
                 <div style={{
                   cursor: "pointer",
                   height: "50px",
@@ -335,13 +363,18 @@ class Map extends React.PureComponent {
               <hr />
             </Col>
             <Col md="12">
-              <div style={{ height: "500px", overflow: "scroll" }}>
-                {this.renderStore()}
-              </div>
+              {
+                (this.props.stores.length > 0) ? <div style={{ height: "500px", overflow: "scroll" }}>
+                  {this.renderStore()}
+                </div>
+                  : <div style={{ textAlign: "center", paddingBottom:"16px" }}>
+                     <Alert severity="error">Xin lỗi, chúng tôi không tìm được cửa hàng gần bạn</Alert>
+                  </div>
+              }
             </Col>
           </Row>
           {this.props.chat_toggle && <Chat where="customer" />}
-        </Container>
+        </Container>}
         <Footer />
       </div>
     );

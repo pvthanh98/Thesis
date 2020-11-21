@@ -7,6 +7,7 @@ import Stores from "../../components/user_ui/stores";
 import Footer from "../../components/user_ui/footer";
 import Service from "../../components/user_ui/service";
 import axios from '../../service/axios_user';
+import Chat from '../../components/user_ui/chat/container';
 import {connect} from 'react-redux';
 function Home(props) {
   const [outStandingService, setOutStandingService] = React.useState([]);
@@ -54,13 +55,15 @@ function Home(props) {
       <Container fluid={true} className="my-container">
         <Service outStandingService={outStandingService} />
         <Stores />
+        {props.chat_toggle && <Chat where="customer" />}
       </Container>
       <Footer />
     </div>
   );
 }
 const mapProp = state => ({
-    stores: state.stores
+    stores: state.stores,
+    chat_toggle: state.chat_toggle
 })
 
 const mapDispatch = dispatch => ({

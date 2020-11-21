@@ -1,4 +1,4 @@
-let initState = [];
+let initState = null;
 export default function(state = initState, action){
     switch(action.type){
         case "GET_STORES": {

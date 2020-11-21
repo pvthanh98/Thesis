@@ -12,6 +12,7 @@ const storeSchema = new Schema({
   latitude: {type:Number, default:-1},
   longtitude: {type:Number, default:-1},
   image: { type: String, default : "default_store.png"},
+  city: {type: Schema.Types.ObjectId, ref: "city"},
   rating: {
     five: { type:Number, default: 0 },
     four: { type:Number, default: 0 },

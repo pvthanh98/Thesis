@@ -44,7 +44,8 @@ const BillCtl = require("./controller/bill");
 const RescueCtl = require("./controller/rescue");
 const ProblemCtl = require("./controller/problem");
 const commentCtl = require("./controller/comment");
-const serviceCommentCtl = require("./controller/service_comment")
+const serviceCommentCtl = require("./controller/service_comment");
+const CityCtl = require("./controller/city");
 
 app.get("/api/welcome", (req, res) => res.send("welcome"));
 //login
@@ -53,6 +54,7 @@ app.post("/api/user/login", authCtl.userLogin);
 //store
 app.post("/api/store", validator.createStore(), storeCtl.createStore);
 app.get("/api/store", storeCtl.getStore);
+app.get("/api/store/from_city/:city_id", storeCtl.getStoreFromCity);
 app.get("/api/store/id/:id", storeCtl.getStoreById);
 app.post(
 	"/api/store/modify",
@@ -78,9 +80,12 @@ app.get(
 //store filter
 app.get("/api/store/rating", storeCtl.getStoreByRating);
 app.get("/api/store/sell", storeCtl.getStoreBySale);
+app.put('/api/store/body/:id', passport.authenticate("jwt", { session: false }),storeCtl.modifyBody)
+
 //Service category
 app.post("/api/category", categoryCtl.postCategory);
 app.get("/api/category", categoryCtl.getCategory);
+
 
 //service
 app.get("/api/service", serviceCtl.getService);
@@ -234,6 +239,10 @@ app.get('/api/rating/store_id/:store_id', commentCtl.getComment);
 //COMMENT ON SERVICE (RATING)
 app.post('/api/service/rating', user_auth, serviceCommentCtl.postComment);
 app.get('/api/service/rating/service_id/:service_id', serviceCommentCtl.getComment);
+
+//CITY 
+app.get('/api/city', CityCtl.getCity);
+app.post('/api/city', CityCtl.postCity);
 
 io.on("connection", (socket) => {
 	//authenticate for socket io

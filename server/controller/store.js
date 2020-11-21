@@ -27,7 +27,17 @@ module.exports = {
         .catch(err => { res.sendStatus(400); throw err;})       
     },
     getStore : (req, res) =>{
-        store.find({},"name description address latitude longtitude image rating phone")
+        store.find({},"name description address latitude longtitude image rating phone city")
+            .then((stores)=>{
+                res.json(stores)
+            })
+            .catch(err=>{
+                res.sendStatus(400);
+                throw err;
+            })
+    },
+    getStoreFromCity : (req, res) =>{
+        store.find({city:req.params.city_id},"name description address latitude longtitude image rating phone city")
             .then((stores)=>{
                 res.json(stores)
             })
@@ -69,7 +79,7 @@ module.exports = {
     getStoreInfo : (req, res) =>{
         const { id } = req.user;
         if(id) {
-            Store.findById(id, "email name description latitude longtitude rating address image phone")
+            Store.findById(id, "email name description latitude longtitude rating address image phone city")
             .then(store =>{
                 if(store) res.send(store);
                 return;
@@ -82,7 +92,7 @@ module.exports = {
     },
     getStoreById : (req, res) => {
         const {id} = req.params;
-        store.findById(id, "email name description latitude longtitude rating address image phone")
+        store.findById(id, "email name description latitude longtitude rating address image phone city")
         .then(store=>res.json(store))
         .catch(err=>{res.sendStatus(403);throw err});
     },
@@ -138,5 +148,14 @@ module.exports = {
         })
         .then(()=>res.send("ok"))
         .catch(err=>res.sendStatus(400));
+    },
+
+    modifyBody:(req, res) => {
+        Store.findByIdAndUpdate(req.params.id,req.body)
+        .then(()=>res.sendStatus(200))
+        .catch(err=>{
+            res.send(err);
+            throw err;
+        })
     }
 }

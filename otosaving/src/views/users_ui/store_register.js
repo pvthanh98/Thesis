@@ -1,258 +1,133 @@
 import React from "react";
 import axios from '../../service/axios';
-import {Redirect} from 'react-router-dom';
-import { Spinner } from 'reactstrap';
+import { Redirect } from 'react-router-dom';
+import { Container, Spinner } from 'reactstrap';
+import { Grid, Input, Typography, IconButton, makeStyles, Button } from '@material-ui/core';
+import EmailIcon from '@material-ui/icons/Email';
+import LockIcon from '@material-ui/icons/Lock';
+import PinDropIcon from '@material-ui/icons/PinDrop';
+import EnhancedEncryptionIcon from '@material-ui/icons/EnhancedEncryption';
+import PersonPinIcon from '@material-ui/icons/PersonPin';
+import DescriptionIcon from '@material-ui/icons/Description';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import Checkbox from '@material-ui/core/Checkbox';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import LocationCityIcon from '@material-ui/icons/LocationCity'
+
+const useStyles = makeStyles({
+    root: {
+        backgroundColor: 'red',
+        color: props => props.color,
+    },
+    inputItem: { padding: "8px", marginTop: "8px", display: "flex", flexDirection: "row" },
+    formContainer: { backgroundColor: "#fff", marginTop: "24px", padding: "8px", border: "2px solid #dfdfdf", paddingTop: "24px", paddingBottom: "24px", borderRadius: "12px" }
+});
 const StoreRegister = (props) => {
-    
-    let [email, setEmail] = React.useState("");
-    let [password, setPassword] = React.useState("");
-    let [passwordRetype, setPasswordRetype] = React.useState("");
-    let [name, setName] = React.useState("");
-    let [description, setDescription] = React.useState("");
-    let [address, setAddress] = React.useState("");
+    const classes = useStyles(props);
+    const [check, setCheck] = React.useState(false);
+    const [showPass, setShowPass] = React.useState(false);
+    React.useEffect(() => {
+        console.log(window.innerHeight);
+    }, [])
+    return (
+        <div style={{ backgroundColor: "#e7e7e7", height: window.innerHeight }}>
+            <Container>
+                <Grid container>
+                    <Grid item md={3}></Grid>
+                    <Grid item md={6} className={classes.formContainer} >
+                        <Typography variant="h4" style={{ textAlign: "center" }}>
+                            Đăng Ký Tài khoảng Cửa Hàng
+                    </Typography>
+                        <div className={classes.inputItem}>
+                            <EmailIcon style={{ width: "24px" }} />
+                            <Input
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                placeholder="Email"
+                            />
+                        </div>
+                        <div className={classes.inputItem}>
+                            <LockIcon style={{ width: "24px" }} />
+                            <Input
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                type={showPass ? "text" : "password"}
+                                placeholder="Password"
+                            />
+                            <IconButton onClick={() => setShowPass(!showPass)} style={{ width: "24px" }}>
+                                {!showPass ? <VisibilityIcon color="#ddd" /> : <VisibilityOffIcon color="#ddd" />}
+                            </IconButton>
+                        </div>
+                        <div className={classes.inputItem}>
+                            <EnhancedEncryptionIcon style={{ width: "24px" }} />
+                            <Input
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                type={showPass ? "text" : "password"}
+                                placeholder="Nhập lại password"
+                            />
+                            <IconButton style={{ width: "24px" }} onClick={() => setShowPass(!showPass)} >
+                                {!showPass ? <VisibilityIcon color="#ddd" /> : <VisibilityOffIcon color="#ddd" />}
+                            </IconButton>
+                        </div>
+                        <div className={classes.inputItem}>
+                            <PinDropIcon style={{ width: "24px" }} />
+                            <Input
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                placeholder="Address"
+                            />
+                        </div>
+                        <div className={classes.inputItem}>
+                            <PersonPinIcon style={{ width: "24px" }} />
+                            <Input
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                placeholder="Tên cửa hàng"
+                            />
+                        </div>
+                        <div className={classes.inputItem}>
+                            <DescriptionIcon style={{ width: "24px" }} />
+                            <Input
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                placeholder="Mô tả cửa hàng (khuyến mại...)"
+                            />
+                        </div>
+                        <div className={classes.inputItem}>
+                            <LocationCityIcon style={{ width: "24px" }} />
+                            <Select
+                                value=""
+                                displayEmpty
+                                style={{ width: "100%", marginLeft: "4px" }}
+                                inputProps={{ 'aria-label': 'Without label' }}
+                            >
+                                <MenuItem value="" disabled>
+                                    Thành phố
+                                </MenuItem>
+                                <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                        </div>
 
-    let [emailError, setEmailError] = React.useState("");
-    let [passwordError, setPasswordError] = React.useState("");
-    let [passwordRetypeError, setPasswordRetypeError] = React.useState("");
-    let [nameError, setNameError] = React.useState("");
-    let [descriptionError, setDescriptionError] = React.useState("");
-    let [addressError, setAddressError] = React.useState("");
+                        <div className={classes.inputItem} style={{ justifyContent: "flex-end", alignItems: "center" }}>
+                            Đồng ý với điều khoản
+                        <Checkbox
+                                color="primary"
+                                checked={check}
+                                onChange={e => setCheck(e.target.checked)}
+                            />
+                        </div>
 
-    let [isRegisterSuccess, setRegisterSuccess] = React.useState(false);
-    let [loading, setLoading] = React.useState(false);
+                        <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+                            <Button variant="contained" color="primary" style={{ marginLeft: "8px", width: "40%" }}>ĐĂNG KÝ</Button>
+                            <Button variant="contained" >HỦY BỎ</Button>
+                        </div>
+                    </Grid>
+                    <Grid item md={3}></Grid>
+                </Grid>
+            </Container>
+        </div>
 
-    const handleInput = e => {
-        let {name} = e.target;
-        let {value} = e.target;
-        switch(name){
-            case "email": {
-                setEmail(value);
-                return;
-            }
-            case "password": {
-                setPassword(value);
-                return;
-            }
-            case "retype_password": {
-                setPasswordRetype(value);
-                return;
-            }
-            case "name" :{
-                setName(value);
-                return;
-            }
-            case "description": {
-                setDescription(value);
-                return;
-            }
-            case "address" :{
-                setAddress(value);
-                return;
-            }
-        }
-    }
-
-    const handleFormSubmit = e => {
-        e.preventDefault();
-        if(validator(email,password,name,description,address)){
-            axios().post('/api/store',{
-                email,
-                password,
-                name,
-                description,
-                address
-            })
-            .then(()=>{
-                alert("Đăng ký thành công");
-                setRegisterSuccess(true);
-            })
-            .catch(err => {
-                alert("Có lỗi");
-                console.log(err);
-            });
-        }
-    }
-
-    const validator = (email, password, name, description, address) => {
-        let isValid = true;
-        if(email === "") {
-            setEmailError("Email không được phép rỗng");
-            isValid=false;
-        } else setEmailError("")
-        if(password === "") {
-            setPasswordError("Password Không được phép rỗng")
-            isValid = false
-        } else setPasswordError("")
-        if(passwordRetype === "") {
-            setPasswordRetypeError("Retype password Không được phép rỗng")
-            isValid = false
-        } else setPasswordError("")
-
-        if(passwordRetype !== password) {
-            setPasswordRetypeError("Password không khớp");
-            isValid = false
-        } else setPasswordRetypeError("");
-
-        if(name === "") {
-            setNameError("Tên cửa hàng Không được phép rỗng")
-            isValid = false
-        } else setNameError("");
-        if(description === "") {
-            setDescriptionError("Mô tả cửa hàng Không được phép rỗng")
-            isValid = false
-        } else setDescriptionError("")
-        if(address === "") {
-            setAddressError("Địa chỉ cửa hàng Không được phép rỗng")
-            isValid = false
-        } else setAddressError("")
-
-        return isValid;
-    }
-
-    if(isRegisterSuccess) return <Redirect to="/admin/login" />
-	return (
-		<div className="login-background">
-			<div className="container ">
-				<div className="row mt-4">
-					<div className="col-md-12">
-						<h3 style={{ color: "#231a1a" }}>Đăng ký cửa hàng</h3>
-					</div>
-				</div>
-				<div className="row mt-4">
-					<div className="col-md-12">
-						<div className="login-form">
-							<form onSubmit={handleFormSubmit}>
-								<div className="row">
-									<div className="col-md-6">
-										<div class="form-group">
-											<label
-												for="exampleInputEmail1"
-												style={{ color: "white" }}
-											>
-												Email address
-											</label>
-											<input
-												type="email"
-												className="form-control"
-												id="exampleInputEmail1"
-												aria-describedby="emailHelp"
-                                                placeholder="Enter email"
-                                                name="email"
-                                                onChange={handleInput}
-                                                value={email}                                             
-											/>
-                                            {emailError && <div className="alert-custer" style={{color:"red"}}>{emailError}</div>}
-										</div>
-										<div className="form-group">
-											<label
-												for="exampleInputPassword1"
-												style={{ color: "white" }}
-											>
-												Password
-											</label>
-											<input
-												type="password"
-												className="form-control"
-                                                placeholder="Password"
-                                                name="password"
-                                                onChange={handleInput}
-                                                value={password}
-											/>
-                                            {passwordError && <div className="alert-custer" style={{color:"red"}}>{passwordError}</div>}
-										</div>
-										<div className="form-group">
-											<label
-												for="exampleInputPassword1"
-												style={{ color: "white" }}
-											>
-												Nhập lại password
-											</label>
-											<input
-												type="password"
-												className="form-control"
-                                                placeholder="Retype password"
-                                                name="retype_password"
-                                                onChange={handleInput}
-                                                value={passwordRetype}
-											/>
-                                            {passwordRetypeError && <div className="alert-custer" style={{color:"red"}}>{passwordRetypeError}</div>}
-										</div>
-									</div>
-                                    {/* on the right hand */}
-									<div className="col-md-6">
-										<div className="form-group">
-											<label
-												for="exampleInputPassword1"
-												style={{ color: "white" }}
-											>
-												Name
-											</label>
-											<input
-												type="text"
-												className="form-control"
-                                                placeholder="store name"
-                                                name="name"
-                                                onChange={handleInput}
-                                                value={name}
-											/>
-                                            {nameError && <div className="alert-custer" style={{color:"red"}}>{nameError}</div>}
-										</div>
-                                        <div className="form-group">
-											<label
-												for="exampleInputPassword1"
-												style={{ color: "white" }}
-											>
-												Description
-											</label>
-											<input
-												type="text"
-												className="form-control"
-                                                placeholder="Store description"
-                                                name="description"
-                                                onChange={handleInput}
-                                                value={description}
-											/>
-                                            {descriptionError && <div className="alert-custer" style={{color:"red"}}>{descriptionError}</div>}
-										</div>
-                                        <div className="form-group">
-											<label
-												for="exampleInputPassword1"
-												style={{ color: "white" }}
-											>
-												Address
-											</label>
-											<input
-												type="text"
-												className="form-control"
-												placeholder="Address"
-                                                name="address"
-                                                onChange={handleInput}
-                                                value={address}
-                                            />
-                                            {addressError && <div className="alert-custer" style={{color:"red"}}>{addressError}</div>}
-										</div>
-                                        <div className="form-group">
-                                        {loading && <Spinner color="light"/>}
-										</div>
-									</div>
-								</div>
-                                <div className="row mt-3">
-                                    <div className="col-12" style={{textAlign:"right"}}>              
-                                        <button
-                                            type="submit"
-                                            className="btn btn-warning"
-                                        >
-                                            Register now
-                                        </button>
-                                    </div>
-                                </div>
-							</form>
-						</div>
-					</div>
-					<div className="col-md-6"></div>
-				</div>
-			</div>
-		</div>
-	);
+    );
 };
+
+
 export default StoreRegister;

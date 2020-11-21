@@ -65,7 +65,6 @@ function SimpleMenu(props) {
     })
     .catch(err=>console.log(err));
   }
-console.log(message_list.unread);
   if(redirect) return <Redirect push to={`/customer/${redirect}`} />
   return (
     <div>
