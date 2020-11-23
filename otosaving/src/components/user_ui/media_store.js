@@ -4,7 +4,6 @@ import Loading from "../../components/user_ui/loading";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { animateScroll as scroll } from "react-scroll";
-import Rating from "../../components/user_ui/rating";
 import axios from "../../service/axios_user";
 import { useDispatch } from "react-redux";
 import { server } from "../../constant";
@@ -17,6 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Rating from 'material-ui-rating';
 export default (props) => {
 	const [requestComplete, setRequestComplete] = React.useState(false);
 	const dispatch = useDispatch();
@@ -51,6 +51,7 @@ export default (props) => {
 	};
 
 	const handleButtonClick = () => {
+		console.log(localStorage.getItem('admin_token'))
 		props.chatToggle();
 		loadMessages();
 	};
@@ -92,7 +93,9 @@ export default (props) => {
 				{props.description}
 			</Media>
 			<Media className="mr-5">
-				<Rating star={props.store.rating.total} />
+				<Rating 
+					value={props.store.rating.total} 
+				/>
 			</Media>
 			<Media className="mr-5">
 				Cách bạn{" "}

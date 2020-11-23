@@ -162,7 +162,7 @@ function MyNavbar (props) {
   return (
     <Navbar className="mynav" light expand="md">
       <Link to="/">
-        <img src="/images/logo.png" height={"60px"} />
+        <img src="/images/logo2.png" height={"60px"} />
       </Link>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>

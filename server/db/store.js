@@ -11,7 +11,7 @@ const storeSchema = new Schema({
   address:   String,
   latitude: {type:Number, default:-1},
   longtitude: {type:Number, default:-1},
-  image: { type: String, default : "default_store.png"},
+  image: { type: String, default : "default_store.jpg"},
   city: {type: Schema.Types.ObjectId, ref: "city"},
   rating: {
     five: { type:Number, default: 0 },

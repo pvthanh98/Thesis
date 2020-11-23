@@ -190,3 +190,12 @@
 .registerContainer {
   background-image:  url('/images/background.jpg');
 }
+
+.navbar-light .navbar-nav .nav-link {
+  color: rgb(0 0 0) !important;
+}
+
+.mynav {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f1f1f1 !important;
+}

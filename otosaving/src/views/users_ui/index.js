@@ -14,6 +14,7 @@ import socketIOClient from "socket.io-client";
 import {server} from '../../constant';
 import CustomerIndex from './Customer/index';
 import StoreList from './storelist';
+import PrivateRoute from '../../components/PrivateRoute/user_privateroute'
 const socket = socketIOClient(server);
 socket.on('connect', function(){
     socket.emit("authenticate",{token: localStorage.getItem("user_token"), type: "user"});
@@ -56,7 +57,7 @@ function Index() {
   return (
     <div>
       <Route exact path="/login" component={Login} />
-      <Route exact path="/cuuho" component={Rescue} />
+      <PrivateRoute exact path="/cuuho" component={Rescue} />
       <Route exact path="/user/register" component={UserRegister} />
       <Route exact path="/store/register" component={StoreRegister} />
       <Route exact path="/store/id/:id" component={StoreDetail} />
