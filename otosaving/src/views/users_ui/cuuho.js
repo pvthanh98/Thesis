@@ -38,8 +38,8 @@ const MyMapComponent = compose(
   withScriptjs,
   withGoogleMap,
   lifecycle({
-    async updateDistance() {
-      console.log("updating distance ")
+    async updateDistance(stores) {
+      console.log("updating distance ");
       const findDistance = (lat, lng) => {
         return new Promise((resolve, reject) => {
           const DirectionsService = new window.google.maps.DirectionsService();
@@ -67,9 +67,10 @@ const MyMapComponent = compose(
           );
         });
       };
-      let { stores } = this.props;
+      console.log("stores inside map ", stores);
       for (var i = 0; i < stores.length; i++) {
         try {
+          console.log(stores[i].latitude, stores[i].longtitude, stores[i].address)
           let distance = await findDistance(stores[i].latitude, stores[i].longtitude)
           stores[i].distance = distance;
         } catch (e) {
@@ -86,15 +87,16 @@ const MyMapComponent = compose(
         })
       }
 
-      this.props.updateStore(stores)
+       this.props.updateStore(stores)
     },
     async componentDidMount() {
-      this.updateDistance();
+      this.updateDistance(this.props.stores);
     },
     componentWillReceiveProps(nextProps) {
-      console.log("I RECEIVED A NEW PROP", nextProps);
+      console.log("I RECEIVED A NEW PROP", nextProps.stores);
+
       if (this.props.stores.length > 0 && !this.props.stores[0].distance) {
-        this.updateDistance();
+        this.updateDistance(this.props.stores);
       } else console.log("no need to update distance")
       const DirectionsService = new window.google.maps.DirectionsService();
       DirectionsService.route(
@@ -210,7 +212,8 @@ class Map extends React.PureComponent {
     myposition: null,
     city: [],
     citySelected: null,
-    cityNameSelected: null
+    cityNameSelected: null,
+    stores: null
   };
   componentDidMount() {
     this.loadMyposition();
@@ -218,11 +221,20 @@ class Map extends React.PureComponent {
     this.getCity();
   }
 
+  updateStore = (stores) => {
+    this.setState( {
+      stores: [...stores]
+    })
+  }
+
   loadStore = (city_id) => {
     axios()
       .get("/api/store/from_city/" + city_id)
       .then((res) => {
-        this.props.updateStore(res.data);
+        console.log("stores loaded ", res.data);
+        this.setState({
+          stores :res.data
+        })
       })
       .catch((err) => console.log(err));
   }
@@ -272,7 +284,7 @@ class Map extends React.PureComponent {
   }
 
   renderStore = () => {
-    return this.props.stores && this.props.stores.map(store => {
+    return this.state.stores && this.state.stores.map(store => {
       return (
         <MediaObject
           key={store._id}
@@ -291,7 +303,7 @@ class Map extends React.PureComponent {
     this.setState({
       sortStore: !this.state.sortStore
     })
-    let { stores } = this.props;
+    let { stores } = this.state;
     if (!this.state.sortStore) {
       console.log("case1");
       stores.sort((store_1, store_2) => {
@@ -327,19 +339,19 @@ class Map extends React.PureComponent {
         <Navbar />
         {
           (this.state.myposition !== null
-            && this.props.stores !== null
+            && this.state.stores !== null
           )
             ?
             <MyMapComponent
               myposition={this.state.myposition}
               setSelectedWindow={this.setSelectedWindow}
               selectedWindow={this.state.selectedWindow}
-              stores={this.props.stores}
-              updateStore={this.props.updateStore}
+              stores={this.state.stores}
+              updateStore={this.updateStore}
             />
             : <Loading message="Đang tải vị trí của bạn" />
         }
-        {this.props.stores && <Container className="custom-container">
+        {this.state.stores && <Container className="custom-container">
           <Row>
             <Col md="12 mt-3">
               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -370,7 +382,7 @@ class Map extends React.PureComponent {
             </Col>
             <Col md="12">
               {
-                (this.props.stores.length > 0) ? <div style={{ height: "500px", overflow: "scroll" }}>
+                (this.state.stores.length > 0) ? <div style={{ height: "500px", overflow: "scroll" }}>
                   {this.renderStore()}
                 </div>
                   : <div style={{ textAlign: "center", paddingBottom:"16px" }}>
@@ -388,17 +400,10 @@ class Map extends React.PureComponent {
 }
 
 const mapProp = (state) => ({
-  stores: state.stores,
   chat_toggle: state.chat_toggle
 });
 
 const mapDispatch = (dispatch) => ({
-  updateStore: (stores) => {
-    dispatch({
-      type: "GET_STORES",
-      stores,
-    });
-  },
   updateService: (services) => {
     dispatch({
       type: "GET_SERVICES",
