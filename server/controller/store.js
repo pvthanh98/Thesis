@@ -19,7 +19,8 @@ module.exports = {
             password: bcrypt.hashSync(req.body.password, salt),
             name: req.body.name,
             description: req.body.description,
-            address: req.body.address
+            address: req.body.address,
+            city: req.body.city
         })
         .then(() => {
             res.sendStatus(200)

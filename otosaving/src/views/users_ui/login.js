@@ -4,6 +4,7 @@ import axios from '../../service/axios';
 import { Spinner } from 'reactstrap';
 import { server } from '../../constant';
 import { socket } from '../users_ui/index';
+import { Badge } from 'reactstrap';
 import {useDispatch} from 'react-redux';
 
 function Login(props) {
@@ -65,12 +66,16 @@ function Login(props) {
 					<div className="col-md-4"></div>
 					<div className="col-md-4">
 						<div className="login-form">
-							<h4 style={{ color: "white" }}>Đăng nhập</h4>
+							<h4>
+								Đăng nhập
+								<Badge color="success">Khách hàng</Badge>
+
+							</h4>
 							<form onSubmit={onFormSubmit}>
 								<div class="form-group">
-									<label style={{ color: "white" }}>
+									<div>
 										Email address
-									</label>
+									</div>
 									<input
 										type="email"
 										className="form-control"
@@ -85,14 +90,13 @@ function Login(props) {
 										id="emailHelp"
 										className="form-text text-muted"
 									>
-										We'll never share your email with anyone
-										else.
+										Chúng tôi sẽ không bao giờ chia sẽ email của bạn
 									</small>
 								</div>
 								<div className="form-group">
-									<label style={{ color: "white" }}>
+									<div>
 										Password
-									</label>
+									</div>
 									<input
 										type="password"
 										className="form-control"
@@ -111,25 +115,12 @@ function Login(props) {
 									<Spinner color="light" />
 								</div>}
 
-								<div className="form-check">
-									<input
-										type="checkbox"
-										className="form-check-input"
-										id="exampleCheck1"
-									/>
-									<label
-										className="form-check-label"
-										for="exampleCheck1"
-									>
-										Check me out
-									</label>
-								</div>
-								<div className="mt-2">
+								<div className="mt-2" style={{textAlign:"right"}}>
 									<button
 										type="submit"
 										className="btn btn-danger mr-2"
 									>
-										Login as user
+										Đăng nhập
 									</button>
 								</div>
 							</form>
@@ -137,7 +128,7 @@ function Login(props) {
 								to="/user/register"
 								className="mt-2"
 								style={{
-									color: "white",
+									color: "blue",
 									textDecoration: "underline",
 									cursor: "pointer",
 								}}

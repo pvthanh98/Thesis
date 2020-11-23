@@ -55,12 +55,14 @@ function Login(props) {
 					<div className="col-md-4"></div>
 					<div className="col-md-4">
 						<div className="login-form">
-							<h4 style={{ color: "white" }}>Đăng nhập Admin Board</h4>
+							<div style={{textAlign:"center", marginBottom:"16px"}}>
+							<h4>Admin Dashboard</h4>
+							</div>
 							<form onSubmit={onFormSubmit}>
 								<div class="form-group">
-									<label style={{ color: "white" }}>
+									<div>
 										Email address
-									</label>
+									</div>
 									<input
 										type="email"
 										className="form-control"
@@ -75,14 +77,13 @@ function Login(props) {
 										id="emailHelp"
 										className="form-text text-muted"
 									>
-										We'll never share your email with anyone
-										else.
+										Đừng bao giờ để người khác biết email của bạn
 									</small>
 								</div>
 								<div className="form-group">
-									<label style={{ color: "white" }}>
+									<div>
 										Password
-									</label>
+									</div>
 									<input
 										type="password"
 										className="form-control"
@@ -101,25 +102,12 @@ function Login(props) {
 									<Spinner color="light"/>
 								</div>}
 
-								<div className="form-check">
-									<input
-										type="checkbox"
-										className="form-check-input"
-										id="exampleCheck1"
-									/>
-									<label
-										className="form-check-label"
-										for="exampleCheck1"
-									>
-										Check me out
-									</label>
-								</div>
-								<div className="mt-2">
+								<div className="mt-2" style={{textAlign:"right"}}>
 									<button
 										type="submit"
 										className="btn btn-danger mr-2"
 									>
-										Login as store owner
+										Đăng nhập
 									</button>
 								</div>
 							</form>
@@ -127,7 +115,7 @@ function Login(props) {
 								to="/store/register"
 								className="mt-2"
 								style={{
-									color: "white",
+									color: "red",
 									textDecoration: "underline",
 									cursor: "pointer",
 								}}

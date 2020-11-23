@@ -79,9 +79,12 @@ const MyMapComponent = compose(
 
       //sort
 
-      stores.sort((a, b) => {
-        return (a.distance.distance.value - b.distance.distance.value)
-      })
+      if(stores.length>0 && stores[0].distance) {
+        stores.sort((a, b) => {
+          if(a.distance && b.distance) return (a.distance.distance.value - b.distance.distance.value);
+          else return -1;
+        })
+      }
 
       this.props.updateStore(stores)
     },
@@ -117,6 +120,9 @@ const MyMapComponent = compose(
           }
         }
       )
+    },
+    componentWillMount () {
+      console.log("unmount")
     }
 
   })

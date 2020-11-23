@@ -17,13 +17,12 @@
 }
 
 .login-form {
-    border: 1px solid rgb(142 142 142);
+    border: 2px solid #dfdfdf;
     padding:24px;
-    background-color: #000000a6;
+    background-color: #ffffff5c;
     border-radius: 12px;
 }
 .login-background {
-   
     border: 1px solid #f3f3f3;
     height: 700px;
     background-image: url('/images/background.jpg');
@@ -186,4 +185,8 @@
 
 .unread-message {
   font-weight: bold;
+}
+
+.registerContainer {
+  background-image:  url('/images/background.jpg');
 }
