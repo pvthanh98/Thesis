@@ -89,7 +89,7 @@ const dashboardRoutes = [
     showSidebar: false
   },
   {
-    path: "/bill/add",
+    path: "/bill/add/:customer_id",
     name: "Bill",
     icon: "business_center",
     component: BillAdd,

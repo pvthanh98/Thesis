@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, StatusBar, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, StatusBar, TouchableOpacity, Image} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as Animatable from 'react-native-animatable';
 export default ({navigation}) => {
@@ -7,7 +7,12 @@ export default ({navigation}) => {
     <View style={styles.container}>
       <StatusBar backgroundColor="#01877c" />
       <View style={styles.header}>
-        <Text style={styles.appTitle}>OTO RESCUING</Text>
+        {/* <Text style={styles.appTitle}>OTO RESCUING</Text> */}
+        <Image 
+          source={require('../assets/images/logo2.png')} 
+          style={{height:150, width:"80%"}}
+          resizeMethod="auto"
+        />
       </View>
       <Animatable.View 
         style={styles.footer}

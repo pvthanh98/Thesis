@@ -386,7 +386,7 @@ const ProvisionalBillList = (props) => {
 						List
 					</Link>
 					<Link
-						to="/admin/bill/add"
+						to="/admin/bill/add/init"
 						style={{ color: "black" }}
 						className={
 							props.match.url === "/admin/bill/add"

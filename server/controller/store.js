@@ -1,20 +1,18 @@
-const store = require("../db/store");
+const Store = require("../db/store");
 const { validationResult } = require('express-validator'); 
 const bcrypt = require('bcryptjs');
-const Store = require("../db/store");
 const salt = bcrypt.genSaltSync(10);
 const path = require("path");
 const Jimp = require('jimp');
 const Customer = require("../db/customer");
 const Bill = require("../db/bill");
-const { populate } = require("../db/store");
 module.exports = {
     createStore : (req, res) =>{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        store.create({
+        Store.create({
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password, salt),
             name: req.body.name,
@@ -28,7 +26,7 @@ module.exports = {
         .catch(err => { res.sendStatus(400); throw err;})       
     },
     getStore : (req, res) =>{
-        store.find({},"name description address latitude longtitude image rating phone city")
+        Store.find({},"name description address latitude longtitude image rating phone city")
             .then((stores)=>{
                 res.json(stores)
             })
@@ -38,7 +36,7 @@ module.exports = {
             })
     },
     getStoreFromCity : (req, res) =>{
-        store.find({city:req.params.city_id},"name description address latitude longtitude image rating phone city")
+        Store.find({city:req.params.city_id},"name description address latitude longtitude image rating phone city")
             .then((stores)=>{
                 res.json(stores)
             })
@@ -93,7 +91,7 @@ module.exports = {
     },
     getStoreById : (req, res) => {
         const {id} = req.params;
-        store.findById(id, "email name description latitude longtitude rating address image phone city")
+        Store.findById(id, "email name description latitude longtitude rating address image phone city")
         .then(store=>res.json(store))
         .catch(err=>{res.sendStatus(403);throw err});
     },
@@ -109,7 +107,7 @@ module.exports = {
         })
     },
     getStoreByRating :(req, res) => {
-        store.find({},"email name description latitude longtitude rating address image phone")
+        Store.find({},"email name description latitude longtitude rating address image phone")
         .sort({"rating.total":-1})
         .limit(4)
         .then(stores=> res.send(stores))
@@ -125,7 +123,7 @@ module.exports = {
         let stores = [];
         for(let i=0;i<result.length;i++){
             console.log(result[i])
-            let store_temp = await store.findById(result[i]._id, "email name description latitude longtitude rating address image phone");
+            let store_temp = await Store.findById(result[i]._id, "email name description latitude longtitude rating address image phone");
             stores.push(store_temp);
         }
         res.send(stores)

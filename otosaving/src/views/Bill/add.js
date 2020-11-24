@@ -92,7 +92,7 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function ProvisionalBill() {
+export default function ProvisionalBill(props) {
   const classes = useStyles();
   const [name, setName] = React.useState("");
   const [address, setAddress] = React.useState("");
@@ -110,6 +110,8 @@ export default function ProvisionalBill() {
   //////// for submit
   const [customerID, setCustomerID] = React.useState(null);
   useEffect(()=>{
+      const {customer_id} =props.match.params;
+      if(customer_id!=="init") setInputSearch(customer_id)
       return function(){
           setErr(false);
       }
@@ -250,7 +252,7 @@ export default function ProvisionalBill() {
             List
           </Link>
           <Link
-            to="/admin/bill/add"
+            to="/admin/bill/add/init"
             style={{color:"black"}}
             className={classes.linkCustom}
           >

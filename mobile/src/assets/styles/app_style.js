@@ -4,7 +4,7 @@ export default function app_style() {
     container: {
       ...StyleSheet.absoluteFillObject,
       width: '100%',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
       alignItems: 'center',
     },
     map: {
@@ -85,9 +85,8 @@ export default function app_style() {
       marginBottom: 15,
     },
     topBox: {
-      position: 'absolute',
       top: 0,
-      backgroundColor: '#fff',
+      backgroundColor: '#ffffff5c',
       width: '100%',
       justifyContent: 'center',
       alignItems: 'center',
@@ -99,6 +98,12 @@ export default function app_style() {
     ratingContainer: {
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    top: {
+      width:"100%"
+    },
+    bottom:  {
+      width:"100%"
     },
   };
 }

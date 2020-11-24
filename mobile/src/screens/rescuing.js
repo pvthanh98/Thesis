@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,53 +7,75 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import app_style from '../assets/styles/app_style';
 import Geolocation from '@react-native-community/geolocation';
 import axios from '../service/axios';
 import axiosDefault from 'axios';
-import {useSelector, useDispatch} from 'react-redux';
-import {Button} from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
+import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Polyline from '@mapbox/polyline';
-import {Title, Text} from 'react-native-paper';
+import { Title, Text } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import StoreInfo from '../components/rescue/store_info';
-import Loading from '../components/load'
+import Loading from '../components/load';
+import CitySelectModal from '../components/rescue/city_modal';
+import { Picker } from '@react-native-picker/picker';
+
 const defaultPosition = {
   lat: 10.860281,
   lng: 106.650232
 };
 const styles = StyleSheet.create(app_style());
 
-const Rescue = ({navigation}) => {
+const Rescue = ({ navigation }) => {
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
   const [storeIndex, setStoreIndex] = React.useState(0);
   const [mapInit, setMapInit] = React.useState(true);
   const [coords, setCoords] = React.useState(null);
+  const [cities, setCities] = React.useState(null);
+  const [citySelected, setCitySelected] = React.useState("")
   const [selectedStore, setSelectedStore] = React.useState(null);
   const dispatch = useDispatch();
   const stores = useSelector((state) => state.store_in_area);
   const markerRef = React.createRef();
-  const [globalLoading, setGlobalLoading] = React.useState(true);
+
 
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [cityModalVisible, setCityModalVisible] = React.useState(false);
   const [problemID, setProblemID] = React.useState('');
   const [carProblems, setCarProblems] = React.useState([]);
 
+
+
+  const [globalLoading, setGlobalLoading] = React.useState(false);
   const [loadingStore, setLoadingStore] = React.useState(false);
   const [updatingDistance, setUpdatingDistance] = React.useState(false);
   const [updatingDistanceError, setUpdatingDistanceError] = React.useState(false);
   const [loadStoreError, setLoadStoreError] = React.useState(null);
 
-  const [error, setError] =  React.useState(false);
+  const [error, setError] = React.useState(false);
 
   useEffect(() => {
+    loadCity();
     getCurrentLocation();
     loadCarProblems();
+    if (citySelected === "") setCityModalVisible(true)
   }, []);
+
+  useEffect(() => {
+    loadStore(currentLocation, citySelected)
+  }, [citySelected])
+
+  const loadCity = () => {
+    axios.get('/api/city').then(({ data }) => {
+      setCities(data);
+    })
+      .catch(err => console.log(err))
+  }
 
   const loadCarProblems = () => {
     axios
@@ -68,7 +90,7 @@ const Rescue = ({navigation}) => {
   const requestRescue = () => {
     if (problemID != '') {
       axios
-        .post('/api/rescue', {store_id: selectedStore.id, problem: problemID, coordinate:currentLocation})
+        .post('/api/rescue', { store_id: selectedStore.id, problem: problemID, coordinate: currentLocation })
         .then((resl) => {
           alert('Yêu cầu của bạn đã được gửi');
         })
@@ -80,10 +102,9 @@ const Rescue = ({navigation}) => {
   };
 
   const renderCarProblems = () => {
-    return carProblems.map((e) => ({
-      label: e.name,
-      value: e._id,
-    }));
+    return carProblems.map((e) => (
+      <Picker.Item key={e._id} label={e.name} value={e._id} />
+    ));
   };
 
   const updateStoreDistance = async (currentLatLng, my_store) => {
@@ -98,7 +119,7 @@ const Rescue = ({navigation}) => {
           let resp = await axiosDefault.get(
             `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
           );
-          my_store[i].distance = {...resp.data.routes[0].legs[0].distance};
+          my_store[i].distance = { ...resp.data.routes[0].legs[0].distance };
         }
         my_store.sort((a, b) => a.distance.value - b.distance.value);
         setUpdatingDistanceError(false);
@@ -108,9 +129,9 @@ const Rescue = ({navigation}) => {
           my_store[i].distance = {};
           my_store[i].distance.text = 'không thể tải khoảng cách';
         }
-       
+
       }
-      dispatch({type: 'GET_STORES', stores: my_store});
+      dispatch({ type: 'GET_STORES', stores: my_store });
       setUpdatingDistance(false);
     } catch (exception) {
       console.log(exception);
@@ -238,8 +259,14 @@ const Rescue = ({navigation}) => {
     }
   };
 
+  const getCityName = (id) => {
+    let index = cities.findIndex(e => e._id === id)
+    if (cities && (index >= 0)) return cities[index].name;
+  }
+
+
   const getDirection = async (lat, lng) => {
-    setSelectedLocation({lat, lng});
+    setSelectedLocation({ lat, lng });
     const origin = `${currentLocation.lat},${currentLocation.lng}`;
     const destination = `${lat},${lng}`;
     try {
@@ -272,35 +299,39 @@ const Rescue = ({navigation}) => {
         };
         setCurrentLocation(success);
         setSelectedLocation(success);
-        loadStore(success);
+        // loadStore(success);
         setGlobalLoading(false);
         setError(false);
       },
       (error) => {
         setError(true);
-        loadStore(null);
+        // loadStore(null);
         if (error) setError(error);
         setGlobalLoading(false);
       },
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000},
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 1000 },
     );
   };
 
-  const loadStore = (currentLatLng) => {
-    setLoadingStore(true);
-    axios
-      .get('/api/store')
-      .then((res) => {
-        updateStoreDistance(currentLatLng, res.data);
-        setLoadingStore(false);
-        setLoadStoreError(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoadingStore(false);
-        setLoadStoreError(true);
-      });
+  const loadStore = (currentLatLng, cityID) => {
+    if (cityID !== "") {
+      setLoadingStore(true);
+      axios
+        .get(`/api/store/from_city/${cityID}`)
+        .then((res) => {
+          updateStoreDistance(currentLatLng, res.data);
+          setLoadingStore(false);
+          setLoadStoreError(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoadingStore(false);
+          setLoadStoreError(true);
+        });
+    }
   };
+
+
 
   const renderStore = () =>
     stores.map((store) => (
@@ -337,9 +368,9 @@ const Rescue = ({navigation}) => {
         </Callout>
       </Marker>
     ));
-  if(globalLoading) return <Loading text="Đang xác định vị trí của bạn" />
+  if (globalLoading) return <Loading text="Đang xác định vị trí của bạn" />
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <StatusBar backgroundColor="#295a59" barStyle="light-content" />
       <View style={styles.container}>
         <MapView
@@ -387,58 +418,87 @@ const Rescue = ({navigation}) => {
             />
           )}
         </MapView>
-        {(error || updatingDistanceError || loadStoreError) && (
-          <View style={styles.topBox}>
-            {error && (
-              <Text style={{color: 'red'}}>
-                Có lỗi, không thể tải vị trí của bạn
-              </Text>
-            )}
-            {loadStoreError && (
-              <Text style={{color: 'red'}}>
-                Có lỗi, không thể tải các cửa hàng gần bạn
-              </Text>
-            )}
-            {updatingDistanceError && (
-              <Text style={{color: 'red'}}>
-                Có lỗi, không thể cập nhật khoảng cách
-              </Text>
-            )}
-            <TouchableOpacity onPress={getCurrentLocation}>
-              <Text style={{textDecorationLine: 'underline'}}>Thử lại?</Text>
-            </TouchableOpacity>
-          </View>
-        )}
 
-        {(loadingStore || updatingDistance || globalLoading) && (
-          <View style={styles.topBox}>
-            <ActivityIndicator color="red" />
-            {loadingStore && <Text>Đang tìm kiếm cửa hàng gần bạn</Text>}
-            {updatingDistance && <Text>Đang cập nhật khoảng cách</Text>}
-          </View>
-        )}
-        {(!selectedStore && stores.length>0) && (
-          <View style={styles.barContainer}>
+        <View style={styles.top}>
+          <View
+            style={{
+              justifyContent: "flex-start",
+              width: "100%",
+              backgroundColor: "#ffffff5c",
+              alignItems: "center",
+              padding: 4
+            }}
+          >
             <Button
+
               icon={() => (
-                <Icon style={{color: '#fff'}} name="search" size={24} />
+                <Icon style={{ color: 'black' }} name="location-city" size={24} />
               )}
-              color="#295a59"
-              mode="contained"
-              onPress={() => getAllLocationAndSort(0)}>
-              LOOKING FOR SOS
+              color="black"
+              onPress={() => setCityModalVisible(!cityModalVisible)}
+            >
+              Thành phố : {(citySelected !== "") ? getCityName(citySelected) : "Chọn thành phố..."}
+              <Icon style={{ color: 'black' }} name="create" size={16} />
             </Button>
+            <Text style={{ fontSize: 16, justifyContent: "center" }}>
+              <Icon name="car-repair" size={20} />CỬA HÀNG: {stores.length}
+            </Text>
           </View>
-        )}
-        {selectedStore && (
-          <StoreInfo
-            selectedStore={selectedStore}
-            setSelectedStore={setSelectedStore}
-            getAllLocationAndSort={getAllLocationAndSort}
-            setModalVisible={setModalVisible}
-            navigation={navigation}
-          />
-        )}
+          {(error || updatingDistanceError || loadStoreError) && (
+            <View style={styles.topBox}>
+              {error && (
+                <Text style={{ color: 'red' }}>
+                  Có lỗi, không thể tải vị trí của bạn
+                </Text>
+              )}
+              {loadStoreError && (
+                <Text style={{ color: 'red' }}>
+                  Có lỗi, không thể tải các cửa hàng gần bạn
+                </Text>
+              )}
+              {updatingDistanceError && (
+                <Text style={{ color: 'red' }}>
+                  Có lỗi, không thể cập nhật khoảng cách
+                </Text>
+              )}
+              <TouchableOpacity onPress={getCurrentLocation}>
+                <Text style={{ textDecorationLine: 'underline' }}>Thử lại?</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+        </View>
+        <View style={styles.bottom}>
+          {(!selectedStore && stores.length > 0) && (
+            <View style={styles.barContainer}>
+              <Button
+                icon={() => (
+                  <Icon style={{ color: '#fff' }} name="search" size={24} />
+                )}
+                color="#295a59"
+                mode="contained"
+                onPress={() => getAllLocationAndSort(0)}>
+                LOOKING FOR SOS
+            </Button>
+            </View>
+          )}
+          {(loadingStore || updatingDistance || globalLoading) && (
+            <View style={styles.topBox}>
+              <ActivityIndicator color="red" />
+              {loadingStore && <Text>Đang tìm kiếm cửa hàng gần bạn</Text>}
+              {updatingDistance && <Text>Đang cập nhật khoảng cách</Text>}
+            </View>
+          )}
+          {selectedStore && (
+            <StoreInfo
+              selectedStore={selectedStore}
+              setSelectedStore={setSelectedStore}
+              getAllLocationAndSort={getAllLocationAndSort}
+              setModalVisible={setModalVisible}
+              navigation={navigation}
+            />
+          )}
+        </View>
       </View>
       {/* modal */}
       <Modal
@@ -454,14 +514,19 @@ const Rescue = ({navigation}) => {
               {selectedStore && selectedStore.name}
             </Title>
             <Text>Vấn đề của bạn là gì?</Text>
-            <RNPickerSelect
-              onValueChange={(value) => setProblemID(value)}
-              value={problemID}
-              items={renderCarProblems()}
-            />
-            <View style={{marginTop: 8, flexDirection: 'row-reverse'}}>
+            <Picker
+              selectedValue={problemID}
+              style={{ height: 50, width: "100%" }}
+              onValueChange={(itemValue, itemIndex) => {
+                setProblemID(itemValue);
+              }}
+            >
+              <Picker.Item label={"Chọn vấn đề..."} value={""} />
+              {renderCarProblems()}
+            </Picker>
+            <View style={{ marginTop: 8, flexDirection: 'row-reverse' }}>
               <Button
-                style={{marginLeft: 4}}
+                style={{ marginLeft: 4 }}
                 mode="contained"
                 onPress={requestRescue}>
                 Yêu cầu cứu hộ
@@ -476,6 +541,13 @@ const Rescue = ({navigation}) => {
           </View>
         </View>
       </Modal>
+      <CitySelectModal
+        visible={cityModalVisible}
+        setVisible={setCityModalVisible}
+        cities={cities}
+        citySelected={citySelected}
+        setCitySelected={setCitySelected}
+      />
     </View>
   );
 };

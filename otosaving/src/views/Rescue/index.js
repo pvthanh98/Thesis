@@ -21,35 +21,17 @@ import DriveEtaIcon from "@material-ui/icons/DriveEta";
 import CallIcon from "@material-ui/icons/Call";
 import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import SearchIcon from '@material-ui/icons/Search';
 
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import {Input} from "@material-ui/core"
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import {server} from '../../constant';
+import { Input } from "@material-ui/core"
+
+import { server } from '../../constant';
 import DatePicker from "react-datepicker";
 import ReplayIcon from "@material-ui/icons/Replay";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import "react-datepicker/dist/react-datepicker.css";
+import {Redirect } from 'react-router-dom'
 
-import {
-	Search,
-	AccountBox as AccountBoxIcon,
-	Room as RoomIcon,
-	PhoneAndroid,
-	ErrorOutlineTwoTone,
-} from "@material-ui/icons";
 import Pagination from '@material-ui/lab/Pagination';
 
 const { compose, withProps, lifecycle } = require("recompose");
@@ -73,11 +55,11 @@ const MyMapComponent = compose(
 	withScriptjs,
 	withGoogleMap,
 	lifecycle({
-		test(){
+		test() {
 			console.log("HELLO");
 		},
-		async updateDistance () {
-			console.log("update distance",this.props.storeCoordinate.lat,this.props.storeCoordinate.lng)
+		async updateDistance() {
+			console.log("update distance", this.props.storeCoordinate.lat, this.props.storeCoordinate.lng)
 			const findDistance = (lat, lng) => {
 				return new Promise((resolve, reject) => {
 					const DirectionsService = new window.google.maps.DirectionsService();
@@ -131,9 +113,8 @@ const MyMapComponent = compose(
 		componentWillReceiveProps(nextProps) {
 			console.log("RECEIVE PROPS");
 			const DirectionsService = new window.google.maps.DirectionsService();
-			if((!this.props.selectedCustomer || (this.props.selectedCustomer.customer_id !== nextProps.selectedCustomer.customer_id))
-			&& this.props.inputSearchService  === nextProps.inputSearchService){
-				console.log("call API");
+			if ((!this.props.selectedCustomer || (this.props.selectedCustomer.customer_id !== nextProps.selectedCustomer.customer_id))) {
+				console.log("call API", this.props.inputSearchService);
 				DirectionsService.route(
 					{
 						origin: new window.google.maps.LatLng(
@@ -154,15 +135,17 @@ const MyMapComponent = compose(
 						if (status === window.google.maps.DirectionsStatus.OK) {
 							this.setState({
 								directions: result,
-								distance: {...result.routes[0].legs[0].distance},
+								distance: { ...result.routes[0].legs[0].distance },
 							});
 						} else {
 							console.error("error", result);
 						}
 					}
 				);
+
 			}
-			if(this.props.carRescue.length>0 && !this.props.carRescue[0].distance) {
+
+			if (this.props.carRescue.length > 0 && !this.props.carRescue[0].distance) {
 				this.updateDistance();
 			} else console.log("no need to update distance")
 		}
@@ -179,12 +162,12 @@ const MyMapComponent = compose(
 			lng: props.mapCenter.lng,
 		}}
 		options={{
-			gestureHandling:'greedy',
-			scrollwheel:false,
+			gestureHandling: 'greedy',
+			scrollwheel: false,
 			zoomControlOptions: { position: 9 },
-			streetViewControl:false,
-			fullscreenControl:false,
-		  }}
+			streetViewControl: false,
+			fullscreenControl: false,
+		}}
 	>
 		<Marker
 			position={{
@@ -208,39 +191,38 @@ const MyMapComponent = compose(
 							lat: e.customer_id.latitude,
 							lng: e.customer_id.longtitude,
 						}}
-						onClick={()=>{
+						onClick={() => {
 							props.setSelectedCustomer({
 								customer_id: e.customer_id._id,
 								name: e.customer_id.name,
 								phone: e.customer_id.phone,
 								lat: e.customer_id.latitude,
 								lng: e.customer_id.longtitude,
-								distance: e.distance ? e.distance.text :  "Loading...",
+								distance: e.distance ? e.distance.text : "Loading...",
 							})
 							console.log(props.distance)
 						}}
 					>
 						{props.selectedCustomer &&
-							e.customer_id._id ==
-								props.selectedCustomer.customer_id && (
+						(e.customer_id._id == props.selectedCustomer.customer_id) && (
 								<InfoWindow>
 									<div>
-										<Typography style={{fontWeight:"bold"}} variant="subtitle1">
+										<Typography style={{ fontWeight: "bold" }} variant="subtitle1">
 											{props.selectedCustomer
 												? props.selectedCustomer.name
 												: e.customer_id.name}
 										</Typography>
 										{e.is_complete
-										&& <Typography style={{color:"green"}} variant="body1">
+											&& <Typography style={{ color: "green" }} variant="body1">
 												Đã hoàn thành
 											</Typography>
 										}
 										<Typography variant="body1">
-											<DriveEtaIcon style={{marginRight:"4px", fontSize:"20px"}} />
+											<DriveEtaIcon style={{ marginRight: "4px", fontSize: "20px" }} />
 											{props.selectedCustomer.distance}
 										</Typography>
 										<Typography variant="body1">
-											<CallIcon style={{marginRight:"4px", fontSize:"20px"}} />
+											<CallIcon style={{ marginRight: "4px", fontSize: "20px" }} />
 											{props.selectedCustomer.phone}
 										</Typography>
 										<Typography variant="body1">
@@ -253,7 +235,7 @@ const MyMapComponent = compose(
 											</Tooltip>
 											<Tooltip title="Thanh thêm vào hóa đơn">
 												<IconButton
-													onClick={() => props.handleClickOpen(e.customer_id, e._id)}
+													onClick={() => props.setIsRedirect(e.customer_id._id)}
 												>
 													<PaymentIcon style={{ color: "#3b0957" }} />
 												</IconButton>
@@ -265,9 +247,9 @@ const MyMapComponent = compose(
 													<CheckIcon style={{ color: "#044711" }} />
 												</IconButton>
 											</Tooltip>}
-											
+
 										</Typography>
-										
+
 
 									</div>
 								</InfoWindow>
@@ -305,9 +287,9 @@ const useStyles = makeStyles((theme) => ({
 		padding: "8px",
 	},
 	dialogPaper: {
-        minHeight: '80vh',
-        maxHeight: '80vh',
-    },
+		minHeight: '80vh',
+		maxHeight: '80vh',
+	},
 }));
 
 function createData(id, name, price, quantity, total) {
@@ -321,17 +303,16 @@ export default function Rescue() {
 	const [mapCenter, setMapCenter] = React.useState(null);
 	const [selectedCustomer, setSelectedCustomer] = React.useState(null);
 	const [rows, setRows] = React.useState([])
-	const [inputSearchService, setInputNameService] = React.useState("")
-	const [resultService, setResultService] = React.useState([])
 	const [open, setOpen] = React.useState(false);
 	const [billCustomerInfo, setBillCustomerInfo] = React.useState(null);
 	const [totalCost, setTotalCost] = React.useState(0);
 	const [selectedRescueId, setSelectedRescueId] = React.useState(0);
+	const [isRedirect, setIsRedirect] = React.useState(null);
 	const [totalPage, setTotalPage] = React.useState(1);
 	const [startDate, setStartDate] = React.useState("");
 	const [customerName, setCustomerName] = React.useState("");
 	const [loading, setLoading] = React.useState(true);
-	const handleClickOpen = (customer , rescue_id) => {
+	const handleClickOpen = (customer, rescue_id) => {
 		setOpen(true);
 		setBillCustomerInfo(customer);
 		setSelectedRescueId(rescue_id)
@@ -362,14 +343,12 @@ export default function Rescue() {
 	};
 
 	const sleep = (milisecond) => {
-		return new Promise(function(resolve, reject){
-			setTimeout(function(){
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () {
 				resolve("ok")
-			},milisecond)
+			}, milisecond)
 		})
 	}
-
-
 
 	const loadMessages = (customer_id) => {
 		axios()
@@ -393,81 +372,6 @@ export default function Rescue() {
 			})
 			.catch((err) => console.log(err));
 	};
-
-
-	const renderResultServices = () => {
-		return resultService.map(e=>(
-			<ListItem key={e._id} style={{borderBottom:"1px solid #f1f1f1",borderRadius:"12px"}}>
-				<ListItemAvatar>
-					<Avatar src={`${server}/images/${e.image}`} />
-				</ListItemAvatar>
-				<ListItemText
-					primary={e.name}
-				/>
-				<ListItemSecondaryAction>
-					<IconButton edge="start" aria-label="add" onClick={()=>handleAddService(e)}>
-						<AddCircleOutlineIcon />
-					</IconButton>
-				</ListItemSecondaryAction>
-			</ListItem>
-		))
-	}
-	const makeBill = (rescue_id) => {
-		let services = [];
-		let total_cost =0;
-		for(let i=0;i<rows.length;i++){
-		  total_cost += rows[i].price * rows[i].quantity;
-		  services.push({
-			service_id: rows[i].id,
-			quantity: rows[i].quantity
-		  })
-		}
-		const bill ={
-		  customer_id: billCustomerInfo._id,
-		  total_cost,
-		  services,
-		}
-		
-		axios().post('/api/bill',bill)
-		.then(reslt=> {
-			setComplete(selectedRescueId);
-			alert("Thành công!");
-		})
-		.catch(err=>console.log(err));
-		handleClose();
-	}
-
-	const handleChangeService = (e) => {
-		setInputNameService(e.target.value);
-		if(e.target.value!==""){
-		  axios().get(`/api/service/search/${e.target.value}`)
-		  .then(({data})=>{
-			setResultService(data)
-		  })
-		  .catch(err=>console.log(err))
-		} else {
-			setResultService([])
-		}
-	}
-
-	const handleAddService = (service) => {
-		const services = [...rows];
-		var index = services.findIndex(e=>{
-			return e.id === service._id
-		});
-		if(index<0){
-			services.push(createData(service._id, service.name, service.price,1,service.price));
-		} else {
-			services[index].quantity += 1;
-			services[index].total =  services[index].quantity * services[index].price
-		}
-		let total = 0;
-		for(let e of services) {
-			total+=e.total;
-		}
-		setTotalCost(total)
-		setRows(services);
-	}
 
 	if (!mapCenter && mystoreInfo)
 		setMapCenter({
@@ -506,7 +410,7 @@ export default function Rescue() {
 							<IconButton
 								aria-label="gps"
 								className={classes.margin}
-								onClick={() => handleClickOpen(e.customer_id, e._id)}
+								onClick={() => setIsRedirect(e.customer_id)}
 							>
 								<PaymentIcon style={{ color: "#3b0957" }} />
 							</IconButton>
@@ -528,7 +432,7 @@ export default function Rescue() {
 				)}
 				{e.is_complete && (
 					<div>
-						<Typography style={{ color: "green", marginLeft:"4px" }} variant="body1">
+						<Typography style={{ color: "green", marginLeft: "4px" }} variant="body1">
 							Đã hoàn thành
 						</Typography>
 					</div>
@@ -571,93 +475,93 @@ export default function Rescue() {
 		));
 
 	const searchRescueByCustomerName = () => {
-		if(customerName!==""){
+		if (customerName !== "") {
 			setLoading(true);
 			axios().get(`/api/rescue/search/name/${customerName}`)
-			.then(async (res)=>{
-				await sleep(1000);
-				setCarRescue(res.data.rescuelist)
-				setTotalPage(res.data.total_page);
-				setLoading(false)
-			})
-			.catch(err=>{console.log(err); setLoading(false)});
+				.then(async (res) => {
+					await sleep(1000);
+					setCarRescue(res.data.rescuelist)
+					setTotalPage(res.data.total_page);
+					setLoading(false)
+				})
+				.catch(err => { console.log(err); setLoading(false) });
 			setCustomerName("");
 		} else alert("Nhập tên khách hàng")
-		
+
 	}
 
 	const searchRescueByCustomerDate = () => {
-		if(startDate!=""){
+		if (startDate != "") {
 			setLoading(true);
 			axios().get(`/api/rescue/search/date/${startDate}`)
-			.then(async res=>{
-				await sleep(1000);
-				setCarRescue(res.data.rescuelist)
-				setTotalPage(res.data.total_page);
-				setLoading(false)
-			})
-			.catch(err=>{console.log(err); setLoading(false)});
+				.then(async res => {
+					await sleep(1000);
+					setCarRescue(res.data.rescuelist)
+					setTotalPage(res.data.total_page);
+					setLoading(false)
+				})
+				.catch(err => { console.log(err); setLoading(false) });
 			setStartDate("");
 		} else alert("Nhập ngày liệt kê")
 	}
-	
+
 	const callInsideMap = (f) => {
 		f();
 	}
 
+	if(isRedirect) return <Redirect push to={`/admin/bill/add/${isRedirect}`} />
 	return (
 		<GridContainer>
 			<GridItem xs={12} sm={12} md={12}>
-				<Button on>ok</Button>
 				<Typography variant="h5" gutterBottom>
 					Bản đồ
 				</Typography>
 				{
 					(carRescue.length > 0) && mystoreInfo
-					&& 
+					&&
 					<MyMapComponent
-					mapCenter={mapCenter}
-					carRescue={carRescue}
-					setCarRescue={setCarRescue}
-					setMapCenter={setMapCenter}
-					storeCoordinate={{
-						lat: mystoreInfo ? mystoreInfo.latitude : -1,
-						lng: mystoreInfo ? mystoreInfo.longtitude : -1,
-					}}
-					selectedCustomer={selectedCustomer}
-					setSelectedCustomer={setSelectedCustomer}
-					handleOpenMessage={handleOpenMessage}
-					setComplete={setComplete}
-					handleClickOpen={handleClickOpen}
-					callInsideMap={callInsideMap}
-					inputSearchService={inputSearchService}
-				/>
+						mapCenter={mapCenter}
+						carRescue={carRescue}
+						setCarRescue={setCarRescue}
+						setMapCenter={setMapCenter}
+						storeCoordinate={{
+							lat: mystoreInfo ? mystoreInfo.latitude : -1,
+							lng: mystoreInfo ? mystoreInfo.longtitude : -1,
+						}}
+						selectedCustomer={selectedCustomer}
+						setSelectedCustomer={setSelectedCustomer}
+						handleOpenMessage={handleOpenMessage}
+						setComplete={setComplete}
+						handleClickOpen={handleClickOpen}
+						callInsideMap={callInsideMap}
+						setIsRedirect={setIsRedirect}
+					/>
 				}
 			</GridItem>
 			<GridItem xs={12} sm={12} md={12}>
 				<Typography variant="h5" className="mt-3" gutterBottom>
 					Danh sách
-					<IconButton onClick={()=>loadOtoRescuing(1)} >
+					<IconButton onClick={() => loadOtoRescuing(1)} >
 						<ReplayIcon />
 					</IconButton>
 				</Typography>
 			</GridItem>
 			<GridItem xs={12} sm={12} md={8}>
-				{loading && <div style={{textAlign:"center", display:"flex", justifyContent:"center"}}>
+				{loading && <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
 					<CircularProgress color="secondary" />
 				</div>}
 				<List
 					component="nav"
 					aria-labelledby="nested-list-subheader"
 					className={classes.root}
-				>	
+				>
 					{renderListItem(0)}
 				</List>
-				{totalPage==-1 && carRescue.length<=0 && <div style={{textAlign:"center", display:"flex", justifyContent:"center"}}>
+				{totalPage == -1 && carRescue.length <= 0 && <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
 					Không tìm thấy
 				</div>}
-				{totalPage>=0 && <div style={{textAlign:"center", display:"flex", justifyContent:"center"}}>
-					<Pagination count={totalPage} onChange={(e, value)=> loadOtoRescuing(value)} color="primary" />
+				{totalPage >= 0 && <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
+					<Pagination count={totalPage} onChange={(e, value) => loadOtoRescuing(value)} color="primary" />
 				</div>}
 			</GridItem>
 			<GridItem xs={12} sm={12} md={4}>
@@ -665,22 +569,22 @@ export default function Rescue() {
 					Bộ lọc
 				</Typography>
 				<Input
-					style={{width:"80%"}}
+					style={{ width: "80%" }}
 					placeholder="Tìm tên khách hàng"
 					value={customerName}
-					onChange={(e)=>setCustomerName(e.target.value)}
+					onChange={(e) => setCustomerName(e.target.value)}
 				/>
 				<IconButton
 					onClick={searchRescueByCustomerName}
 				>
 					<SearchIcon style={{ color: "#115293" }} />
 				</IconButton>
-				<div style={{position:"relative"}}>
-					<DatePicker 
-						placeholderText="Tìm theo ngày" 
-						selected={startDate} 
-						onChange={date => setStartDate(date)} 
-						style={{border:"none", borderBottom:"1px solid #ddd"}}
+				<div style={{ position: "relative" }}>
+					<DatePicker
+						placeholderText="Tìm theo ngày"
+						selected={startDate}
+						onChange={date => setStartDate(date)}
+						style={{ border: "none", borderBottom: "1px solid #ddd" }}
 					/>
 					<IconButton
 						onClick={searchRescueByCustomerDate}
@@ -689,139 +593,6 @@ export default function Rescue() {
 					</IconButton>
 				</div>
 			</GridItem>
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-				maxWidth="lg"
-				fullWidth
-				classes={{ paper: classes.dialogPaper }}
-			>
-				<DialogTitle id="alert-dialog-title">
-					{"Thêm dịch vụ"}
-				</DialogTitle>
-				<DialogContent>
-					<GridContainer>
-						<GridItem md={8}>
-							<Typography variant="h6">Dịch vụ</Typography>
-							<div 
-								style={{position:"relative"}}
-							>
-								<div 
-									style={{
-										display:"flex", 
-										flexDirection:"row-reverse"
-									}}
-								>
-									<div style={{width:"70%", textAlign:"right"}}>
-										<SearchIcon/>
-										<Input 
-											type="text" 
-											placeholder="Tên sản phẩm"
-											style={{width:"85%"}}
-											value={inputSearchService}
-                            				onChange={handleChangeService}
-										/> 
-									</div>
-								</div>
-								<div 
-									style={{
-										position:"absolute",
-										right:"0px",
-										zIndex:1,
-										backgroundColor:"#fff",
-										width:"65%"
-									}}
-								>
-									<List >
-										{renderResultServices()}
-									</List>
-								</div>
-							</div>
-							<Table
-								className={classes.table}
-								aria-label="simple table"
-							>
-								<TableHead>
-									<TableRow>
-										<TableCell>
-											ID
-										</TableCell>
-										<TableCell align="right">
-											Name
-										</TableCell>
-										<TableCell align="right">
-											Price
-										</TableCell>
-										<TableCell align="right">
-											Quantity
-										</TableCell>
-										<TableCell align="right">
-											Total
-										</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									{rows.map((row) => (
-										<TableRow key={row.name}>
-											<TableCell
-												component="th"
-												scope="row"
-											>
-												{row.id}
-											</TableCell>
-											<TableCell align="right">
-												{row.name}
-											</TableCell>
-											<TableCell align="right">
-												{row.price}
-											</TableCell>
-											<TableCell align="right">
-												{row.quantity}
-											</TableCell>
-											<TableCell align="right">
-												{row.total}
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-							<div style={{display:"flex", flexDirection:"row-reverse", marginTop:"8px"}}>
-								<div style={{width:"30%", display:"flex", justifyContent:"space-between"}}>
-									<div>
-										Tổng tiền:
-									</div>
-									<div style={{color:"red", fontWeight:"bold"}}>
-										{totalCost}
-									</div>
-								</div>
-							</div>
-						</GridItem>
-						<GridItem md={4}>
-							<Typography variant="h6">Khách hàng</Typography>
-							<Avatar src={`${server}/images/${billCustomerInfo ? billCustomerInfo.image : ""}`} />
-							<div className={classes.infoItem}>
-								<AccountBoxIcon /> {billCustomerInfo && billCustomerInfo.name}
-							</div>
-							<div className={classes.infoItem}>
-								<RoomIcon /> {billCustomerInfo && billCustomerInfo.address}
-							</div>
-							<div className={classes.infoItem}>
-								<PhoneAndroid /> {billCustomerInfo && billCustomerInfo.phone}
-							</div>
-						</GridItem>
-					</GridContainer>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Hủy
-					</Button>
-					<Button onClick={makeBill} variant="contained" color="primary" autoFocus>
-						Đồng Ý
-					</Button>
-				</DialogActions>
-			</Dialog>
 		</GridContainer>
 	);
 }

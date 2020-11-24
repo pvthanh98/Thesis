@@ -252,7 +252,7 @@ export default function ProvisionalBill(props) {
             List
           </Link>
           <Link
-            to="/admin/bill/add"
+            to="/admin/bill/add/init"
             style={{color:"black"}}
           >
             <AddIcon className={classes.icon} />
