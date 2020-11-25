@@ -41,7 +41,9 @@ export default (props) => {
 		props.setSelectedWindow({
 			id: props.store._id,
 			name: props.store.name,
+			phone: props.store.phone,
 			description: props.store.description,
+			image:props.store.image,
 			lat: props.store.latitude,
 			lng: props.store.longtitude,
 			distance: props.store.distance.distance,

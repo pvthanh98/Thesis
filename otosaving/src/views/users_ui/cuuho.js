@@ -2,19 +2,20 @@ import React from "react";
 import Navbar from "../../components/user_ui/navbar";
 import Footer from "../../components/user_ui/footer";
 import { connect } from "react-redux";
-import Rating from '../../components/user_ui/rating';
 import { Container, Row, Col } from 'reactstrap';
-import { Button } from 'reactstrap';
+import { Avatar, Button } from '@material-ui/core';
 import { Link } from "react-router-dom";
 import axios from "service/axios_user";
 import MediaObject from '../../components/user_ui/media_store';
 import Chat from '../../components/user_ui/chat/container';
-import { socket } from '../../views/users_ui/index';
-import CitySelection from '../../components/user_ui/selectCity';
 import Loading from '../../components/user_ui/loading'
 import Alert from '@material-ui/lab/Alert';
-import { IconButton } from '@material-ui/core';
-import CreateIcon from '@material-ui/icons/Create';
+import CityModal from '../../components/user_ui/city_modal'
+import Rating from 'material-ui-rating';  
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import DirectionsCarIcon from '@material-ui/icons/DirectionsCar';
+import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
+import {server} from '../../constant'
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -97,7 +98,11 @@ const MyMapComponent = compose(
 
       if (this.props.stores.length > 0 && !this.props.stores[0].distance) {
         this.updateDistance(this.props.stores);
-      } else console.log("no need to update distance")
+      } else console.log("no need to update distance");
+      console.log(this.props.stores[0].city)
+      console.log(nextProps.stores[0].city)
+      if(this.props.stores[0].city !== nextProps.stores[0].city) this.updateDistance(this.props.stores);
+      else console.log("no need to update distance");
       const DirectionsService = new window.google.maps.DirectionsService();
       DirectionsService.route(
         {
@@ -167,7 +172,9 @@ const MyMapComponent = compose(
               props.setSelectedWindow({
                 id: store._id,
                 name: store.name,
+                phone: store.phone,
                 description: store.description,
+                image: store.image,
                 lat: store.latitude,
                 lng: store.longtitude,
                 distance: store.distance ? store.distance.distance : "",
@@ -184,13 +191,31 @@ const MyMapComponent = compose(
                       <h5>{props.selectedWindow.name}</h5>
                     </Link>
                     <p>{props.selectedWindow.description}</p>
-                    <p>Click vào biểu tượng 1 lần để xem đường đi</p>
-                    {props.selectedWindow.distance && (
-                      <p>Khoảng cách: {props.selectedWindow.distance.text}</p>
-                    )}
-                    <Rating star={props.selectedWindow.rating} />
+                    <div style={{display:"flex", flexDirection:"row"}}>
+                      <div style={{width:"60%"}}>
+                        <p><PhoneAndroidIcon/> SDT: {props.selectedWindow.phone}</p>
+                        {props.selectedWindow.distance && (
+                          <p><DirectionsCarIcon /> Khoảng cách: {props.selectedWindow.distance.text}</p>
+                        )}
+                      </div>
+                      <div style={{width:"40%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                        <Avatar style={{height:"100px", width:"100px"}} src={`${server}/images/${props.selectedWindow.image}`} />
+                      </div>
+                    </div>
+                    
+                    <Rating value={props.selectedWindow.rating} size="large" />
                     <div className="mt-2">
-                      <Button color="success"> <i className="fas fa-sms"></i></Button>
+                      <Button 
+                        variant="contained" 
+                        icon={()=>  <MailOutlineIcon />} 
+                        color="primary"
+                        onClick={props.handleClickSendMessage}
+                      >
+                        GỬI TIN NHẮN
+                      </Button>
+                      <Button  variant="contained" className="ml-2">
+                        CHI TIẾT CỬA HÀNG
+                      </Button>
                     </div>
                   </div>
                 </InfoWindow>
@@ -213,12 +238,23 @@ class Map extends React.PureComponent {
     city: [],
     citySelected: null,
     cityNameSelected: null,
-    stores: null
+    stores: null,
+    openCityModal: true,
   };
   componentDidMount() {
     this.loadMyposition();
     this.loadCarProblems();
     this.getCity();
+  }
+
+  handleCityModal = (city_id) => {
+    this.loadStore(city_id);
+    const index = this.state.city.findIndex(e=>(e._id===city_id));
+    this.setState({
+      citySelected: city_id,
+      cityNameSelected: this.state.city[index].name,
+      openCityModal: !this.state.openCityModal
+    })
   }
 
   updateStore = (stores) => {
@@ -322,22 +358,25 @@ class Map extends React.PureComponent {
       .catch(err => console.log(err))
   }
 
-  getCitySelected = (value) => {
-    this.loadStore(value);
-    const index = this.state.city.findIndex(e=>(e._id===value));
-
-    this.setState({
-      citySelected: value,
-      cityNameSelected: this.state.city[index].name
-    })
-  }
+  handleClickSendMessage = () => {
+		this.props.setChatToggle(true)
+	  this.loadMessages();
+	};
+	loadMessages = () => {
+		axios()
+			.get(`/api/messages/customer_to/${this.state.selectedWindow.id}`)
+			.then(({ data }) => {
+				this.props.updateMessage(data);
+			})
+			.catch((err) => console.log(err));
+	};
 
   render() {
-    if (this.state.citySelected === null) return <CitySelection city={this.state.city} getCitySelected={this.getCitySelected} />
+   // if (this.state.citySelected === null) return <CitySelection city={this.state.city} getCitySelected={this.getCitySelected} />
     return (
       <div>
         <Navbar />
-        {
+        { this.state.citySelected && (
           (this.state.myposition !== null
             && this.state.stores !== null
           )
@@ -348,8 +387,10 @@ class Map extends React.PureComponent {
               selectedWindow={this.state.selectedWindow}
               stores={this.state.stores}
               updateStore={this.updateStore}
+              handleClickSendMessage={this.handleClickSendMessage}
             />
             : <Loading message="Đang tải vị trí của bạn" />
+        )
         }
         {this.state.stores && <Container className="custom-container">
           <Row>
@@ -357,10 +398,7 @@ class Map extends React.PureComponent {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
                   <h4>Cửa hàng oto gần bạn</h4>
-                  <p>Thành Phố: {this.state.cityNameSelected} <IconButton onClick={()=>{this.setState({
-                    citySelected:null,
-                    cityNameSelected:null
-                  })}}> <CreateIcon/> </IconButton>
+                  <p>Thành Phố: {this.state.cityNameSelected}
                   </p>
                 </div>
                 <div style={{
@@ -394,6 +432,7 @@ class Map extends React.PureComponent {
           {this.props.chat_toggle && <Chat where="customer" />}
         </Container>}
         <Footer />
+        <CityModal open={this.state.openCityModal} city={this.state.city} setOpen={this.handleCityModal} />
       </div>
     );
   }
@@ -414,6 +453,12 @@ const mapDispatch = (dispatch) => ({
     dispatch({
       type: "SET_CHAT_TOGGLE",
       state,
+    });
+  },
+  updateMessage: (messages) => {
+    dispatch({
+      type: "UPDATE_MESSAGES",
+      messages,
     });
   },
 
