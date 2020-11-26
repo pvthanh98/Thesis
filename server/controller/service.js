@@ -2,10 +2,20 @@ const service = require("../db/service");
 const path = require("path");
 const Jimp = require('jimp');
 module.exports = {
-    getService : (req, res) =>{
-        service.find({}).populate("store_id").limit(16)
+    getService : async (req, res) =>{
+		const {page} = req.params;
+        const perPage = 8;
+        let total_page = await service.count({});
+        total_page = Math.ceil(total_page/perPage);
+		service.find({})
+		.populate("store_id")
+		.limit(perPage)
+        .skip(perPage *(page-1))
         .then(services=>{
-            res.json(services)
+            res.json({
+				services,
+				total_page
+			})
         })
         .catch(err=>console.log(err))
 	},

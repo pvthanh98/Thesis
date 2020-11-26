@@ -17,9 +17,11 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Rating from '../../components/user_ui/rating';
+import Rating from 'material-ui-rating';
 import Card from '../../components/user_ui/card_material';
 import Chat from '../../components/user_ui/chat/container';
+import Loading from '../../components/user_ui/loading';
+import Comment from '../../components/user_ui/comment';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
 	withScriptjs,
@@ -56,6 +58,10 @@ const MyMapComponent = compose(
 				? props.store_coordinate.lng
 				: 105.77034019999999,
 		}}
+		center={{
+			lat: props.store_coordinate.lat,
+			lng: props.store_coordinate.lng
+		}}
 		options={{
 			gestureHandling: "greedy",
 		}}
@@ -68,7 +74,7 @@ const MyMapComponent = compose(
 				}}
 			>
 				<InfoWindow>
-					<div>Vị trí của bạn</div>
+					<div>Vị trí cửa hàng</div>
 				</InfoWindow>
 			</Marker>
 		)}
@@ -93,7 +99,7 @@ const useStyle = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
-		position:"relative"
+		position: "relative"
 	},
 	customAppBar: {
 		backgroundColor: "#ffffff",
@@ -133,21 +139,29 @@ function a11yProps(index) {
 }
 
 const RenderService = (props) => {
-	return props.services.map(service => (<Grid item md={3}>
-		<Card
-			service={service}
-		/>
-	</Grid>))
+	return props.services.map(service => {
+		console.log(service);
+		if (service.category!=="5fbdc0f297f583672286ec4b") {
+			return (
+				<Grid item md={3}>
+					<Card
+						service={service}
+					/>
+				</Grid>
+			)
+
+		}
+	})
 }
 
 export default (props) => {
 	const classes = useStyle();
-	const [services, setServices] = React.useState([]);
+	const [services, setServices] = React.useState(null);
 	const [loading, setLoading] = React.useState(true);
 	const theme = useTheme();
 	const dispatch = useDispatch();
 	const store_detail = useSelector((state) => state.store_detail);
-	const chat_toggle = useSelector(state=> state.chat_toggle)
+	const chat_toggle = useSelector(state => state.chat_toggle)
 	useEffect(() => {
 		loadStore();
 		loadServices();
@@ -168,12 +182,12 @@ export default (props) => {
 		console.log("press me")
 		dispatch({ type: "SET_CHAT_TOGGLE", state: true })
 		axios().get(`/api/messages/customer_to/${store_detail._id}`)
-		.then(({data})=> {
-		  console.log(data)
-		  dispatch({type:"UPDATE_MESSAGES", messages:data})
-		})
-		.catch(err=>console.log(err));
-	  }
+			.then(({ data }) => {
+				console.log(data)
+				dispatch({ type: "UPDATE_MESSAGES", messages: data })
+			})
+			.catch(err => console.log(err));
+	}
 
 	const loadServices = () => {
 		axios().get(`/api/service/store/${props.match.params.id}`)
@@ -230,7 +244,7 @@ export default (props) => {
 								/>
 								<h4 className="mt-3">{store_detail.name}</h4>
 								<div>{store_detail.description}</div>
-								<div><Rating star={4} /></div>
+								<div><Rating value={4} /></div>
 							</div>
 						) : (
 								<div>Loading...</div>
@@ -257,15 +271,15 @@ export default (props) => {
 							className={classes.customButton}
 							endIcon={<KeyboardVoiceIcon />}
 						>
-							Gọi
+							Đánh giá
 						</Button>
 
-						<div className={classes.customButton} style={{ textAlign: "center" }}>
+							<div className={classes.customButton} style={{ textAlign: "center" }}>
 							<hr />
 							<div><EditLocation /> {store_detail && store_detail.address}  </div>
 							<div><DriveEta /> Cách bạn 12 km</div>
 						</div>
-						{chat_toggle && <Chat where="customer"/>}
+						{chat_toggle && <Chat where="customer" />}
 					</Grid>
 					<Grid item md={6} sm={12} xs={12}>
 						<hr />
@@ -278,8 +292,8 @@ export default (props) => {
 								variant="fullWidth"
 								aria-label="full width tabs example"
 							>
-								<Tab label="Dịch vụ mới" {...a11yProps(0)} />
-								<Tab label="Dịch vụ chuyên" {...a11yProps(1)} />
+								<Tab label="Dịch vụ" {...a11yProps(0)} />
+								<Tab label="Bình luận" {...a11yProps(1)} />
 							</Tabs>
 						</AppBar>
 					</Grid>
@@ -297,7 +311,9 @@ export default (props) => {
 								style={{ overflow: "hidden" }}
 							>
 								<Grid container spacing={2}>
-									<RenderService services={services} />
+									{loading ? 
+									 <Grid item md={12}><Loading /></Grid>
+									:<RenderService services={services} />}
 								</Grid>
 							</div>
 							<div
@@ -306,8 +322,14 @@ export default (props) => {
 								dir={theme.direction}
 								style={{ overflow: "hidden" }}
 							>
-								Item Two
-								</div>
+								<Grid container spacing={2}>
+									<Comment />
+									<Comment />
+									<Comment />
+									<Comment />
+									<Comment />
+								</Grid>
+							</div>
 						</SwipeableViews>
 					</Grid>
 				</Grid>

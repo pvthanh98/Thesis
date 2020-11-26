@@ -4,6 +4,8 @@ import Carousel from "./carousel_for_service";
 import Medias from "./media_service";
 import Card from "./card";
 import { connect } from "react-redux";
+import Pagination from '@material-ui/lab/Pagination';
+import Icon from "./icon";
 const Service = (props) => {
   const serviceToMedia = () => {
     return (
@@ -47,6 +49,14 @@ const Service = (props) => {
   };
   return (
     <Row className="mt-2">
+      <Col md="12" style={{textAlign:"center"}}>
+        <h3 className="sansserif mt-2">
+          <Icon name="car-service.svg" /> 
+          <div className="mt-2">
+            DỊCH VỤ
+          </div>
+        </h3>
+      </Col>
       <Col md="12" className="mt-3">
         <Row className="pb-5">
           <Col md="8">
@@ -58,10 +68,20 @@ const Service = (props) => {
             {serviceToMedia()}
           </Col>
           <Col md="12">
-            <h3>Service</h3>
             <Row>
               {serviceToItem()}
             </Row>
+          </Col>
+          <Col md="12">
+            <div style={{justifyContent:"center", display:"flex",alignItems:"center"}} >
+              <Pagination 
+                count={10} 
+                color="primary" 
+                count={props.total_page} 
+                page={props.page} 
+                onChange={(e, page)=>props.setPage(page)}
+              />
+            </div>
           </Col>
         </Row>
       </Col>

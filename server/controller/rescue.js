@@ -19,7 +19,7 @@ module.exports = {
         const {page} = req.params;
         const perPage = 5;
         let total_page = await Rescue.count({store_id:req.user.id});
-        total_page = Math.ceil(total_page/perPage);
+        total_page = Math.ceil(total_page/perPage); 
 
         Rescue.find({
             store_id: req.user.id

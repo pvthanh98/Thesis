@@ -25,10 +25,19 @@ module.exports = {
         })
         .catch(err => { res.sendStatus(400); throw err;})       
     },
-    getStore : (req, res) =>{
+    getStore : async (req, res) =>{
+        const {page} = req.params;
+        const perPage = 8;
+        let total_page = await Store.count({});
+        total_page = Math.ceil(total_page/perPage);
         Store.find({},"name description address latitude longtitude image rating phone city")
+            .limit(perPage)
+            .skip(perPage *(page-1))
             .then((stores)=>{
-                res.json(stores)
+                res.json({
+                    stores,
+                    total_page
+                })
             })
             .catch(err=>{
                 res.sendStatus(400);
@@ -106,11 +115,23 @@ module.exports = {
             throw err;
         })
     },
-    getStoreByRating :(req, res) => {
-        Store.find({},"email name description latitude longtitude rating address image phone")
+    getStoreByRating : async (req, res) => {
+        const {page, city} = req.params;
+        let conditions = {};
+        if(city!=1){
+            conditions.city = city;
+        }
+        const perPage = 8;
+        let total_page = await Store.count({});
+        total_page = Math.ceil(total_page/perPage);
+        Store.find(conditions,"email name description latitude longtitude rating address image phone")
         .sort({"rating.total":-1})
-        .limit(4)
-        .then(stores=> res.send(stores))
+        .limit(perPage)
+        .skip(perPage *(page-1))
+        .then(stores=> res.json({
+            stores,
+            total_page
+        }))
         .catch(err=> console.log(err));
     },
     getStoreBySale : async (req, res) => {
@@ -156,5 +177,16 @@ module.exports = {
             res.send(err);
             throw err;
         })
-    }
+    },
+    getSearchSS: (req, res) => {
+		const {name} = req.params;
+		Store.find({$text:{$search:name}}, "email name description latitude longtitude rating address image phone")
+		.then(stores=>{
+			res.send(stores)
+		})
+		.catch(err=>{
+			res.sendStatus(400);
+			throw err;
+		})
+	},
 }

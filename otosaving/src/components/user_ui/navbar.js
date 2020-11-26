@@ -1,215 +1,79 @@
-import React, { useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { server } from '../../constant';
-import Icon from '@material-ui/core/Icon';
-import { connect} from 'react-redux';
-import {socket} from '../../views/users_ui/index';
-import Badge from '@material-ui/core/Badge';
-import { withStyles } from '@material-ui/core/styles';
-import EmailIcon from '@material-ui/icons/Email';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import axios from '../../service/axios_user';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  Nav,
-  NavItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  NavbarText
-} from 'reactstrap';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import {useSelector, useDispatch} from 'react-redux';
-
-function SimpleMenu(props) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [anchorEl_2, setAnchorEl_2] = React.useState(null);
-  const [redirect, setRedirect] = React.useState(null);
-  const message_list = useSelector(state => state.message_list)
-  const dispatch = useDispatch()
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClick_2 = (event) => {
-    setAnchorEl_2(event.currentTarget);
-  };
-  const setRedirectCustom = (link) => {
-    setRedirect(link);
-    handleClose();
-  }
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleClose_2 = () => {
-    setAnchorEl_2(null);
-  };
-
-  const openChat = (store_id, message_id) => {
-    dispatch({type:"SET_CHAT_TOGGLE", state:true})
-    loadMessages(store_id);
-    socket.emit("read_message",{message_id, is_store:false})
-    handleClose_2();
-  }
-
-  const loadMessages = (store_id) => {
-    axios().get(`/api/messages/customer_to/${store_id}`)
-    .then(({data})=> {
-      dispatch({type:"UPDATE_MESSAGES", messages:data})
-    })
-    .catch(err=>console.log(err));
-  }
-  if(redirect) return <Redirect push to={`/customer/${redirect}`} />
-  return (
-    <div>
-      <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-        <Avatar size={{height:"100px", width:"100px"}} src={server + "images/" + localStorage.getItem('user_avt')} />
-        {localStorage.getItem('user_name')}
-      </Button>
-      <Menu
-        id="simple-menu"  
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={()=> setRedirectCustom('info')}><Icon>people</Icon><p className="ml-2">Thông tin</p></MenuItem>
-        <MenuItem onClick={()=> setRedirectCustom('history')}><Icon>history</Icon><p className="ml-2">Lịch sử cứu hộ</p></MenuItem>
-        <MenuItem style={{borderBottom:"1px solid #e0e0e0"}} onClick={()=> setRedirectCustom('bill')}>
-          <Icon>payment</Icon> <p className="ml-2">Hóa đơn thanh toán</p>
-        </MenuItem>
-        <MenuItem onClick={props.logout}><Icon>exit_to_app</Icon>  <p className="ml-2">Đăng xuất</p></MenuItem>
-      </Menu>
-
-      <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick_2}>
-        <StyledBadge badgeContent={(message_list.unread!==null) ? message_list.unread : ""} color="secondary">
-          <EmailIcon />
-        </StyledBadge>
-      </Button>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl_2}
-        keepMounted
-        open={Boolean(anchorEl_2)}
-        onClose={handleClose_2}
-        style={{minWidth:"400px"}}
-      >
-        {message_list.messages.map(message=>(
-          <MenuItem 
-            key={message._id}
-            onClick={()=>openChat(message.store_id._id, message._id)}
-          >
-            <div style={{display:"flex"}}>
-              <Avatar src={`${server}/images/${message.store_id.image}`} />
-              <div style={{width:"300px", marginLeft:"8px"}}>
-                <Typography>{message.store_id.name}</Typography>
-                <Typography variant="body2" style={{fontWeight: !message.is_read ? "bold" : "200"}}>
-                  {message.body}
-                </Typography>  
-              </div>
-            </div>
-          </MenuItem>
-        ))}
-      </Menu>
-    </div>
-  );
-}
-
-const StyledBadge = withStyles((theme) => ({
-  badge: {
-    right: -3,
-    top: 13,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: '0 4px',
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
+import ProfileMenu from '../../components/user_ui/profileMenu';
+import {Button} from '@material-ui/core'
+const useStyles = makeStyles({
+  root: {
+    height: window.innerHeight,
+    backgroundImage: "url('/images/background_1920_blur.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: 'no-repeat'
   },
-}))(Badge);
+  navbarContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingLeft: "24px",
+    paddingRight: "24px",
+    height: "100px",
+    boxShadow: "0 2px 2px 0 rgba(61, 45, 45, 0.16),0 2px 10px 0 rgba(0,0,0,0.12)"
+  },
+  logo: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  rightSide: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  intro: {
+    marginLeft: "80px",
+    marginTop: "90px",
+    backgroundColor: "#ffffff4d",
+    padding: "24px",
+    borderRadius: "12px",
+    width: "40%"
+  }
+});
 
-function MyNavbar (props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
-  const [isOpenToggleInfo, setIsOpenToggleInfo] = useState(false);
-  const toggleInfo = () => setIsOpenToggleInfo(!isOpenToggleInfo);
+function MyNavbar(props) {
+  const classes = useStyles(props);
   const [isLogin, setIsLogin] = React.useState(false);
-
   React.useEffect(()=>{
     if (localStorage.getItem("user_token")) setIsLogin(true);
   },[])
-
-
-  const renderMenuCategories = () =>{
-    return props.categories && props.categories.map(cat=>{
-      return <DropdownItem>
-      <Link to={"/service/type/"+cat.name} className="custom-link nav-link">{cat.name}</Link>
-    </DropdownItem> 
-    })
-  }
-
-  const logout = () => {
-    localStorage.removeItem('user_token');
-    localStorage.removeItem('user_avt');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user_id');
-    setIsLogin(false);
-    socket.disconnect(true);
-  }
-
   return (
-    <Navbar className="mynav" light expand="md">
-      <Link to="/">
-        <img src="/images/logo2.png" height={"60px"} />
-      </Link>
-      <NavbarToggler onClick={toggle} />
-      <Collapse isOpen={isOpen} navbar>
-        <Nav className="mr-auto" navbar>
-        <UncontrolledDropdown nav inNavbar>
-        </UncontrolledDropdown>
-          <NavItem>
-            <Link className="custom-link nav-link" to="/cuuho">Cứu hộ</Link>
-          </NavItem>
-          <NavItem>
-            <Link className="custom-link nav-link" to="/store">Cửa hàng</Link>
-          </NavItem>
-          <UncontrolledDropdown nav inNavbar>
-            <DropdownToggle nav caret>
-              Đăng Ký
-              </DropdownToggle>
-            <DropdownMenu right>
-              <DropdownItem>
-                <Link to="/store/register" className="custom-link nav-link">Đăng ký cửa hàng</Link>
-              </DropdownItem>
-              <DropdownItem>
-                <Link to="/user/register" className="custom-link nav-link" >Đăng ký tài khoảng cứu hộ</Link>
-              </DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </Nav>
-        <div className="search-custom">
-          <img src="/images/searching.svg" height="25px" />
-          <input
-            type="text"
-            style={{ marginRight: "12px" }}
-            placeholder="Search..."
-          />
+      <div className={classes.navbarContainer}>
+        <Link className={classes.logo} to="/">
+          <img src="/images/logo2.png" height="100px" />
+          <div>
+            <div>
+              <b style={{ color: "#922b2b", fontFamily: "Arial sans-serif" }}>THANH PHAN</b>
+            </div>
+            <div>
+              <b style={{ color: "#922b2b", fontFamily: "Arial sans-serif" }}>OTO RESCUING</b>
+            </div>
+          </div>
+        </Link>
+        <div className={classes.rightSide}>
+          <Link style={{ marginRight: "24px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/cuuho">CỨU HỘ</Link>
+          <Link style={{ marginRight: "24px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/store">CỬA HÀNH</Link>
+          <Link style={{ marginRight: "48px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/intro">GIỚI THIỆU</Link>
+          {
+          !isLogin 
+          ? <div>
+                <Button variant="contained" color="primary" >ĐĂNG NHẬP</Button>
+                <Button style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
+            </div> 
+          : <ProfileMenu />}
         </div>
-        {!isLogin ? <NavbarText>
-          <Link to="/login">Đăng nhập</Link>
-        </NavbarText>
-          :
-        <div>
-          <SimpleMenu logout={logout} />
-        </div>
-        }
-      </Collapse>
-    </Navbar>
+      </div>
   );
 }
 
-export default connect((state)=>({
-    categories: state.categories
-}),null)(MyNavbar);
+export default MyNavbar;

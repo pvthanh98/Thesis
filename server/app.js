@@ -53,7 +53,7 @@ app.post("/api/store/login", authCtl.login);
 app.post("/api/user/login", authCtl.userLogin);
 //store
 app.post("/api/store", validator.createStore(), storeCtl.createStore);
-app.get("/api/store", storeCtl.getStore);
+app.get("/api/store/page/:page", storeCtl.getStore);
 app.get("/api/store/from_city/:city_id", storeCtl.getStoreFromCity);
 app.get("/api/store/id/:id", storeCtl.getStoreById);
 app.post(
@@ -77,8 +77,9 @@ app.get(
 	passport.authenticate("jwt", { session: false }),
 	storeCtl.getRescueLocation
 );
+app.get('/api/store/search/:name', storeCtl.getSearchSS)
 //store filter
-app.get("/api/store/rating", storeCtl.getStoreByRating);
+app.get("/api/store/rating/page/:page/city/:city", storeCtl.getStoreByRating);
 app.get("/api/store/sell", storeCtl.getStoreBySale);
 app.put('/api/store/body/:id', passport.authenticate("jwt", { session: false }),storeCtl.modifyBody)
 
@@ -88,7 +89,7 @@ app.get("/api/category", categoryCtl.getCategory);
 
 
 //service
-app.get("/api/service", serviceCtl.getService);
+app.get("/api/service/page/:page", serviceCtl.getService);
 app.get("/api/service/outstanding", serviceCtl.getOutStandingService);
 app.get("/api/service/id/:id", serviceCtl.getServiceById);
 app.get("/api/service/category/:id", serviceCtl.getServiceByCategoryID);

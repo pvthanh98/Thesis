@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {server} from '../../constant';
 import {Redirect, Link} from 'react-router-dom';
-import Rating from '../../components/user_ui/rating';
+import Rating from 'material-ui-rating'
 const useStyles = makeStyles({
     root: {
       maxWidth: 345,
@@ -40,9 +40,9 @@ export default (props) => {
               <Typography variant="body2" color="textSecondary" component="p">
                 {props.service.description}
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                <Rating star={props.service.rating.total} align="center" />
-              </Typography>
+           
+              <Rating value={props.service.rating.total} align="center" />
+            
             </CardContent>
           </CardActionArea>
           <CardActions>

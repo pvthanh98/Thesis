@@ -9,22 +9,40 @@ import Service from "../../components/user_ui/service";
 import axios from '../../service/axios_user';
 import Chat from '../../components/user_ui/chat/container';
 import {connect} from 'react-redux';
+import Pagination from '@material-ui/lab/Pagination';
+import store from "reducer/store";
 function Home(props) {
   const [outStandingService, setOutStandingService] = React.useState([]);
-  const getStores = () => {
+  const [storePage, setStorePage] = React.useState(1);
+  const [storeTotalPage, setStoreTotalPage] = React.useState(1);
+  const [servicePage, setServicePage] = React.useState(1);
+  const [serviceTotalPage, setServiceTotalPage] = React.useState(1);
+  const getStores = (page) => {
     axios() 
-      .get("/api/store")
+      .get("/api/store/page/"+page)
       .then((res) => {
-        props.updateStore(res.data);
+        props.updateStore(res.data.stores);
+        setStoreTotalPage(res.data.total_page)
       })
       .catch((err) => console.log(err));
   };
 
-  const getServices = () => {
+  const onChangeStorePage = (page) => {
+    setStorePage(page);
+    getStores(page);
+  }
+  const onChangeServicePage = (page) => {
+    setServicePage(page);
+    getServices(page);
+  }
+  
+
+  const getServices = (page) => {
     axios()
-      .get("/api/service")
+      .get("/api/service/page/"+page)
       .then((res) => {
-        props.updateService(res.data);
+        props.updateService(res.data.services);
+        setServiceTotalPage(res.data.total_page)
       })
       .catch((err) => console.log(err));
   };
@@ -43,8 +61,8 @@ function Home(props) {
     }
   }
   useEffect(() => { 
-    getStores();
-    getServices();
+    getStores(storePage);
+    getServices(servicePage);
     getOutStandingService();
  //   loadMessages(); there're some errors in this task, we need to fix later
   },[]);
@@ -52,8 +70,18 @@ function Home(props) {
     <div className="App">
       <Navbar />
       <Container fluid={true} className="my-container">
-        <Service outStandingService={outStandingService} />
-        <Stores />
+        <Stores 
+          page={storePage} 
+          setPage={onChangeStorePage} 
+          total_page={storeTotalPage} 
+          setTotalPage={setStoreTotalPage} 
+        />
+        <Service 
+          outStandingService={outStandingService} 
+          page={servicePage} setPage={onChangeServicePage} 
+          total_page={serviceTotalPage} 
+          setTotalPage={setServiceTotalPage} 
+        />
         {props.chat_toggle && <Chat where="customer" />}
       </Container>
       <Footer />

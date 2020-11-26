@@ -26,5 +26,6 @@ const storeSchema = new Schema({
   socket_id: String
 });
 
+storeSchema.index({name:'text'})
 const Store = mongoose.model('store', storeSchema);
 module.exports = Store;

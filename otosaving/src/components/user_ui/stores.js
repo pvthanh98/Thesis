@@ -4,6 +4,7 @@ import CardItem from './card_store';
 import Icon from "./icon";
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Pagination from '@material-ui/lab/Pagination';
 
 export default function (props) {
   const stores = useSelector(state => state.stores)
@@ -37,6 +38,18 @@ export default function (props) {
           {storeToCard()}
         </Row>
       </Col>
+      <Col md="12">
+        <div style={{justifyContent:"center", display:"flex",alignItems:"center"}} >
+          <Pagination 
+            count={props.total_page} 
+            page={props.page} 
+            onChange={(e, page)=>props.setPage(page)}
+            color="secondary" 
+          />
+        </div>  
+        
+      </Col>
+      
     </Row>
   );
 }
