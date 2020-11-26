@@ -1,7 +1,7 @@
 import "../../App.css";
 import React, { useState, useEffect } from "react";
 import { Container } from "reactstrap";
-import Navbar from "../../components/user_ui/navbar";
+import Navbar from "../../components/user_ui/navbar_v2";
 import Carousel from "../../components/user_ui/Carousel";
 import Stores from "../../components/user_ui/stores";
 import Footer from "../../components/user_ui/footer";
@@ -51,7 +51,6 @@ function Home(props) {
   return (
     <div className="App">
       <Navbar />
-      <Carousel />
       <Container fluid={true} className="my-container">
         <Service outStandingService={outStandingService} />
         <Stores />
