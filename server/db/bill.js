@@ -15,7 +15,8 @@ const billSchema = new Schema({
   coordinate: {
     lat: {type:Number},
     lng: {type:Number}
-  }
+  },
+  address:{type:String}
 });
 
 module.exports = mongoose.model('bill', billSchema);

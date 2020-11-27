@@ -1,12 +1,14 @@
 const Comment = require('../db/service_comment');
 const Service = require('../db/service');
+const mongoose = require("mongoose");
 module.exports = {
     postComment: async (req, res ) => {
         const customer_id = req.user.id;
         const {content, rating, service_id} = req.body;
+        console.log(customer_id);
         if(content!==""){
             Comment.create({
-                customer_id,
+                customer_id: mongoose.Schema.Types.ObjectId(customer_id),
                 content,rating, service_id
             })
             .then(()=>res.sendStatus(200))

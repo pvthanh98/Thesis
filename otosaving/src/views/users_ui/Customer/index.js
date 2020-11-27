@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import axios from '../../../service/axios_user';
 import Nav from '../../../components/user_ui/navbar';
 import Footer from '../../../components/user_ui/footer';
-import Bill from './bill';
+import History from './history';
 import {useDispatch} from 'react-redux';
 
 export default (props) => {
@@ -18,7 +18,7 @@ export default (props) => {
     return (
         <div>
             <Nav />
-                <Route exact path="/customer/bill" component={Bill} />
+                <Route exact path="/customer/history" component={History} />
             <Footer />
         </div>
     )

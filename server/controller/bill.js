@@ -3,29 +3,35 @@ const Bill = require("../db/bill");
 const paypal = require("paypal-rest-sdk");
 const User = require('../db/customer');
 var mongoose = require('mongoose');
-
+const axios = require("axios");
 module.exports = {
 	postBill: async (req, res) => {
-		let data = { ...req.body };
-		const {customer_id} = data;
-		data.store_id = req.user.id;
+		try {
+			let data = { ...req.body };
+			const { customer_id } = data;
+			data.store_id = req.user.id;
 
-		const customer = await User.findById(customer_id,"latitude longtitude");
-		if(customer){
-			data.coordinate = {
-				lat: customer.latitude,
-				lng: customer.longtitude
-			}
-
-			Bill.create(data)
-			.then(() => {
-				res.sendStatus(200);
-			})
-			.catch((err) => {
-				res.sendStatus(500);
-				throw err;
-			});
-		} else res.status(403).send("User id not found")
+			const customer = await User.findById(customer_id, "latitude longtitude");
+			if (customer) {
+				data.coordinate = {
+					lat: customer.latitude,
+					lng: customer.longtitude
+				}
+				const geocoderResp = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${data.coordinate.lat},${data.coordinate.lng}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`)
+				data.address = geocoderResp.data.results[0].formatted_address;
+				Bill.create(data)
+					.then(() => {
+						res.sendStatus(200);
+					})
+					.catch((err) => {
+						res.sendStatus(500);
+						throw err;
+					});
+			} else res.status(403).send("User id not found")
+		} catch (e) {
+			res.sendStatus(500);
+			throw e;
+		}
 	},
 	getBill: (req, res) => {
 		Bill.find({ store_id: req.user.id })
@@ -91,7 +97,7 @@ module.exports = {
 				}
 			});
 	},
-	
+
 	modifyBillTemp: (req, res) => {
 		const { id } = req.params;
 		Bill.findByIdAndUpdate(id, req.body)
@@ -103,7 +109,7 @@ module.exports = {
 	},
 	confirmBillFromUser: (req, res) => {
 		const { id } = req.params;
-		Bill.findByIdAndUpdate(id, {confirm:true})
+		Bill.findByIdAndUpdate(id, { confirm: true })
 			.then(() => res.sendStatus(200))
 			.catch((err) => {
 				res.sendStatus(400);
@@ -124,11 +130,11 @@ module.exports = {
 			});
 	},
 	payment: (req, res) => {
-        paypal.configure({
-            mode: "sandbox", //sandbox or live
-            client_id: process.env.PAYPAL_CLIENT_ID,
-            client_secret: process.env.PAYPAL_CLIENT_SECRET,
-        });
+		paypal.configure({
+			mode: "sandbox", //sandbox or live
+			client_id: process.env.PAYPAL_CLIENT_ID,
+			client_secret: process.env.PAYPAL_CLIENT_SECRET,
+		});
 		const { cost, bill_id } = req.params;
 		var create_payment_json = {
 			intent: "sale",
@@ -156,7 +162,7 @@ module.exports = {
 						currency: "USD",
 						total: cost,
 					},
-                    description: bill_id,
+					description: bill_id,
 				},
 			],
 		};
@@ -172,11 +178,11 @@ module.exports = {
 	},
 
 	handlePay: (req, res) => {
-        paypal.configure({
-            mode: "sandbox", //sandbox or live
-            client_id: process.env.PAYPAL_CLIENT_ID,
-            client_secret: process.env.PAYPAL_CLIENT_SECRET,
-        });
+		paypal.configure({
+			mode: "sandbox", //sandbox or live
+			client_id: process.env.PAYPAL_CLIENT_ID,
+			client_secret: process.env.PAYPAL_CLIENT_SECRET,
+		});
 		const { paymentId, PayerID } = req.query;
 		var execute_payment_json = {
 			payer_id: PayerID,
@@ -188,25 +194,25 @@ module.exports = {
 		) {
 			if (error) {
 				console.log(error.response);
-				throw error; 
+				throw error;
 			} else {
 				console.log("Get Payment Response");
-                const bill_id = payment.transactions[0].description;
-                Bill.findByIdAndUpdate(bill_id,{paid:true, confirm:true})
-                .then(()=>{
-                    res.write(
-                        `<html><head><title>success</title></head><body>success</body></html>`
-                    );
-                    res.end();
-                })
-                .catch(err=> {
-                    throw err;
-                })
-			
+				const bill_id = payment.transactions[0].description;
+				Bill.findByIdAndUpdate(bill_id, { paid: true, confirm: true })
+					.then(() => {
+						res.write(
+							`<html><head><title>success</title></head><body>success</body></html>`
+						);
+						res.end();
+					})
+					.catch(err => {
+						throw err;
+					})
+
 			}
 		});
 	},
-	countBillToday : (req, res) => {
+	countBillToday: (req, res) => {
 		const date = new Date();
 		const store_id = req.user.id;
 		console.log(store_id)
@@ -214,13 +220,13 @@ module.exports = {
 			{
 				$project: {
 					"year": {
-					  "$year": "$timestamp"
+						"$year": "$timestamp"
 					},
 					"month": {
-					  "$month": "$timestamp"
+						"$month": "$timestamp"
 					},
 					"day": {
-					  "$dayOfMonth": "$timestamp"
+						"$dayOfMonth": "$timestamp"
 					},
 					"store_id": 1
 				}
@@ -228,18 +234,18 @@ module.exports = {
 			{
 				$match: {
 					year: date.getFullYear(),
-					month: date.getMonth()+1,
+					month: date.getMonth() + 1,
 					day: date.getDate(),
 					store_id
 				}
 			}
 		]).then(resl => {
-			res.send({count:resl.length})
+			res.send({ count: resl.length })
 		})
-		.catch(err=> {
-			res.sendStatus(400);
-			throw err
-		})	
+			.catch(err => {
+				res.sendStatus(400);
+				throw err
+			})
 	},
 	countBillWeek: (req, res) => {
 		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
@@ -247,60 +253,60 @@ module.exports = {
 		Bill.aggregate([
 			{
 				$project: {
-					timestamp:1,
-					store_id:1
+					timestamp: 1,
+					store_id: 1
 				}
 			},
 			{
-				$match : {
-					timestamp : {
+				$match: {
+					timestamp: {
 						$gte: date
 					},
-					store_id:store_id
+					store_id: store_id
 				}
 			}
 		])
-		.then(bill=>{
-			res.send({count:bill.length})
-		})
-		.catch(err=>console.log(err))
+			.then(bill => {
+				res.send({ count: bill.length })
+			})
+			.catch(err => console.log(err))
 	},
-	countBillCostWeek : (req, res) => {
+	countBillCostWeek: (req, res) => {
 		const store_id = req.user.id;
 		Bill.aggregate([
 			{
 				$project: {
-					timestamp:{
+					timestamp: {
 						$dateToString: {
 							date: "$timestamp",
 							format: "%Y-%m-%d",
 						}
 					},
-					total_cost:1,
+					total_cost: 1,
 					store_id: 1
 				}
 			},
 			{
-				$match:{
-					store_id:store_id
+				$match: {
+					store_id: store_id
 				}
 			},
 			{
-				$group:{
+				$group: {
 					_id: "$timestamp",
-					total_cost:{$sum:"$total_cost"}
+					total_cost: { $sum: "$total_cost" }
 				}
 			}
 		])
-		.sort({_id:-1})
-		.limit(7)
-		.then(resl => {
-			res.send(resl.reverse());
-		})
-		.catch(err=> {
-			res.sendStatus(400);
-			throw err
-		})	
+			.sort({ _id: -1 })
+			.limit(7)
+			.then(resl => {
+				res.send(resl.reverse());
+			})
+			.catch(err => {
+				res.sendStatus(400);
+				throw err
+			})
 	},
 	billCostToday: (req, res) => {
 		const date = new Date();
@@ -309,40 +315,40 @@ module.exports = {
 			{
 				$project: {
 					"year": {
-					  "$year": "$timestamp"
+						"$year": "$timestamp"
 					},
 					"month": {
-					  "$month": "$timestamp"
+						"$month": "$timestamp"
 					},
 					"day": {
-					  "$dayOfMonth": "$timestamp"
+						"$dayOfMonth": "$timestamp"
 					},
 					"store_id": 1,
-					"total_cost":1
+					"total_cost": 1
 				}
 			},
 			{
 				$match: {
 					year: date.getFullYear(),
-					month: date.getMonth()+1,
+					month: date.getMonth() + 1,
 					day: date.getDate(),
 					store_id
 				}
 			},
 			{
 				$group: {
-					_id: {year:"$year",month:"$month",day:"$day"},
-					cost: {$sum:"$total_cost"}
+					_id: { year: "$year", month: "$month", day: "$day" },
+					cost: { $sum: "$total_cost" }
 				}
 			}
 		]).then(resl => {
-			if(resl.length>0) res.send({cost:resl[0].cost})
-			else res.send({cost:0})
+			if (resl.length > 0) res.send({ cost: resl[0].cost })
+			else res.send({ cost: 0 })
 		})
-		.catch(err=> {
-			res.sendStatus(400);
-			throw err
-		})	
+			.catch(err => {
+				res.sendStatus(400);
+				throw err
+			})
 	},
 	billCostWeek: (req, res) => {
 		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
@@ -350,28 +356,28 @@ module.exports = {
 		Bill.aggregate([
 			{
 				$project: {
-					timestamp:1,
-					store_id:1,
-					total_cost:1
+					timestamp: 1,
+					store_id: 1,
+					total_cost: 1
 				}
 			},
 			{
-				$match : {
-					timestamp : {
+				$match: {
+					timestamp: {
 						$gte: date
 					},
 					store_id
 				}
 			}
 		])
-		.then(bills=>{
-			let sum=0;
-			bills.forEach(bill=>{
-				sum+=bill.total_cost
+			.then(bills => {
+				let sum = 0;
+				bills.forEach(bill => {
+					sum += bill.total_cost
+				})
+				res.json({ cost: sum })
 			})
-			res.json({cost:sum})
-		})
-		.catch(err=>console.log(err))
+			.catch(err => console.log(err))
 	},
 	billChartCountWeek: (req, res) => {
 		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
@@ -379,14 +385,14 @@ module.exports = {
 		Bill.aggregate([
 			{
 				$project: {
-					timestamp:1,
-					store_id:1,
-					total_cost:1
+					timestamp: 1,
+					store_id: 1,
+					total_cost: 1
 				}
 			},
 			{
-				$match : {
-					timestamp : {
+				$match: {
+					timestamp: {
 						$gte: date
 					},
 					store_id
@@ -405,15 +411,15 @@ module.exports = {
 			{
 				$group: {
 					_id: "$timestamp",
-					count: {$sum:1}
+					count: { $sum: 1 }
 				}
 			}
 		])
-		.sort({_id:1})
-		.then(bills=>{
-			res.json(bills)
-		})
-		.catch(err=>console.log(err))
+			.sort({ _id: 1 })
+			.then(bills => {
+				res.json(bills)
+			})
+			.catch(err => console.log(err))
 	},
 	billChartCostWeek: (req, res) => {
 		let date = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
@@ -421,14 +427,14 @@ module.exports = {
 		Bill.aggregate([
 			{
 				$project: {
-					timestamp:1,
-					store_id:1,
-					total_cost:1
+					timestamp: 1,
+					store_id: 1,
+					total_cost: 1
 				}
 			},
 			{
-				$match : {
-					timestamp : {
+				$match: {
+					timestamp: {
 						$gte: date
 					},
 					store_id
@@ -442,21 +448,21 @@ module.exports = {
 							format: "%Y-%m-%d",
 						}
 					},
-					total_cost:1
+					total_cost: 1
 				}
 			},
 			{
 				$group: {
 					_id: "$timestamp",
-					cost: {$sum:"$total_cost"}
+					cost: { $sum: "$total_cost" }
 				}
 			}
 		])
-		.sort({_id:1})
-		.then(bills=>{
-			res.json(bills)
-		})
-		.catch(err=>console.log(err))
+			.sort({ _id: 1 })
+			.then(bills => {
+				res.json(bills)
+			})
+			.catch(err => console.log(err))
 	}
 
 };

@@ -68,9 +68,6 @@ function SimpleMenu(props) {
         >
           <MenuItem onClick={()=> setRedirectCustom('info')}><Icon>people</Icon><p className="ml-2">Thông tin</p></MenuItem>
           <MenuItem onClick={()=> setRedirectCustom('history')}><Icon>history</Icon><p className="ml-2">Lịch sử cứu hộ</p></MenuItem>
-          <MenuItem style={{borderBottom:"1px solid #e0e0e0"}} onClick={()=> setRedirectCustom('bill')}>
-            <Icon>payment</Icon> <p className="ml-2">Hóa đơn thanh toán</p>
-          </MenuItem>
           <MenuItem onClick={props.logout}><Icon>exit_to_app</Icon>  <p className="ml-2">Đăng xuất</p></MenuItem>
         </Menu>
   

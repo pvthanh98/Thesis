@@ -41,7 +41,7 @@ export default (props) => {
                 {props.service.description}
               </Typography>
            
-              <Rating value={props.service.rating.total} align="center" />
+              <Rating value={props.service.rating.total} />
             
             </CardContent>
           </CardActionArea>

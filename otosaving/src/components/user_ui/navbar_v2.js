@@ -6,6 +6,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { Link, Redirect } from 'react-router-dom';
 import ProfileMenu from '../../components/user_ui/profileMenu';
+import {socket} from '../../views/users_ui/index';
 const useStyles = makeStyles({
   root: {
     height: window.innerHeight,
@@ -49,7 +50,16 @@ function MyNavbar(props) {
   const [isLogin, setIsLogin] = React.useState(false);
   React.useEffect(()=>{
     if (localStorage.getItem("user_token")) setIsLogin(true);
-  },[])
+  },[]);
+
+  const logout = () => {
+    localStorage.removeItem('user_token');
+    localStorage.removeItem('user_avt');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_id');
+    setIsLogin(false);
+    socket.disconnect(true);
+  }
 
   if(redirect) return <Redirect push to={redirect} />
   return (
@@ -75,7 +85,7 @@ function MyNavbar(props) {
             <Button variant="contained" color="primary" >ĐĂNG NHẬP</Button>
             <Button style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
           </div>
-          : <ProfileMenu />
+          : <ProfileMenu logout={logout} />
           }
         </div>
       </div>

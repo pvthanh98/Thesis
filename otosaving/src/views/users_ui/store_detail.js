@@ -9,6 +9,7 @@ import { server } from "../../constant";
 import Icon from "@material-ui/core/Icon";
 import KeyboardVoiceIcon from "@material-ui/icons/KeyboardVoice";
 import { EditLocation, DriveEta } from "@material-ui/icons";
+import Pagination from '@material-ui/lab/Pagination';
 //tabbar
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -17,11 +18,13 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Rating from 'material-ui-rating';
 import Card from '../../components/user_ui/card_material';
 import Chat from '../../components/user_ui/chat/container';
 import Loading from '../../components/user_ui/loading';
 import Comment from '../../components/user_ui/comment';
+import TextField from '@material-ui/core/TextField';
+import Rating from 'material-ui-rating';
+const labels = ["", "Poor", "Ok", "Good", "Good+", "Excellent"]
 const { compose, withProps, lifecycle } = require("recompose");
 const {
 	withScriptjs,
@@ -139,11 +142,10 @@ function a11yProps(index) {
 }
 
 const RenderService = (props) => {
-	return props.services.map(service => {
-		console.log(service);
-		if (service.category!=="5fbdc0f297f583672286ec4b") {
+	return props.services && props.services.map(service => {
+		if (service.category !== "5fbdc0f297f583672286ec4b") {
 			return (
-				<Grid item md={3}>
+				<Grid key={service._id} item md={3}>
 					<Card
 						service={service}
 					/>
@@ -154,10 +156,16 @@ const RenderService = (props) => {
 	})
 }
 
+
+
 export default (props) => {
 	const classes = useStyle();
 	const [services, setServices] = React.useState(null);
 	const [loading, setLoading] = React.useState(true);
+	const [comments, setComments] = React.useState(null);
+	const [ratingValue, setRatingValue] = React.useState(2);
+	const [hover, setHover] = React.useState(-1);
+	const [textFieldValue, setTextFieldValue] = React.useState("")
 	const theme = useTheme();
 	const dispatch = useDispatch();
 	const store_detail = useSelector((state) => state.store_detail);
@@ -165,6 +173,7 @@ export default (props) => {
 	useEffect(() => {
 		loadStore();
 		loadServices();
+		loadComment();
 	}, [props.match.params.id]);
 
 	const loadStore = async () => {
@@ -201,6 +210,16 @@ export default (props) => {
 			})
 	}
 
+	const loadComment = () => {
+		axios().get(`/api/rating/store_id/${props.match.params.id}`)
+			.then(({ data }) => setComments(data))
+			.catch(err => console.log(err))
+	}
+
+	const renderComments = () => (
+		comments && comments.map(e => <Comment key={e._id} {...e} />)
+	)
+
 	const [value, setValue] = React.useState(0);
 
 	const handleChange = (event, newValue) => {
@@ -210,6 +229,20 @@ export default (props) => {
 	const handleChangeIndex = (index) => {
 		setValue(index);
 	};
+
+	const onSubmitRating = () => {
+		if(textFieldValue!="") {
+			let data = {
+				content: textFieldValue,
+				rating: ratingValue,
+				store_id: props.match.params.id
+			}
+			axios().post("/api/rating",data)
+			.then(()=>alert("Đánh giá của bạn đã được gửi đi"))
+			.catch(err=>alert(err))
+			setTextFieldValue("")
+		}
+	}
 
 	return (
 		<div>
@@ -274,7 +307,7 @@ export default (props) => {
 							Đánh giá
 						</Button>
 
-							<div className={classes.customButton} style={{ textAlign: "center" }}>
+						<div className={classes.customButton} style={{ textAlign: "center" }}>
 							<hr />
 							<div><EditLocation /> {store_detail && store_detail.address}  </div>
 							<div><DriveEta /> Cách bạn 12 km</div>
@@ -311,9 +344,9 @@ export default (props) => {
 								style={{ overflow: "hidden" }}
 							>
 								<Grid container spacing={2}>
-									{loading ? 
-									 <Grid item md={12}><Loading /></Grid>
-									:<RenderService services={services} />}
+									{loading ?
+										<Grid item md={12}><Loading /></Grid>
+										: <RenderService services={services} />}
 								</Grid>
 							</div>
 							<div
@@ -323,11 +356,47 @@ export default (props) => {
 								style={{ overflow: "hidden" }}
 							>
 								<Grid container spacing={2}>
-									<Comment />
-									<Comment />
-									<Comment />
-									<Comment />
-									<Comment />
+									<Grid item md={12}>
+										<TextField
+											style={{ marginTop: "8px" }}
+											required
+											onChange={(e)=>setTextFieldValue(e.target.value)}
+											value={textFieldValue}
+											id="outlined-required"
+											label="ĐÁNH GIÁ CỦA BẠN VỀ CỬA HÀNG"
+											variant="outlined"
+											fullWidth
+											multiline
+											rows={4}
+										/>
+										<div style={{ textAlign: "right" }}>
+											<div style={{ display: "flex", flexDirection: "row-reverse", alignItems: "center" }}>
+												<Rating
+													name="hover-feedback"
+													value={ratingValue}
+													size="large"
+													onChange={(newValue) => {
+														setRatingValue(newValue);
+													}}
+												/>
+												{ratingValue !== null && <Box ml={2}>{labels[ratingValue]}</Box>}
+											</div>
+											<Button 
+												style={{ marginTop: "4px" }} 
+												variant="contained" 
+												onClick={onSubmitRating}
+												color="secondary" 
+											>
+												GỬI ĐÁNH GIÁ
+											</Button>
+										</div>
+									</Grid>
+									{renderComments()}
+									<Grid item md={12} style={{textAlign:"center"}}>
+										<div style={{display:"flex", justifyContent:"center"}}>
+										<Pagination count={10} color="primary" />				
+										</div>
+									</Grid>
 								</Grid>
 							</div>
 						</SwipeableViews>

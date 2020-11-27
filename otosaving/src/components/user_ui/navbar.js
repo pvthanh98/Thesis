@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import ProfileMenu from '../../components/user_ui/profileMenu';
+import {socket} from '../../views/users_ui/index';
 import {Button} from '@material-ui/core'
 const useStyles = makeStyles({
   root: {
@@ -47,6 +48,15 @@ function MyNavbar(props) {
   React.useEffect(()=>{
     if (localStorage.getItem("user_token")) setIsLogin(true);
   },[])
+
+  const logout = () => {
+    localStorage.removeItem('user_token');
+    localStorage.removeItem('user_avt');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_id');
+    setIsLogin(false);
+    socket.disconnect(true);
+  }
   return (
       <div className={classes.navbarContainer}>
         <Link className={classes.logo} to="/">
@@ -70,7 +80,7 @@ function MyNavbar(props) {
                 <Button variant="contained" color="primary" >ĐĂNG NHẬP</Button>
                 <Button style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
             </div> 
-          : <ProfileMenu />}
+          : <ProfileMenu logout={logout} />}
         </div>
       </div>
   );

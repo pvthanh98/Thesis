@@ -207,3 +207,6 @@ body {
   background-color: #ffffff;
   border-bottom: 1px solid #f1f1f1 !important;
 }
+.MuiFilledInput-root {
+  background-color: none !important;
+}
