@@ -29,10 +29,10 @@ export default (props) => {
               <Typography gutterBottom variant="h5" component="h2">
                 {props.name}
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography style={{minHeight:"40px"}} variant="body2" color="textSecondary" component="p">
                 {props.description}
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography style={{minHeight:"40px"}} variant="body2" color="textSecondary" component="p">
                {props.address}
               </Typography>
               <Rating value={props.star} align="center" />

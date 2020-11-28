@@ -55,8 +55,8 @@ export default function (props) {
         />
       </Link>
       <CardContent>
-        <h4>{props.name}</h4>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <h4 style={{minHeight:"60px"}}>{props.name}</h4>
+        <Typography style={{minHeight:"50px"}} variant="body2" color="textSecondary" component="p">
           {props.description}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">

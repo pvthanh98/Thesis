@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import ProfileMenu from '../../components/user_ui/profileMenu';
 import {socket} from '../../views/users_ui/index';
-import {Button} from '@material-ui/core'
+import {Button} from '@material-ui/core';
+import {Redirect} from 'react-router-dom';
 const useStyles = makeStyles({
   root: {
     height: window.innerHeight,
@@ -45,6 +46,7 @@ const useStyles = makeStyles({
 function MyNavbar(props) {
   const classes = useStyles(props);
   const [isLogin, setIsLogin] = React.useState(false);
+  const [redirect, setRedirect] = React.useState(null);
   React.useEffect(()=>{
     if (localStorage.getItem("user_token")) setIsLogin(true);
   },[])
@@ -57,6 +59,7 @@ function MyNavbar(props) {
     setIsLogin(false);
     socket.disconnect(true);
   }
+  if(redirect) return <Redirect push to={redirect} />
   return (
       <div className={classes.navbarContainer}>
         <Link className={classes.logo} to="/">
@@ -77,8 +80,8 @@ function MyNavbar(props) {
           {
           !isLogin 
           ? <div>
-                <Button variant="contained" color="primary" >ĐĂNG NHẬP</Button>
-                <Button style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
+                <Button onClick={()=>setRedirect('/login')} variant="contained" color="primary" >ĐĂNG NHẬP</Button>
+                <Button onClick={()=>setRedirect('/user/register')} style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
             </div> 
           : <ProfileMenu logout={logout} />}
         </div>

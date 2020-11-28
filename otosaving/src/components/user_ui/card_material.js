@@ -31,13 +31,13 @@ export default (props) => {
               title="Contemplative Reptile"
             />
             <CardContent>
-              <Typography gutterBottom variant="h5" component="h2">
+              <Typography style={{minHeight:"65px"}} gutterBottom variant="h5" component="h2">
                 {props.service.name}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
                 Giá <b style={{color:"red"}}>{props.service.price}</b>
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography style={{minHeight:"60px"}} variant="body2" color="textSecondary" component="p">
                 {props.service.description}
               </Typography>
            

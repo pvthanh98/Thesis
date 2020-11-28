@@ -9,12 +9,15 @@ import {useDispatch} from 'react-redux';
 export default (props) => {
     const dispatch = useDispatch();
     React.useEffect(()=>{
+        loadBill();
+    })
+    const loadBill = () => {
         axios().get('/api/customer/bill')
         .then(res=>{
             dispatch({type:"UPDATE_CUSTOMER_BILLS", bills:res.data});
         })
         .catch(err=>console.log(err));
-    })
+    }
     return (
         <div>
             <Nav />

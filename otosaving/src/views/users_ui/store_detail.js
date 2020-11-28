@@ -24,6 +24,7 @@ import Loading from '../../components/user_ui/loading';
 import Comment from '../../components/user_ui/comment';
 import TextField from '@material-ui/core/TextField';
 import Rating from 'material-ui-rating';
+import PhoneIcon from '@material-ui/icons/Phone';
 const labels = ["", "Poor", "Ok", "Good", "Good+", "Excellent"]
 const { compose, withProps, lifecycle } = require("recompose");
 const {
@@ -311,6 +312,7 @@ export default (props) => {
 							<hr />
 							<div><EditLocation /> {store_detail && store_detail.address}  </div>
 							<div><DriveEta /> Cách bạn 12 km</div>
+							<div><PhoneIcon /> {store_detail && store_detail.phone}</div>
 						</div>
 						{chat_toggle && <Chat where="customer" />}
 					</Grid>

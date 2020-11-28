@@ -82,8 +82,8 @@ function MyNavbar(props) {
           <Link style={{ marginRight: "48px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/intro">GIỚI THIỆU</Link>
           {!isLogin? 
           <div>
-            <Button variant="contained" color="primary" >ĐĂNG NHẬP</Button>
-            <Button style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
+            <Button onClick={()=>setRedirect('/login')}  variant="contained" color="primary" >ĐĂNG NHẬP</Button>
+            <Button onClick={()=>setRedirect('/user/register')} style={{ marginLeft: "4px" }} >ĐĂNG KÝ</Button>
           </div>
           : <ProfileMenu logout={logout} />
           }

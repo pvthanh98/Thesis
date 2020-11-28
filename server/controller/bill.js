@@ -201,7 +201,7 @@ module.exports = {
 				Bill.findByIdAndUpdate(bill_id, { paid: true, confirm: true })
 					.then(() => {
 						res.write(
-							`<html><head><title>success</title></head><body>success</body></html>`
+							`<html><head><title>success</title></head><body>Thanh toán thành công <a href="http://localhost:3000/">Quay lại trang chủ</a></body></html>`
 						);
 						res.end();
 					})
