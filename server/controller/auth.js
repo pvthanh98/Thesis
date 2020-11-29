@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Store = require('../db/store');
 const User = require("../db/customer");
+const SysAdmin = require("../db/sys_user")
 const bcrypt = require('bcryptjs');
 module.exports = {
     login: (req,res) => {
@@ -44,5 +45,24 @@ module.exports = {
             res.sendStatus(401);
             throw err;
         })
+    },
+    sysLogin: (req, res) => {
+        SysAdmin.findOne({email: req.body.email}).then(sys_user => {
+            if(sys_user && bcrypt.compareSync(req.body.password, sys_user.password)) {
+                let sys_token = jwt.sign({
+                    id: sys_user._id,
+                    name: sys_user.name,
+                    type:"sys_user"
+                }, process.env.SECRET_SYSKEY);
+                res.status(200).json({
+                    sys_token,
+                    sys_id: sys_user._id,
+                    sys_name: sys_user.name,
+                    sys_avt: sys_user.image
+                });    
+                return;
+            }
+            res.sendStatus(401)
+        });
     }
 }

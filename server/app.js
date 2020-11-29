@@ -13,6 +13,7 @@ const passport = require("./config/passport");
 const multer = require("multer");
 const io = require("socket.io")(server);
 const user_auth = require("./middleware/user_auth");
+const sys_auth = require('./middleware/sys_auth')
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, path.join(__dirname, "public", "images"));
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 //controller
+const sysCtl = require("./controller/system")
 const storeCtl = require("./controller/store");
 const categoryCtl = require("./controller/category");
 const serviceCtl = require("./controller/service");
@@ -47,10 +49,16 @@ const commentCtl = require("./controller/comment");
 const serviceCommentCtl = require("./controller/service_comment");
 const CityCtl = require("./controller/city");
 
+
+//system admin 
+app.post('/api/sysadmin', sysCtl.createUser);
+app.get('/api/sysadmin', sys_auth, sysCtl.getUser)
+
 app.get("/api/welcome", (req, res) => res.send("welcome"));
 //login
 app.post("/api/store/login", authCtl.login);
 app.post("/api/user/login", authCtl.userLogin);
+app.post("/api/sys/login", authCtl.sysLogin)
 //store
 app.post("/api/store", validator.createStore(), storeCtl.createStore);
 app.get("/api/store/page/:page", storeCtl.getStore);

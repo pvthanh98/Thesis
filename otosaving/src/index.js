@@ -28,8 +28,8 @@ import { createStore } from "redux";
 import Reducer from "./reducer/index";
 import { Provider } from "react-redux";
 import AdminLogin from './views/Adminpage/login';
-
-
+import SysLogin from './views/sysadmin/login';
+import SysIndex from './views/sysadmin/index';
 const hist = createBrowserHistory();
 const store = createStore(
   Reducer,
@@ -40,6 +40,8 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
+        <Route path="/sys/login" component={SysLogin} />
+        <Route path="/sys" component={SysIndex} />
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin" component={Admin} />
         <Route path="/" component={Index} />
