@@ -13,7 +13,9 @@ const passport = require("./config/passport");
 const multer = require("multer");
 const io = require("socket.io")(server);
 const user_auth = require("./middleware/user_auth");
-const sys_auth = require('./middleware/sys_auth')
+const sys_auth = require('./middleware/sys_auth');
+const multipart = require('connect-multiparty');
+const multipartMiddleware = multipart({uploadDir:path.join(__dirname, "public", "images")});
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, path.join(__dirname, "public", "images"));
@@ -49,7 +51,9 @@ const commentCtl = require("./controller/comment");
 const serviceCommentCtl = require("./controller/service_comment");
 const CityCtl = require("./controller/city");
 
-
+app.post('/uploads', multipartMiddleware, function(req, resp) {
+	console.log(req.files);
+});
 //system admin 
 app.post('/api/sysadmin', sysCtl.createUser);
 app.get('/api/sysadmin', sys_auth, sysCtl.getUser)
@@ -252,6 +256,13 @@ app.get('/api/service/rating/service_id/:service_id', serviceCommentCtl.getComme
 //CITY 
 app.get('/api/city', CityCtl.getCity);
 app.post('/api/city', CityCtl.postCity);
+
+//SYS_ADMIN
+app.get('/api/query',storeCtl.query);
+app.get('/api/sys/stores/page/:page/:active/:rating', sys_auth, sysCtl.getStores);
+app.put('/api/sys/store',sys_auth, sysCtl.activeStore);
+app.get('/api/store/profile', sys_auth, sysCtl.getProfile);
+app.post('/api/sys/profile/modify', sys_auth, upload.single("file"), sysCtl.modify)
 
 io.on("connection", (socket) => {
 	//authenticate for socket io

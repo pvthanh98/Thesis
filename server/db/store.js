@@ -23,6 +23,7 @@ const storeSchema = new Schema({
   },
   timestamp: { type: Date, default: Date.now },
   phone:{type:String},
+  active:{type:Boolean},
   socket_id: String
 });
 

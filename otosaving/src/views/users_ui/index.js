@@ -8,6 +8,7 @@ import ServiceDetail from './service_detail';
 import UserRegister from './user_register';
 import StoreRegister from './store_register';
 import StoreDetail from './store_detail';
+import About from './about';
 // redux
 import { useSelector, useDispatch } from 'react-redux';
 import socketIOClient from "socket.io-client";
@@ -58,6 +59,7 @@ function Index() {
     <div>
       <Route exact path="/login" component={Login} />
       <PrivateRoute exact path="/cuuho" component={Rescue} />
+      <Route exact path="/about" component={About} />
       <Route exact path="/user/register" component={UserRegister} />
       <Route exact path="/store/register" component={StoreRegister} />
       <Route exact path="/store/id/:id" component={StoreDetail} />

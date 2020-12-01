@@ -46,8 +46,7 @@ function Login(props) {
 		})
 	};
 
-	if(isLogin) return <Redirect to="/admin"/>
-
+	if(isLogin) return <Redirect to="/sys"/>
 	return (
 		<div className="login-background">
 			<div className="container ">

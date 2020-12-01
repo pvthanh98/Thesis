@@ -19,7 +19,7 @@ const Service = (props) => {
             image={service.image}
             price={service.price}
             id={service._id}
-            store_name={service.store_id.name}
+            store_name={service.store_id?service.store_id.name: "unknow"}
           />
         );
       })

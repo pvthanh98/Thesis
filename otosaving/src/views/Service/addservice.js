@@ -201,7 +201,7 @@ export default function AddService() {
                     data={detail}
                     onChange={ ( event, editor ) => {
                         const data = editor.getData();
-                        setDetail(data);
+                        setDetail(data); 
                     } }
                   />
                 </Grid>

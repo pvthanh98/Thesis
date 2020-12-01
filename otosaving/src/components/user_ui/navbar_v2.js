@@ -79,7 +79,7 @@ function MyNavbar(props) {
         <div className={classes.rightSide}>
           <Link style={{ marginRight: "24px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/cuuho">CỨU HỘ</Link>
           <Link style={{ marginRight: "24px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/store">CỬA HÀNH</Link>
-          <Link style={{ marginRight: "48px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/intro">GIỚI THIỆU</Link>
+          <Link style={{ marginRight: "48px", fontFamily: "Arial sans-serif", fontWeight: "bold" }} className="custom-link nav-link" to="/about">GIỚI THIỆU</Link>
           {!isLogin? 
           <div>
             <Button onClick={()=>setRedirect('/login')}  variant="contained" color="primary" >ĐĂNG NHẬP</Button>

@@ -1,15 +1,18 @@
 import React from "react";
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Link, Redirect } from "react-router-dom";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import StoreIcon from "@material-ui/icons/Store";
 import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import PrivateRoute from '../../components/PrivateRoute/sys_privateroute'
+import PrivateRoute from '../../components/PrivateRoute/sys_privateroute';
+import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import Home from "./home";
+import Profile from './profile';
+import About from './about';
 const useStyle = makeStyles({
   root: {
     backgroundColor: "#000000d1",
-    height: window.innerHeight,
+    minHeight: window.innerHeight,
   },
   main: {
     padding: "8px",
@@ -48,7 +51,16 @@ const useStyle = makeStyles({
 });
 export default (props) => {
   const classes = useStyle();
-  console.log(props.match);
+  const [isLogin,setIsLogin] = React.useState(true);
+  const logout = () => {
+    localStorage.removeItem("sys_token");
+    localStorage.removeItem("sys_id");
+    localStorage.removeItem("sys_avt");
+    localStorage.removeItem("sys_name");
+    setIsLogin(false);
+  }
+
+  if(!isLogin) return <Redirect to="/sys/login" />
   return (
     <Grid container>
       <Grid item className={classes.root} xs={12} sm={12} md={2}>
@@ -71,24 +83,37 @@ export default (props) => {
 
         <Route
           exact
-          path="/sys/info"
+          path="/sys/profile"
           children={({ match }) => (
             <Link
               className={match ? classes.menuItemActive : classes.menuItem}
-              to="/sys/info"
+              to="/sys/profile"
             >
-              <PermIdentityIcon className={classes.icon} /> Thông tin
+              <PermIdentityIcon className={classes.icon} /> Quản lí tài khoản
             </Link>
           )}
         />
-        <div className={classes.menuItem}>
+        <Route
+          exact
+          path="/sys/about"
+          children={({ match }) => (
+            <Link
+              className={match ? classes.menuItemActive : classes.menuItem}
+              to="/sys/about"
+            >
+              <ArtTrackIcon className={classes.icon} /> Trang giới thiệu
+            </Link>
+          )}
+        />
+        <div className={classes.menuItem} onClick={logout}>
           <ExitToAppIcon className={classes.icon} /> Đăng xuất
         </div>
       </Grid>
       <Grid item xs={12} sm={12} md={10} className={classes.main}>
         <Switch>
+          <PrivateRoute exact path="/sys/profile" component={Profile} />
+          <PrivateRoute exact path="/sys/about" component={About} />
           <PrivateRoute exact path="/sys" component={Home} />
-          <PrivateRoute exact path="/sys/info" component={() => <div>Hehe</div>} />
         </Switch>
       </Grid>
     </Grid>

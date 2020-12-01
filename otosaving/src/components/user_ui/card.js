@@ -41,10 +41,10 @@ export default function (props) {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe">
-            <img height="100%" src={`${server}/images/${props.store.image}`} />
+            <img height="100%" src={`${server}/images/${props.store ? props.store.image: ""}`} />
           </Avatar>
         }
-        title={props.store.name}
+        title={props.store?props.store.name:"unknow"}
         subheader={props.timestamp}
       />
       <Link to={"/service/" + props.id + "/" + props.name} style={{ color: "black", textDecoration: "none" }}>

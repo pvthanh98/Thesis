@@ -1,12 +1,11 @@
 import React from "react";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Table from "../../components/systemadmin/table";
+import axios from "../../service/axios_sys";
+import MenuItem from '@material-ui/core/MenuItem';
+import {Badge} from 'reactstrap';
+import Select from '@material-ui/core/Select';
+import LinearProgress from "@material-ui/core/LinearProgress";
 const useStyle = makeStyles({
   card: {
     backgroundColor: "#ffffff5c",
@@ -16,51 +15,132 @@ const useStyle = makeStyles({
     minWidth: 650,
   },
 });
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
 export default (props) => {
   const classes = useStyle();
+  const [loading, setLoading] = React.useState(false);
+  const [page, setPage] = React.useState(0);
+  const [total_page, setTotal_Page] = React.useState(1);
+  const [stores, setStores] = React.useState(null);
+  const [rowsPerPage, setRowsPerPage] = React.useState(8);
+  const [ratingLabel, setRatingLabel] = React.useState("asc");
+  const [sortRatingValue, setSortRatingValue] = React.useState(0);
+  const [sortActive, setSortActive] = React.useState(0);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 8));
+    setPage(0);
+  };
+
+  React.useEffect(() => {
+    loadStores(page + 1,sortActive,sortRatingValue);
+  }, [page]);
+
+  const sortRating = (label) => {
+    const newstores = [...stores];
+    if (label === "desc") {
+      newstores.sort((a, b) => a.rating.total - b.rating.total);
+      setRatingLabel("asc");
+    } else {
+      newstores.sort((a, b) => b.rating.total - a.rating.total);
+      setRatingLabel("desc");
+    }
+
+    setStores(newstores);
+  };
+
+  const handleChangeSelect = (e) => {
+    switch(e.target.name){
+      case "status": {
+        setSortActive(e.target.value);
+        setSortRatingValue(0);
+        loadStores(page+1, e.target.value,0);
+        return;
+      }
+      case "rating": {
+        setSortRatingValue(e.target.value);
+        setSortActive(0)
+        loadStores(page+1, 0,e.target.value)
+        return;
+      }
+    }
+  }
+
+  const loadStores = (page, active, rating) => {
+    setLoading(true);
+    axios()
+      .get(`/api/sys/stores/page/${page}/${active}/${rating}`)
+      .then(({ data }) => {
+        setStores(data.stores);
+        setTotal_Page(data.total_page);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
+  const activeStore = (store_id, actions) => {
+    console.log(store_id, actions);
+    axios()
+      .put(`/api/sys/store`, {
+        store_id,
+        actions,
+      })
+      .then(() => {
+        loadStores(page + 1);
+      })
+      .catch((err) => console.log("err"));
+  };
   return (
     <Grid container>
       <Grid item xs={12} sm={12} md={12} style={{ marginBottom: "8px" }}>
+        {loading && <LinearProgress style={{marginBottom:"8px"}}/>}
         <Typography variant="h5">QUẢN LÍ CỬA HÀNG</Typography>
       </Grid>
       <Grid item className={classes.root} xs={12} sm={12} md={12}>
         <div className={classes.card}>
-          <TableContainer>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Dessert <TableSortLabel active direction="dsc" /> </TableCell>
-                  <TableCell align="right">Calories <TableSortLabel /> </TableCell>
-                  <TableCell align="right">Fat&nbsp;(g) <TableSortLabel /> </TableCell>
-                  <TableCell align="right">Carbs&nbsp;(g) <TableSortLabel /> </TableCell>
-                  <TableCell align="right">Protein&nbsp;(g) <TableSortLabel /> </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
-                    <TableCell align="right">{row.fat}</TableCell>
-                    <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Badge color="success">Trạng thái</Badge> {" "}
+          <Select
+            name="status"
+            labelId="demo-simple-select-helper-label"
+            id="demo-simple-select-helper"
+            value={sortActive}
+            onChange={handleChangeSelect}
+            style={{marginRight:"36px", width:"200px"}}
+            
+          >
+            <MenuItem value={0}>Tất cả</MenuItem>
+            <MenuItem value={-1}>Kích hoạt</MenuItem>
+            <MenuItem value={1}>Chờ kích hoạt</MenuItem>
+          </Select>
+         <Badge color="primary">Đánh giá</Badge> {" "}
+          <Select
+            name="rating"
+            labelId="demo-simple-select-helper-label"
+            id="demo-simple-select-helper"
+            value={sortRatingValue}
+            onChange={handleChangeSelect}
+            style={{width:"200px"}}
+          >
+            <MenuItem value={0}>Tất cả</MenuItem>
+            <MenuItem value={1}>Đánh giá tăng dần</MenuItem>
+            <MenuItem value={-1}>Đánh giá giảm dần</MenuItem>
+          </Select>
+          <Table
+            stores={stores}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            total_page={total_page}
+            loading={loading}
+            sortRating={sortRating}
+            ratingLabel={ratingLabel}
+            activeStore={activeStore}
+          />
         </div>
       </Grid>
     </Grid>
