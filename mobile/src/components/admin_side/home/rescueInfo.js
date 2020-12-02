@@ -80,9 +80,11 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigatio
           </Button>
           <Button
             icon={() => <MaterialIcon color="#fff" name="launch" size={24} />}
-            onPress={() => navigation.navigate('store_chat',{
-              customer_id:selectedOto.customer_id._id,
-              customer_name: selectedOto.customer_id.name
+            onPress={() => navigation.navigate('process',{
+              customer_id: selectedOto.customer_id._id,
+              address:selectedOto.customer_id.address,
+              phone: selectedOto.customer_id.phone,
+              name: selectedOto.customer_id.name
             })}
             mode="contained"
             color="#068041"
