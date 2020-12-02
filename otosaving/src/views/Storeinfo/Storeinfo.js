@@ -218,25 +218,25 @@ export default function StoreInfo() {
         <GridItem xs={12} sm={12} md={8} >
           <Card >
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Edit Store Profile</h4>
-              <p className={classes.cardCategoryWhite}>Complete your profile</p>
+              <h4 className={classes.cardTitleWhite}>Chỉnh sửa thông tin</h4>
+              <p className={classes.cardCategoryWhite}>Hoàn thành thông tin cá nhân của bạn</p>
             </CardHeader>
             <CardBody>
              <Grid container>
                 <Grid item md={4} className={classes.customContainer}>
-                    <InputLabel >Name</InputLabel>
+                    <InputLabel >Tên</InputLabel>
                     <Input fullWidth={true} name="name" onChange={onInputChange} value={name}  />
                 </Grid>
                 <Grid item md={8} className={classes.customContainer}>
-                <InputLabel>Description</InputLabel>
+                <InputLabel>Mô tả (có thể là thông tin khuyến mãi)</InputLabel>
                     <Input fullWidth={true} name="description" onChange={onInputChange} value={description} />
                 </Grid>
                 <Grid item md={8} className={classes.customContainer}>
-                    <InputLabel>Address</InputLabel>
+                    <InputLabel>Địa chỉ</InputLabel>
                     <Input fullWidth={true} name="address" onChange={onInputChange} value={address} />
                 </Grid>
                 <Grid item md={4} className={classes.customContainer}>
-                    <InputLabel>Phone</InputLabel>
+                    <InputLabel>Số điện thoại</InputLabel>
                     <Input fullWidth={true} name="phone" onChange={onInputChange} value={phone} />
                 </Grid>
                 <Grid item md={4} className={classes.customContainer}>
@@ -252,8 +252,8 @@ export default function StoreInfo() {
                     {loading && <Loading style={{marginLeft:"24px"}} />}
                 </Grid>
                 <Grid item md={8} className={classes.customContainer}>
-                    We recommend you to get coordinates from this site{" "}
-                    {" "}<a target ="_blank" href="https://www.latlong.net/convert-address-to-lat-long.html">Link</a>
+                    Chúng tôi khuyên bạn truy cập vào <a target ="_blank" href="https://www.latlong.net/convert-address-to-lat-long.html">website</a>  để lấy lat lng theo địa chỉ{" "}
+                    {" "}Chỉ số lat, lng là tọa độ của cửa hàng được hiển thị trên bản đồ
                 </Grid>
              </Grid>
             </CardBody>

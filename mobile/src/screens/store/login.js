@@ -107,11 +107,11 @@ export default function Login(props) {
                 />
             </View>
             <View style={[styles.inputContainer,{marginTop:20}]}>
-                <Button onPress={handleLoginButton} color="#fff" mode="contained">Login</Button>
-                <Button color="#fff" >Signup</Button>
+                <Button style={{width:200, marginRight:4}} onPress={handleLoginButton} color="#fff" mode="contained">Login</Button>
+                {loading && <ActivityIndicator size="large" color="#fff" />}
             </View>
             <TouchableOpacity style={{marginTop:8}}>
-                <Text style={{color:"#69737f", textDecorationLine:"underline", textDecorationColor:"red"}}>Are you store owner ?</Text>
+                <Text style={{color:"#fff", textDecorationLine:"underline", textDecorationColor:"red"}}>Bạn muốn đăng ký cửa hàng? truy cập vào website</Text>
             </TouchableOpacity>
         </View>
     )

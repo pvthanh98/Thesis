@@ -8,27 +8,18 @@ import {server} from '../../constant';
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
-import { Input, Button } from "@material-ui/core";
+import { Input } from "@material-ui/core";
 import axios from '../../service/axios';
 import Alert from '@material-ui/lab/Alert';
 import Table from "components/Table/Table.js";
 import LinearProgress from '@material-ui/core/LinearProgress';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import FolderIcon from '@material-ui/icons/Folder';
-import IconButton from '@material-ui/core/IconButton';
-import AddCircle from '@material-ui/icons/AddCircle';
-import DeleteIcon from '@material-ui/icons/Delete';
 import {Link} from 'react-router-dom';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import ListIcon from '@material-ui/icons/List';
 import AddIcon from '@material-ui/icons/Add';
 import {Typography} from '@material-ui/core';
 import Create from '@material-ui/icons/Create';
+import formatDate from '../../service/formatDate';
 
 import {
     AccountBox as AccountBoxIcon, 
@@ -107,6 +98,7 @@ export default function ProvisionalBill(props) {
   const [loadingPage, setLoadingPage] = React.useState(false);
   const [billTemp, setBillTemp] = React.useState([]);  
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const [date, setDate] = React.useState("");
   //////// for submit
   const [customerID, setCustomerID] = React.useState(null);
   useEffect(()=>{
@@ -120,128 +112,40 @@ export default function ProvisionalBill(props) {
     const {id} = props.match.params;
     axios().get(`/api/bill/id/${id}`)
     .then(({data})=>{
-      setInputSearch(data._id);
+      setInputSearch(data._id); 
       setName(data.customer_id.name);
       setAddress(data.customer_id.address);
       setImage(data.customer_id.image)
       setPhone(data.customer_id.phone);
       setCustomerID(data.customer_id._id)
-      let bill = []
-      console.log(data)
-      // data.services.forEach(service => bill.push({
-      //   id:service.service_id._id,
-      //   name:service.service_id.name,
-      //   price: service.service_id.price,
-      //   quantity:service.quantity
-      // }));
+      setDate(formatDate(data.timestamp))
+
+      let bill = [];
+      data.services.forEach(service => bill.push({
+        id:service.service_id._id,
+        name:service.service_id.name,
+        price: service.service_id.price,
+        quantity:service.quantity
+      }));
       setBillTemp(bill);
     })
   }
 
-  const handleChangeService = (e) => {
-    setLoading(true);
-    setInputNameService(e.target.value);
-    if(e.target.value!=""){
-      axios().get(`/api/service/search/${e.target.value}`)
-      .then(({data})=>{
-        setResultService(data)
-        setLoading(false);
-      })
-      .catch(err=>setLoading(false))
-    }
-  }
-
-  const addToBill = (id,name, price) => {
-    let bills = [...billTemp];
-    let index = bills.findIndex(bill=>bill.id===id);
-    if(index>=0){
-      bills[index].quantity +=1; 
-    } else 
-    bills.push({
-      id,
-      name,
-      price,
-      quantity:1
-    });
-    setBillTemp(bills);
-  }
-  const deleteItem = (index) => {
-    let bills = [...billTemp];
-    bills.splice(index,1);
-    setBillTemp(bills);
-  }
-
-  const renderIconButton = (index) => {
-    return (
-      <IconButton onClick={()=>deleteItem(index)} aria-label="delete" color="primary">
-        <DeleteIcon />
-      </IconButton>
-    )
-  }
-
-  const renderList = () => {
-    return resultService.map(service=>{
-      return <ListItem key={service._id}>
-                <ListItemAvatar>
-                  <Avatar src={`${server}/images/${service.image}`}>
-                    <FolderIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={service.name}
-                  secondary={`${service.price} VND`}
-                />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" onClick={()=>addToBill(service._id, service.name, service.price)}>
-                    <AddCircle />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-    })
-  }
 
   const renderBillTemp = () => {
     return billTemp.map((bill, index)=>{
       return [index+1, bill.name, bill.price, bill.quantity, 
-        parseFloat(bill.price) * bill.quantity, renderIconButton(index)
+        parseFloat(bill.price) * bill.quantity
       ];
     })
   }
-
-  const submitBillModify = () => {
-    setLoadingPage(true);
-    let services = [];
-    let total_cost =0;
-    for(let i=0;i<billTemp.length;i++){
-      total_cost += billTemp[i].price * billTemp[i].quantity;
-      services.push({
-        service_id: billTemp[i].id,
-        quantity: billTemp[i].quantity
-      })
-    }
-    const bill ={
-      customer_id: customerID,
-      total_cost,
-      services,
-    }
-    
-    axios().put(`/api/bill/provisional/${props.match.params.id}`,bill)
-    .then(()=> {
-      setAndDelayLoading();
+  const calculateTotalCost = () => {
+    let totalCost = 0;
+    billTemp.forEach(bill=>{
+      totalCost+= (parseFloat(bill.price) * bill.quantity)
     })
-    .catch(err=>{
-      console.log(err)
-      setAndDelayLoading();
-    });
+    return totalCost;
   }
-
-  const setAndDelayLoading = (data) => {
-		var timeout = setTimeout(function(){
-      setLoadingPage(false);
-      setIsSuccess(true)
-			clearTimeout(timeout)
-		},1000)
-	}
 
   return (
     <GridContainer>
@@ -249,27 +153,27 @@ export default function ProvisionalBill(props) {
         <Breadcrumbs aria-label="breadcrumb">
           <Link to="/admin/bill/" style={{color:"black"}}>
             <ListIcon />
-            List
+            Danh sách
           </Link>
           <Link
             to="/admin/bill/add/init"
             style={{color:"black"}}
           >
             <AddIcon className={classes.icon} />
-            Add
+            Thêm
           </Link>
           <Typography color="textPrimary" className={classes.linkCustom}>
             <Create className={classes.icon} />
-              Modify
+              Chi tiết
           </Typography>
       </Breadcrumbs>
       </GridItem>
       <GridItem xs={12} sm={12} md={4}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>ProvisionalBill</h4>
+            <h4 className={classes.cardTitleWhite}>Hóa Đơn</h4>
             <p className={classes.cardCategoryWhite}>
-              Make temporary bills for customer
+              {date}
             </p>
           </CardHeader>
           <CardBody>
@@ -291,7 +195,7 @@ export default function ProvisionalBill(props) {
       <GridItem xs={12} sm={12} md={8}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Customer Infomation</h4>
+            <h4 className={classes.cardTitleWhite}>Thông tin khách hàng</h4>
           </CardHeader>
           <CardBody>
               <GridContainer>
@@ -316,26 +220,19 @@ export default function ProvisionalBill(props) {
       <GridItem xs={12} sm={12} md={8}>
         <Card>
           <CardHeader color="warning">
-            <h4 className={classes.cardTitleWhite}>Bill Info</h4>
+            <h4 className={classes.cardTitleWhite}>Chi tiết hóa đơn</h4>
           </CardHeader>
           <CardBody>
               <GridContainer>
                   <GridItem xs={12} sm={12} md={12}>
                     <Table
                       tableHeaderColor="primary"
-                      tableHead={["ID", "Name", "Price", "Quantity", "Total",""]}
+                      tableHead={["ID", "Tên", "Giá", "Số lượng", "Tổng tiền",""]}
                       tableData={renderBillTemp()}
                     />
+                    <div style={{textAlign:"right"}}>Tổng tiền: <b>{calculateTotalCost()}</b></div>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} style={{textAlign:"right"}}>
-                    <Button 
-                      disabled={billTemp.length<=0 ? true : false} 
-                      className="mt-3" variant="contained" 
-                      color="secondary"
-                      onClick={submitBillModify}
-                    >
-                        Yêu Cầu Xác Nhận Thay Đổi
-                    </Button>
                     {loadingPage &&
                       <div style={{padding:"8px 0px 0px 0px"}}>
                         <LinearProgress color="primary" />
@@ -344,38 +241,6 @@ export default function ProvisionalBill(props) {
                     {isSuccess && <Alert className="mt-3" severity="success">success</Alert>}
                   </GridItem>
               </GridContainer>
-          </CardBody>
-        </Card>
-      </GridItem>
-      <GridItem xs={12} sm={12} md={4}>
-        <Card>
-          <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Add New</h4>
-          </CardHeader>
-          <CardBody>
-              <GridContainer>
-                  <GridItem xs={12} sm={12} md={12}>
-                        <div>
-                          Nhập tên sản phẩm
-                        </div>
-                        <Input 
-                            type="text" 
-                            fullWidth
-                            placeholder="Tên sản phẩm"
-                            value={inputSearchService}
-                            onChange={handleChangeService}
-                        /> 
-                    
-                  </GridItem>
-              </GridContainer>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <List>
-              {loading && <LinearProgress color="secondary" />}
-              {renderList()}
-            </List>
           </CardBody>
         </Card>
       </GridItem>

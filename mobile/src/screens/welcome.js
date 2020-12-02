@@ -18,13 +18,13 @@ export default ({navigation}) => {
         style={styles.footer}
         animation="fadeInUpBig"
       >
-        <Text style={styles.title}>Let's checking for rescuing store nearby you</Text>
-        <Text>Sign in to application</Text>
+        <Text style={styles.title}>Tìm kiếm cửa hàng cứu hộ oto gần bạn</Text>
+        <Text>Đăng nhập vào ứng dụng</Text>
         <View style={[styles.btnContainer,{marginTop:20}]}>
             <TouchableOpacity onPress={()=> navigation.navigate('login')}>
                 <View style={[styles.btn,{backgroundColor:"#01877c"}]}>
                     <Text style={{color:"#fff"}}>
-                        Login as user
+                        Tài khoản người dùng
                     </Text>
                     <MaterialIcons name="navigate-next" color="#fff" size={20} />
                 </View>  
@@ -36,7 +36,7 @@ export default ({navigation}) => {
             >
                 <View style={[styles.btn,{backgroundColor:"#69737f"}]}>
                     <Text style={{color:"#fff"}}>
-                        Login as store
+                        Tài khoản cửa hàng
                     </Text>
                     <MaterialIcons name="navigate-next" color="#fff" size={20} />
                 </View>  
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
       alignItems:"center",
       justifyContent:"center",
       flexDirection:"row",
-      width:180
+      width:210
   },
   appTitle: {
       color:"#fff",

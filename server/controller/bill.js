@@ -71,7 +71,7 @@ module.exports = {
 		const { id } = req.params;
 		Bill.findById(id)
 			.populate("customer_id", "name image address phone")
-			.populate("services.service_id", "name price total")
+			.populate("services.service_id", "name price total") 
 			.then((bill) => {
 				res.json(bill);
 			})

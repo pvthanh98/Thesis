@@ -47,7 +47,7 @@ function StackComponent(props) {
         name="rescuing"
         component={RescuingScreen}
         options={{
-          title: 'OTO RESCUE',
+          title: 'CỨU HỘ OTO',
           headerTitleAlign: 'center',
           headerLeft: () => (
             <TouchableOpacity
@@ -70,7 +70,7 @@ function StackComponent(props) {
         name="info"
         component={UserInfo}
         options={{
-          title: 'INFO',
+          title: 'Thông tin khách hàng',
           headerTintColor: '#fff',
         }}
       />
@@ -79,7 +79,7 @@ function StackComponent(props) {
         name="chat_list"
         component={ChatList}
         options={{
-          title: 'Messages',
+          title: 'Tin Nhắn',
           headerTintColor: '#fff',
         }}
       />
@@ -115,7 +115,7 @@ function StackComponent(props) {
         name="history"
         component={HistoryScreen}
         options={{
-          title: 'History',
+          title: 'Lịch Sử Cứu Hộ',
           headerTintColor: '#fff',
         }}
       />
@@ -123,7 +123,7 @@ function StackComponent(props) {
         name="history_detail"
         component={HistoryDetailScreen}
         options={{
-          title: 'History Detail',
+          title: 'Chi Tiết',
           headerTintColor: '#fff',
         }}
       />
@@ -150,7 +150,7 @@ function StackComponent(props) {
         options={{
           headerTintColor: '#fff',
           headerStyle:{
-            backgroundColor:"#202125"
+            backgroundColor:"#295a59"
           }
         }}
       />

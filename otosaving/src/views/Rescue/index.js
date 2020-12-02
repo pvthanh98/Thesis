@@ -31,7 +31,7 @@ import ReplayIcon from "@material-ui/icons/Replay";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import "react-datepicker/dist/react-datepicker.css";
 import {Redirect } from 'react-router-dom'
-
+import {socket} from '../../layouts/Admin';
 import Pagination from '@material-ui/lab/Pagination';
 
 const { compose, withProps, lifecycle } = require("recompose");
@@ -95,8 +95,8 @@ const MyMapComponent = compose(
 			for (var i = 0; i < carRescue.length; i++) {
 				try {
 					let distance = await findDistance(
-						carRescue[i].customer_id.latitude,
-						carRescue[i].customer_id.longtitude
+						carRescue[i].coordinate.lat,
+						carRescue[i].coordinate.lng
 					);
 					carRescue[i].distance = { ...distance };
 				} catch (e) {
@@ -137,6 +137,7 @@ const MyMapComponent = compose(
 								directions: result,
 								distance: { ...result.routes[0].legs[0].distance },
 							});
+							console.log(result.routes[0].legs[0].distance );
 						} else {
 							console.error("error", result);
 						}
@@ -188,16 +189,16 @@ const MyMapComponent = compose(
 					<Marker
 						key={index}
 						position={{
-							lat: e.customer_id.latitude,
-							lng: e.customer_id.longtitude,
+							lat: e.coordinate.lat,
+							lng: e.coordinate.lng,
 						}}
 						onClick={() => {
 							props.setSelectedCustomer({
 								customer_id: e.customer_id._id,
 								name: e.customer_id.name,
 								phone: e.customer_id.phone,
-								lat: e.customer_id.latitude,
-								lng: e.customer_id.longtitude,
+								lat: e.coordinate.lat,
+								lng: e.coordinate.lng,
 								distance: e.distance ? e.distance.text : "Loading...",
 							})
 							console.log(props.distance)
@@ -327,6 +328,9 @@ export default function Rescue() {
 
 	useEffect(() => {
 		loadOtoRescuing(1);
+		socket.on("new_rescue",function(data){
+			loadOtoRescuing(1)
+		})
 	}, []);
 
 	const loadOtoRescuing = (page) => {
@@ -335,6 +339,7 @@ export default function Rescue() {
 			.get(`/api/rescue/page/${page}`)
 			.then(async (resp) => {
 				await sleep(1000);
+				console.log(resp.data.rescuelist);
 				setCarRescue(resp.data.rescuelist);
 				setTotalPage(resp.data.total_page);
 				setLoading(false)
@@ -410,7 +415,7 @@ export default function Rescue() {
 							<IconButton
 								aria-label="gps"
 								className={classes.margin}
-								onClick={() => setIsRedirect(e.customer_id)}
+								onClick={() => setIsRedirect(e.customer_id._id)}
 							>
 								<PaymentIcon style={{ color: "#3b0957" }} />
 							</IconButton>
@@ -444,15 +449,15 @@ export default function Rescue() {
 							className={classes.margin}
 							onClick={() => {
 								setMapCenter({
-									lat: e.customer_id.latitude,
-									lng: e.customer_id.longtitude,
+									lat: e.coordinate.lat,
+									lng: e.coordinate.lng,
 								});
 								setSelectedCustomer({
 									customer_id: e.customer_id._id,
 									name: e.customer_id.name,
 									phone: e.customer_id.phone,
-									lat: e.customer_id.latitude,
-									lng: e.customer_id.longtitude,
+									lat: e.coordinate.lat,
+									lng: e.coordinate.lng,
 									distance: e.distance ? e.distance.text : "",
 								});
 							}}

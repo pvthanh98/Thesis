@@ -371,6 +371,10 @@ io.on("connection", (socket) => {
 	socket.on("hello_server", function () {
 		socket.emit("hello_server", "welcome");
 	});
+
+	socket.on("new_rescue", async function(data){
+		socket.to(data.to).emit("new_rescue",{msg:"new_rescue"});
+	})
 });
 
 server.listen(port, () => console.log(`server is running on ${port}`));

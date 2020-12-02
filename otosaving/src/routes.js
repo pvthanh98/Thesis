@@ -33,7 +33,7 @@ import Rescue from './views/Rescue/index';
 const dashboardRoutes = [
   {
     path: "/dashboard",
-    name: "Dashboard",
+    name: "Trang chủ",
     rtlName: "لوحة القيادة",
     icon: Dashboard,
     component: DashboardPage,
@@ -43,7 +43,7 @@ const dashboardRoutes = [
   },
   {
     path: "/service/add",
-    name: "Service",
+    name: "Dịch Vụ",
     icon: StoreIcon,
     component: AddService,
     layout: "/admin",
@@ -52,7 +52,7 @@ const dashboardRoutes = [
   },
   {
     path: "/service/modify/:id",
-    name: "Service",
+    name: "Dịch Vụ",
     exact: true,
     icon: StoreIcon,
     component: ModifyService,
@@ -61,7 +61,7 @@ const dashboardRoutes = [
   },
   {
     path: "/rescue",
-    name: "Rescue",
+    name: "Cứu Hộ",
     exact: true,
     rtlName: "قائمة الجدول",
     icon: DirectionsCarIcon,
@@ -71,7 +71,7 @@ const dashboardRoutes = [
   },
   {
     path: "/service",
-    name: "Service",
+    name: "Dịch Vụ",
     exact: true,
     rtlName: "قائمة الجدول",
     icon: "content_paste",
@@ -81,7 +81,7 @@ const dashboardRoutes = [
   },
   {
     path: "/bill/modify/:id",
-    name: "Bill",
+    name: "Hóa Đơn",
     icon: "business_center",
     component: BillModify,
     exact: true,
@@ -90,7 +90,7 @@ const dashboardRoutes = [
   },
   {
     path: "/bill/add/:customer_id",
-    name: "Bill",
+    name: "Hóa Đơn",
     icon: "business_center",
     component: BillAdd,
     exact: true,
@@ -99,7 +99,7 @@ const dashboardRoutes = [
   },
   {
     path: "/bill",
-    name: "Bill",
+    name: "Hóa Đơn",
     icon: "business_center",
     component: List,
     exact: true,
@@ -139,7 +139,7 @@ const dashboardRoutes = [
   // },
   {
     path: "/info",
-    name: "Info",
+    name: "Thông tin",
     icon: "info",
     component: StoreInfo,
     layout: "/admin",

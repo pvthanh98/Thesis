@@ -62,15 +62,15 @@ function stableSort(array, comparator) {
 
 const headCells = [
 	{ id: "id", numeric: false, disablePadding: true, label: "ID" },
-	{ id: "name", numeric: true, disablePadding: false, label: "Name" },
+	{ id: "name", numeric: true, disablePadding: false, label: "Tên" },
 	{
 		id: "description",
 		numeric: true,
 		disablePadding: false,
-		label: "Description",
+		label: "Mô tả",
 	},
-	{ id: "price", numeric: true, disablePadding: false, label: "Price" },
-	{ id: "quantity", numeric: true, disablePadding: false, label: "Quantity" },
+	{ id: "price", numeric: true, disablePadding: false, label: "Giá" },
+	{ id: "quantity", numeric: true, disablePadding: false, label: "Số lượng" },
 ];
 
 function EnhancedTableHead(props) {
@@ -297,12 +297,12 @@ export default function Service() {
 		}, 1000);
 	};
 
-	let priceOver500 = 0;
-	let priceBelow500 =0;
+	let priceOver200 = 0;
+	let priceBelow200 =0;
 	let quantityBelow50 = 0;
 	let serviceCount = 0;
 	const rows = services.map((service) => {
-		if(service.price>500) priceOver500++; else priceBelow500++;
+		if(service.price>200) priceOver200++; else priceBelow200++;
 		if(service.quantity<50) quantityBelow50++;
 		serviceCount++;
 		return {
@@ -378,11 +378,11 @@ export default function Service() {
 						className={classes.linkCustom}
 					>
 						<ListIcon />
-						List
+						Danh sách
 					</Link>
 					<Link to="/admin/service/add" style={{ color: "black" }}>
 						<AddIcon />
-						Add
+						Thêm
 					</Link>
 				</Breadcrumbs>
 			</GridItem>
@@ -401,20 +401,20 @@ export default function Service() {
       <GridItem xs={12} sm={6} md={3} className="mt-2">
         <div>
           <div>
-            <AttachMoneyIcon /> Giá dưới 500 $
+            <AttachMoneyIcon /> Giá dưới 200 $
           </div>
           <div style={{fontWeight:"bold", color:"#24aeb5",fontSize:"50px", textAlign:"center"}}>
-            {priceBelow500}
+            {priceBelow200}
           </div>
         </div>
       </GridItem>  
       <GridItem xs={12} sm={6} md={3} className="mt-2">
         <div>
           <div>
-            <AttachMoneyIcon /> Giá trên 500 $
+            <AttachMoneyIcon /> Giá trên 200 $
           </div>
           <div style={{fontWeight:"bold", color:"#471b77",fontSize:"50px", textAlign:"center"}}>
-            {priceOver500}
+            {priceOver200}
           </div>
         </div>
       </GridItem> 

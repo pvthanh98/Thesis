@@ -383,7 +383,7 @@ const ProvisionalBillList = (props) => {
 						className={classes.linkCustom}
 					>
 						<ListIcon />
-						List
+						Danh sách
 					</Link>
 					<Link
 						to="/admin/bill/add/init"
@@ -395,7 +395,7 @@ const ProvisionalBillList = (props) => {
 						}
 					>
 						<AddIcon className={classes.icon} />
-						Add
+						Thêm
 					</Link>
 				</Breadcrumbs>
 			</GridItem>

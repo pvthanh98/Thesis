@@ -200,6 +200,14 @@ export default function ProvisionalBill(props) {
     })
   }
 
+  const calculateTotalCost = () => {
+    let total = 0;
+    billTemp.forEach(bill=> {
+      total+=(parseFloat(bill.price) * bill.quantity);
+    })
+    return total;
+  }
+
   const makeBill = () => {
     setLoadingPage(true);
     let services = [];
@@ -249,7 +257,7 @@ export default function ProvisionalBill(props) {
         <Breadcrumbs aria-label="breadcrumb">
           <Link to="/admin/bill/" style={{color:"black"}}>
             <ListIcon />
-            List
+            Danh Sách
           </Link>
           <Link
             to="/admin/bill/add/init"
@@ -257,7 +265,7 @@ export default function ProvisionalBill(props) {
             className={classes.linkCustom}
           >
             <AddIcon className={classes.icon} />
-            Add
+            Thêm
           </Link>
       </Breadcrumbs>
       </GridItem>
@@ -269,10 +277,10 @@ export default function ProvisionalBill(props) {
       <GridItem xs={12} sm={12} md={4}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>ProvisionalBill</h4>
-            <p className={classes.cardCategoryWhite}>
-              Make temporary bills for customer
-            </p>
+            <h4 className={classes.cardTitleWhite}>Hóa Đơn</h4>
+            {/* <p className={classes.cardCategoryWhite}>
+              
+            </p> */}
           </CardHeader>
           <CardBody>
               <GridContainer>
@@ -297,7 +305,7 @@ export default function ProvisionalBill(props) {
       <GridItem xs={12} sm={12} md={8}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Customer Infomation</h4>
+            <h4 className={classes.cardTitleWhite}>Thông Tin Khách Hàng</h4>
           </CardHeader>
           <CardBody>
               <GridContainer>
@@ -337,7 +345,7 @@ export default function ProvisionalBill(props) {
       <GridItem xs={12} sm={12} md={8}>
         <Card>
           <CardHeader color="warning">
-            <h4 className={classes.cardTitleWhite}>Bill Info</h4>
+            <h4 className={classes.cardTitleWhite}>Chi Tiết Hóa Đơn</h4>
           </CardHeader>
           <CardBody>
               <GridContainer>
@@ -349,14 +357,17 @@ export default function ProvisionalBill(props) {
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} style={{textAlign:"right"}}>
-                    <Button 
-                      disabled={billTemp.length<=0 ? true : false} 
-                      className="mt-3" variant="contained" 
-                      color="primary"
-                      onClick={makeBill}
-                    >
-                        Yêu Cầu Xác Nhận
-                    </Button>
+                    <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                       <div>Tổng Tiền: <b style={{color:"red"}}>${calculateTotalCost()}</b></div>
+                      <Button 
+                        disabled={billTemp.length<=0 ? true : false} 
+                        className="mt-3" variant="contained" 
+                        color="primary"
+                        onClick={makeBill}
+                      >
+                          Yêu Cầu Xác Nhận
+                      </Button>
+                    </div>
                   </GridItem>
               </GridContainer>
           </CardBody>

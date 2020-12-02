@@ -61,17 +61,17 @@ export default (props) => {
         </View>
         <Drawer.Section style={styles.ItemContainer}>
         <DrawerItem
-            label="Home"
+            label="Trang chủ"
             onPress={() => props.navigation.navigate('rescuing')}
             icon={() => <Icon name="home-outline" size={25} color="black" />}
         />
         <DrawerItem
-            label="Profile"
+            label="Thông tin khách hàng"
             onPress={() => props.navigation.navigate('info')}
             icon={() => <Icon name="account-circle-outline" size={25} color="black" />}
         />
         <DrawerItem
-            label="Rescue History"
+            label="Lịch sử cứu hộ"
             onPress={() => props.navigation.navigate('history')}
             icon={() => <Icon name="history" size={25} color="black" />}
         />
@@ -79,7 +79,7 @@ export default (props) => {
       </DrawerContentScrollView>
       <Drawer.Section>
         <DrawerItem
-            label="Sign out"
+            label="Đăng xuất"
             onPress={logout}
             icon={() => <Icon name="logout" size={25} color="black" />}
         />

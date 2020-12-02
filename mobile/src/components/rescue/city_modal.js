@@ -1,36 +1,35 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal } from 'react-native';
+import {View, Text, StyleSheet, Modal} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
+import {Button} from 'react-native-paper';
 export default (props) => {
   const {visible, cities, citySelected, setCitySelected, setVisible} = props;
-  const renderCityItem = () => (
-    cities && cities.map(e=>(
-      <Picker.Item key={e._id} label={e.name} value={e._id} />
-    ))
-  )
+  const renderCityItem = () =>
+    cities &&
+    cities.map((e) => <Picker.Item key={e._id} label={e.name} value={e._id} />);
 
   return (
-    <Modal 
-      visible={visible} 
-      animationType="slide"
-      transparent={true}
-    >
-      <View
-        style={styles.container}
-      >
+    <Modal visible={visible} animationType="slide" transparent={true}>
+      <View style={styles.container}>
         <View style={styles.centerView}>
-          <Text style={{ marginLeft: 4 }}>Thành phố bạn đang ở</Text>
-          <Picker
-            selectedValue={citySelected}
-            style={{ height: 50, width: "100%" }}
-            onValueChange={(itemValue, itemIndex) => {
-              setCitySelected(itemValue);
-              setVisible(false)
-            }}
-          >
-            <Picker.Item label={"Chọn Thành phố..."} value={""} />
-            {renderCityItem()}
-          </Picker>
+          <Text style={{marginLeft: 4}}>Thành phố bạn đang ở</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Picker
+              selectedValue={citySelected}
+              style={{height: 50, flex: 1}}
+              onValueChange={(itemValue, itemIndex) => {
+                setCitySelected(itemValue);
+              }}>
+              <Picker.Item label={'Chọn Thành phố...'} value={''} />
+              {renderCityItem()}
+            </Picker>
+            <Button style={{width: 100}} onPress={()=>{
+              props.setCurrentCity(props.citySelected)
+              setVisible(false);
+            }} mode="contained">
+              CHỌN
+            </Button>
+          </View>
         </View>
       </View>
     </Modal>
@@ -56,5 +55,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  }
+  },
 });

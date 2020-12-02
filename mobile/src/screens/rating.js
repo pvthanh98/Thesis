@@ -26,9 +26,9 @@ export default ({route, navigation}) => {
   };
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#202125" barStyle="light-content" />
+      <StatusBar backgroundColor="#295a59" barStyle="light-content" />
       <View>
-        <Title style={{color: '#fff'}}>Đánh giá trãi nghiệm của bạn</Title>
+        <Title style={{color: '#295a59'}}>Đánh giá trãi nghiệm của bạn</Title>
         <View style={styles.ratingContainer}>
           <AirbnbRating
             count={5}
@@ -43,11 +43,11 @@ export default ({route, navigation}) => {
         <View style={styles.comment}>
           <TextInput
             placeholder="Để lại nhận xét của bạn"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#295a59"
             value={comment}
             onChangeText={(text) => setComment(text)}
             style={{
-              borderColor: '#fff',
+              borderColor: '#295a59',
               borderWidth: 1,
               borderRadius: 8,
               textAlign: 'center',
@@ -68,7 +68,7 @@ export default ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#202125',
+    backgroundColor: '#fff',
     padding: 8,
     justifyContent: 'space-between',
   },

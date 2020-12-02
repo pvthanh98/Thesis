@@ -79,7 +79,12 @@ export default (props) => {
           </Text>
         </View>
         <View style={styles.btn2Container}>
-          <Button color="blue" mode="contained">
+          <Button onPress={()=>{
+           props.navigation.navigate('rating', {
+            store_id: props.selectedStore._id,
+            store_name: props.selectedStore.name,
+          })
+        }}  color="blue" mode="contained">
               Gửi đánh giá
           </Button>
           <Button 

@@ -64,7 +64,7 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigatio
             mode="contained"
             color="#2266b7"
           >
-            CALL
+            GỌI
           </Button>
           <Button
             icon={() => <MaterialIcon color="#fff" name="message" size={24} />}
@@ -76,7 +76,19 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigatio
             color="#69737f"
             style={{marginTop: 4}}
           >
-            SEND
+            NHẮN TIN
+          </Button>
+          <Button
+            icon={() => <MaterialIcon color="#fff" name="launch" size={24} />}
+            onPress={() => navigation.navigate('store_chat',{
+              customer_id:selectedOto.customer_id._id,
+              customer_name: selectedOto.customer_id.name
+            })}
+            mode="contained"
+            color="#068041"
+            style={{marginTop: 4}}
+          >
+            XỬ LÍ
           </Button>
          
         </View>

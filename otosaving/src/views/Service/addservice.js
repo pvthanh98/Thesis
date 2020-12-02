@@ -129,7 +129,7 @@ export default function AddService() {
           <Breadcrumbs aria-label="breadcrumb">
           <Link to="/admin/service/" style={{color:"black"}}>
             <ListIcon />
-            List
+            Danh sách
           </Link>
           <Link
             to="/admin/service/add"
@@ -137,7 +137,7 @@ export default function AddService() {
             className={classes.linkCustom}
           >
             <AddIcon className={classes.icon} />
-            Add
+            Thêm
           </Link>
         </Breadcrumbs>
       </GridItem>

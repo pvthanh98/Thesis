@@ -20,7 +20,7 @@ const HistoryItem = (props) => {
                 <View style={{flexDirection:"row"}}>
                     <Text>Tổng tiền:</Text>
                     <Text style={{color:"red", fontWeight:"bold"}}>
-                        {props.total_cost} VND
+                    {" "}$ {props.total_cost}
                     </Text>
                 </View>    
             </View>

@@ -60,7 +60,6 @@ export default function Home({navigation}) {
             resp.data.rescuelist    
           );
         }
-
       })
       .catch((err) => console.log(err));
   };
