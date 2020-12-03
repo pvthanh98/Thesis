@@ -13,8 +13,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+import {socket} from '../../views/users_ui/index';
 import Select from '@material-ui/core/Select';
 import Rating from 'material-ui-rating';
 export default (props) => {
@@ -71,6 +70,8 @@ export default (props) => {
       axios()
 			.post("/api/rescue", { store_id: props.store._id, problem: problemID, coordinate: props.myposition })
 			.then((resl) => {
+				alert("Yều cầu của bạn đã được gửi");
+				socket.emit('new_rescue', {to: props.store._id});
 				setRequestComplete(true);
 			})
 			.catch((err) => {

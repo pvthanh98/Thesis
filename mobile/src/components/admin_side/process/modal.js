@@ -6,6 +6,17 @@ import Materialicon from 'react-native-vector-icons/MaterialIcons';
 export default function (props) {
   const [input, setInput] = React.useState('');
   const [searchList, setSearchList] = React.useState([]);
+  const addServices = (id,name,price) => {
+    let newServices = [...props.services];
+    let index = newServices.findIndex(e=>e.id===id);
+    console.log(index);
+    if(index<0){
+      newServices.push({id,name,price,quantity:1});
+    } else {
+      newServices[index].quantity = newServices[index].quantity+1;
+    }
+    props.setServices(newServices);
+  }
   const renderResults = () =>
     searchList.map((result) => (
       <View
@@ -28,7 +39,7 @@ export default function (props) {
         <View style={{padding: 4, flex: 1}}>
           <IconButton
             icon={() => <Materialicon name="add-box" color="green" size={24} />}
-            onPress={handeSearch}
+            onPress={()=>addServices(result._id,result.name,result.price)}
             size={24}
           />
         </View>
@@ -40,7 +51,6 @@ export default function (props) {
         .get(`/api/service/search/${input}`)
         .then(({data}) => {
           setSearchList(data);
-          console.log(data);
         })
         .catch((err) => setLoading(false));
     }

@@ -1,12 +1,85 @@
 import React from 'react';
-import {View, Text, StyleSheet, Modal} from 'react-native';
+import {View, Text, StyleSheet, Modal, ScrollView} from 'react-native';
 import {Button, IconButton, Title} from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import ProcessModal from '../../components/admin_side/process/modal';
+import axios from '../../service/store_axios';
 
 export default function Process(props) {
-  const {customer_id, phone, address, name} = props.route.params;
+  const {rescue_id, customer_id, phone, address, name,coordinate} = props.route.params;
   const [visible, setVisible] = React.useState(false);
+  const [services, setServices] = React.useState([]);
+  console.log(rescue_id);
+  const renderServices = () =>
+    services.map((e) => (
+      <View key={e.id} style={styles.itemRow}>
+        <Text style={[styles.leftItem, {flex: 2}]}>{e.name}</Text>
+        <Text
+          style={[
+            styles.rightItem,
+            {flex: 1, color: 'red', fontWeight: 'bold'},
+          ]}>
+          $ {e.price}{' '}
+        </Text>
+        <View
+          style={[
+            styles.rightItem,
+            {flex: 1, flexDirection: 'row', alignItems: 'center'},
+          ]}>
+          <Text style={{fontSize: 15}}>{e.quantity}</Text>
+        </View>
+        <View style={[styles.rightItem, {flex: 1}]}>
+          <IconButton
+            icon={() => <MaterialIcon name="delete" color="red" size={16} />}
+            onPress={() => removeItem(e.id)}
+            size={16}
+          />
+        </View>
+      </View>
+    ));
+
+  const calculateTotalCost = () => {
+    let total_cost = 0;
+    services.forEach((e) => {
+      total_cost += e.quantity * e.price;
+    });
+    return total_cost;
+  };
+
+  const removeItem = (id) => {
+    const index = services.findIndex((e) => e.id === id);
+    const newServices = [...services];
+    if (index >= 0) {
+      newServices.splice(index, 1);
+      setServices(newServices);
+    }
+  };
+
+  const onSubmitBill = () => {
+    let service_bill = [];
+    let total_cost = 0;
+    for (let i = 0; i < services.length; i++) {
+      total_cost += services[i].price * services[i].quantity;
+      service_bill.push({
+        service_id: services[i].id,
+        quantity: services[i].quantity,
+      });
+    }
+    const bill = {
+      customer_id,
+      total_cost,
+      services: service_bill,
+      coordinate,
+      rescue_id
+    };
+
+    axios
+      .post('/api/bill', bill)
+      .then((reslt) => {
+        alert("Thành Công");
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <View style={styles.container}>
       <View style={{flex: 1}}>
@@ -25,7 +98,7 @@ export default function Process(props) {
         </View>
       </View>
       <View style={{flex: 2, justifyContent: 'space-between'}}>
-        <View>
+        <ScrollView>
           <Title style={styles.title}>Dịch vụ</Title>
           <View style={styles.itemRow}>
             <Text style={[styles.leftItem, {flex: 2, fontWeight: 'bold'}]}>
@@ -38,39 +111,36 @@ export default function Process(props) {
               Số lượng
             </Text>
             <Text style={[styles.rightItem, {flex: 1, fontWeight: 'bold'}]}>
-              
-            </Text>
-          </View>
-          <View style={styles.itemRow}>
-            <Text style={[styles.leftItem, {flex: 2}]}>OKOKOK OKOKOK OKOKOK OKOKOK OKOKOK OKOKOK</Text>
-            <Text style={[styles.rightItem, {flex: 1}]}>1</Text>
-            <View style={[styles.rightItem, {flex: 1, flexDirection:"row", alignItems:"center"}]}>
-              <Text style={{fontSize:15 }}>1</Text>
-            </View>
-            <View style={[styles.rightItem, {flex: 1}]}>
               <IconButton
                 icon={() => (
-                  <MaterialIcon name="delete" color="red" size={16} />
+                  <MaterialIcon name="add-box" color="green" size={20} />
                 )}
                 onPress={() => setVisible(true)}
-                size={16}
               />
+            </Text>
+          </View>
+          <View>
+            {renderServices()}
+            <View style={styles.itemRow}>
+              <Text style={{paddingTop: 16, paddingBottom: 16}}>
+                Tổng:{' '}
+                <Text style={{color: 'red', fontWeight: 'bold'}}>
+                  $ {calculateTotalCost()}
+                </Text>
+              </Text>
             </View>
           </View>
-          <View style={{flexDirection: 'row-reverse'}}>
-            <IconButton
-              icon={() => (
-                <MaterialIcon name="add-box" color="green" size={24} />
-              )}
-              onPress={() => setVisible(true)}
-            />
-          </View>
-        </View>
-        <Button mode="contained" color="green">
-          Thêm vào hóa đơn
+        </ScrollView>
+        <Button mode="contained" onPress={onSubmitBill} color="green">
+          Thêm hóa đơn và đánh dấu hoàn tất
         </Button>
       </View>
-      <ProcessModal visible={visible} setVisible={setVisible} />
+      <ProcessModal
+        visible={visible}
+        setVisible={setVisible}
+        services={services}
+        setServices={setServices}
+      />
     </View>
   );
 }
@@ -87,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
-    alignItems:"center"
+    alignItems: 'center',
   },
   leftItem: {
     flex: 1,

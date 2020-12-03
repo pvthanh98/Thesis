@@ -39,11 +39,11 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigatio
         <View style={styles.info}>
           <View style={styles.itemInfo}>
             <MaterialIcon name="person" color="#962803" size={22} />
-            <Text style={styles.text}>{selectedOto.customer_id.name}</Text>
+            <Text style={styles.text}>{selectedOto && selectedOto.customer_id.name}</Text>
           </View>
           <View style={styles.itemInfo}>
             <MaterialIcon name="directions-car" color="#962803" size={22} />
-            <Text style={styles.text}>{selectedOto.distance ? selectedOto.distance.text: ""}</Text>
+            <Text style={styles.text}>{(selectedOto && selectedOto.distance) ? selectedOto.distance.text: ""}</Text>
           </View>
           <View style={styles.itemInfo}>
             <MaterialIcon
@@ -51,7 +51,7 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigatio
               color="#962803"
               size={22}
             />
-            <Text style={styles.text}>{selectedOto.problem.name}</Text>
+            <Text style={styles.text}>{selectedOto && selectedOto.problem.name}</Text>
           </View>
         </View>
         <View style={styles.btnContainer}>
@@ -84,7 +84,9 @@ export default ({selectedOto, rescueList,setSelectedOto, getDirection, navigatio
               customer_id: selectedOto.customer_id._id,
               address:selectedOto.customer_id.address,
               phone: selectedOto.customer_id.phone,
-              name: selectedOto.customer_id.name
+              name: selectedOto.customer_id.name,
+              coordinate: selectedOto.coordinate,
+              rescue_id: selectedOto._id
             })}
             mode="contained"
             color="#068041"
