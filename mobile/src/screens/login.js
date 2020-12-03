@@ -47,6 +47,7 @@ export default function Login(props) {
         socket.connect(server);
       })
       .catch((err) => {
+        alert(err);
         alert('Email or password is incorrect');
         setLoading(false);
       });
@@ -79,7 +80,7 @@ export default function Login(props) {
         <TextInput
           style={styles.textInputStyle}
           placeholderTextColor="#fff"
-          placeholder="Email"
+          placeholder="Email..."
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
