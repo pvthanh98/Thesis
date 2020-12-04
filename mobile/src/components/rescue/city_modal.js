@@ -3,11 +3,10 @@ import {View, Text, StyleSheet, Modal} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {Button} from 'react-native-paper';
 export default (props) => {
-  const {visible, cities, citySelected, setCitySelected, setVisible} = props;
+  const {visible, cities, citySelected, setCitySelected, setVisible, loadingCityName} = props;
   const renderCityItem = () =>
     cities &&
     cities.map((e) => <Picker.Item key={e._id} label={e.name} value={e._id} />);
-
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.container}>
@@ -30,6 +29,7 @@ export default (props) => {
               CHỌN
             </Button>
           </View>
+          {loadingCityName && <Text style={{marginLeft:8}}>Đang tìm thành phố bạn ở...</Text>}
         </View>
       </View>
     </Modal>

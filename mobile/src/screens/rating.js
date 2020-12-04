@@ -53,7 +53,7 @@ export default ({route, navigation}) => {
               textAlign: 'center',
               height: 100,
             }}
-            color="#fff"
+            color="#295a59"
             multiline
           />
         </View>

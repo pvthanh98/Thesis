@@ -264,6 +264,15 @@ app.put('/api/sys/store',sys_auth, sysCtl.activeStore);
 app.get('/api/store/profile', sys_auth, sysCtl.getProfile);
 app.post('/api/sys/profile/modify', sys_auth, upload.single("file"), sysCtl.modify)
 
+
+///////// TO GET DATA ///////////////////////////////////////////////////////////
+const dataCtl = require("./controller/data");
+app.get('/api/data/store_id',dataCtl.getStoreID);
+app.get('/api/data/comment_by/:customer_id', dataCtl.getCommentByuCustomerId);
+
+
+///===============================================================================
+
 io.on("connection", (socket) => {
 	//authenticate for socket io
 	console.log("Client connecting....");

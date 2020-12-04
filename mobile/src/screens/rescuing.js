@@ -23,6 +23,7 @@ import Loading from '../components/load';
 import CitySelectModal from '../components/rescue/city_modal';
 import {Picker} from '@react-native-picker/picker';
 import {socket} from './index';
+import AsycnStorage from '@react-native-async-storage/async-storage';
 
 const defaultPosition = {
   lat: 10.860281,
@@ -31,6 +32,7 @@ const defaultPosition = {
 const styles = StyleSheet.create(app_style());
 
 const Rescue = ({navigation}) => {
+  const [isHighAccuracyMode, setIsHighAccuracyMode] = React.useState(true);
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
   const [storeIndex, setStoreIndex] = React.useState(0);
@@ -43,6 +45,7 @@ const Rescue = ({navigation}) => {
   const dispatch = useDispatch();
   const stores = useSelector((state) => state.store_in_area);
   const markerRef = React.createRef();
+  const [loadingCityName, setLoadingCityName] = React.useState(false)
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [cityModalVisible, setCityModalVisible] = React.useState(false);
@@ -60,11 +63,26 @@ const Rescue = ({navigation}) => {
   const [error, setError] = React.useState(false);
 
   useEffect(() => {
+   // removeHigh();
     loadCity();
-    getCurrentLocation();
+    getLocationModeAndLocation();
     loadCarProblems();
     if (citySelected === '') setCityModalVisible(true);
   }, []);
+
+  const getLocationModeAndLocation = async () => {
+    try {
+      let mode = await AsycnStorage.getItem('highAccuracyMode');
+      mode = (mode==='true');
+      if(mode!==null) {
+        getCurrentLocation(false, mode);
+      } else {
+        getCurrentLocation(false, isHighAccuracyMode);
+      }
+    } catch (e){
+      console.log(e);
+    }
+  }
 
   useEffect(() => {
     loadStore(currentLocation, citySelected);
@@ -72,6 +90,7 @@ const Rescue = ({navigation}) => {
 
   const findCityFromLatLng = async (lat, lng) => {
     let cityName;
+    setLoadingCityName(true);
     try {
       const resp = await axiosDefault.get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
@@ -89,9 +108,11 @@ const Rescue = ({navigation}) => {
         cities_2 = resp.data;
         const index = cities_2.findIndex((e) => e.name === cityName);
         if (index >= 0) setCitySelected(cities_2[index]._id);
+        setLoadingCityName(false)
       } else {
         const index = cities.findIndex((e) => e.name === cityName);
         if (index >= 0) setCitySelected(cities[index]._id);
+        setLoadingCityName(false)
       }
     } catch (e) {
       console.log(e);
@@ -154,7 +175,6 @@ const Rescue = ({navigation}) => {
             let resp = await axiosDefault.get(
               `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
             );
-            console.log(resp.data.routes[0].legs[0].distance);
             my_store[i].distance = {...resp.data.routes[0].legs[0].distance};
           } else {
             my_store[i].distance = {text: 'unknow', value: 9999999};
@@ -328,7 +348,8 @@ const Rescue = ({navigation}) => {
     }
   };
 
-  const getCurrentLocation = (reset = false) => {
+  const getCurrentLocation = (reset = false, highAccuracy = false) => {
+    console.log("high accuracy", highAccuracy)
     setGlobalLoading(true);
     Geolocation.getCurrentPosition(
       (position) => {
@@ -339,17 +360,22 @@ const Rescue = ({navigation}) => {
         setCurrentLocation(success);
         setSelectedLocation(success);
         setGlobalLoading(false);
+        if(citySelected!="") setCityModalVisible(true)
         findCityFromLatLng(success.lat, success.lng);
         setError(false);
-        if(reset) loadStore(success,currentCity)
+        if(reset) loadStore(success,currentCity);
+        AsycnStorage.setItem('highAccuracyMode', highAccuracy.toString());
+        setIsHighAccuracyMode(highAccuracy);
       },
       (error) => {
+        setIsHighAccuracyMode(highAccuracy);
         setError(true);
+        setCityModalVisible(false)
         // loadStore(null);
         if (error) setError(error);
         setGlobalLoading(false);
       },
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000},
+      {enableHighAccuracy: highAccuracy, timeout: 10000, maximumAge: 1000},
     );
   };
 
@@ -502,7 +528,7 @@ const Rescue = ({navigation}) => {
                   Có lỗi, không thể cập nhật khoảng cách
                 </Text>
               )}
-              <TouchableOpacity onPress={()=>getCurrentLocation(true)}>
+              <TouchableOpacity onPress={()=>getCurrentLocation(true, !isHighAccuracyMode)}>
                 <Text style={{textDecorationLine: 'underline'}}>Thử lại?</Text>
               </TouchableOpacity>
             </View>
@@ -588,6 +614,7 @@ const Rescue = ({navigation}) => {
         setCitySelected={setCitySelected}
         currentCity={currentCity}
         setCurrentCity={setCurrentCity}
+        loadingCityName={loadingCityName}
       />
     </View>
   );

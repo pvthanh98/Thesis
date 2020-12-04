@@ -81,7 +81,7 @@ export default (props) => {
         <View style={styles.btn2Container}>
           <Button onPress={()=>{
            props.navigation.navigate('rating', {
-            store_id: props.selectedStore._id,
+            store_id: props.selectedStore.id,
             store_name: props.selectedStore.name,
           })
         }}  color="blue" mode="contained">

@@ -80,7 +80,7 @@ export default function Login(props) {
         <TextInput
           style={styles.textInputStyle}
           placeholderTextColor="#fff"
-          placeholder="Email..."
+          placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
         />

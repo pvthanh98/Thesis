@@ -112,6 +112,7 @@ export default (props) => {
     const renderStoreSearching = storeSearchvalues && storeSearchvalues.map(store=>{
         return  <Grid key={store._id} item xs={12} sm={12} md={3}>
                     <Card 
+                        id={store._id}
                         key={store._id}
                         name={store.name}
                         description={store.description}

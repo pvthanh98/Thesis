@@ -278,7 +278,7 @@ export default (props) => {
 								/>
 								<h4 className="mt-3">{store_detail.name}</h4>
 								<div>{store_detail.description}</div>
-								<div><Rating value={4} /></div>
+								<div><Rating value={store_detail.rating.total} /></div>
 							</div>
 						) : (
 								<div>Loading...</div>
