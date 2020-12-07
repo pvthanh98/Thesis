@@ -97,7 +97,7 @@ const MyMapComponent = compose(
             </div>
             <div>
               <AttachMoneyIcon />
-              {rescue.total_cost} VND
+              {rescue.total_cost} $
             </div>
             <div>
               <CalendarTodayIcon />

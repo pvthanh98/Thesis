@@ -99,7 +99,7 @@ function MyNavbar(props) {
           hộ đạt chất lượng với sự đánh giá của khách hàng. Phân bố khắp cả nước
             </Typography>
         <div style={{ marginTop: "16px", textAlign: "right" }}>
-          <Button variant="contained" onClick={()=>setRedirect("/news")}>
+          <Button variant="contained" onClick={()=>setRedirect("/about")}>
             TÌM HIỂU WEBSITE
             <ArrowDropDownIcon />
           </Button>

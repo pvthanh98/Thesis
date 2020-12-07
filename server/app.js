@@ -269,7 +269,10 @@ app.post('/api/sys/profile/modify', sys_auth, upload.single("file"), sysCtl.modi
 const dataCtl = require("./controller/data");
 app.get('/api/data/store_id',dataCtl.getStoreID);
 app.get('/api/data/comment_by/:customer_id', dataCtl.getCommentByuCustomerId);
-
+app.post('/api/data/comment', dataCtl.deleteComment);
+app.get('/api/date/service_comment',dataCtl.serviceCmt);
+app.get('/api/data/users', dataCtl.getUser);
+app.get("/api/data/services", dataCtl.getServices);
 
 ///===============================================================================
 
