@@ -75,7 +75,7 @@ export default (props) => {
               <TableCell align="right">
                 <Button 
                   variant="contained" 
-                  color={row.active ?"secondary": "primary"}
+                  color={row.active ?"default": "primary"}
                   onClick={()=>props.activeStore(row.id,!row.active)}
                 >
                   {row.active ? "Hủy kích hoạt" : "Kích hoạt"}

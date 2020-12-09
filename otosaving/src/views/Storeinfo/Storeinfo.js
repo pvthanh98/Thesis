@@ -16,6 +16,7 @@ import FormData from 'form-data';
 import {server} from '../../constant';
 import Loading from '@material-ui/core/CircularProgress';
 import Rating from '../../components/user_ui/rating';
+import Alert from '@material-ui/lab/Alert';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -122,6 +123,7 @@ export default function StoreInfo() {
   const [imageText, setImageText] = useState(null);
   const [loading, setLoading] = useState(false);
   const [rating, setRating] = useState("");
+  const [active, setActive] = useState(null);
   useEffect(() => {
       loadStore();
   }, []);
@@ -130,10 +132,12 @@ export default function StoreInfo() {
     setLoading(true);
     axios().get('/api/store/me')
     .then(res => {
+      console.log(res.data)
       dispatch({
         type: "GET_MYSTORE",
         mystore: res.data
       })
+      setActive(res.data.active)
       setName(res.data.name);
       setDescription(res.data.description);
       setAddress(res.data.address);
@@ -210,6 +214,14 @@ export default function StoreInfo() {
   return (
     <div>
       <GridContainer>
+        {(active ===false) && (
+          <GridItem xs={12} style={{marginBottom:"8px"}}>
+            <Alert severity="warning">
+              Cửa hàng của bạn đang chờ xác nhận từ người quản trị để hoạt động - vui lòng liên hệ 0986940591
+              {" "}để xác thực cửa hàng của bạn
+            </Alert>
+          </GridItem>
+        )}
         <GridItem xs={12}>
           <MyMapComponent
             store_coordinate={{lat:mystore_lat,lng: mystore_lng}}

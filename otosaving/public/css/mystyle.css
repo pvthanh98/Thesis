@@ -197,6 +197,8 @@ body {
 
 .registerContainer {
   background-image:  url('/images/background.jpg');
+  background-position: top;
+  background-repeat: no-repeat;
 }
 
 .navbar-light .navbar-nav .nav-link {

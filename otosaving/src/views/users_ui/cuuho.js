@@ -18,6 +18,7 @@ import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import { server } from '../../constant'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import axiosDefault from 'axios';
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -310,11 +311,8 @@ class Map extends React.PureComponent {
           lng: position.coords.longitude,
         },
       });
-      console.log("my position is", {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      }
-      )
+      this.findCityFromLatLng( position.coords.latitude,position.coords.longitude,);
+      
     }, function (err) {
       console.log(err)
     });
@@ -396,6 +394,25 @@ class Map extends React.PureComponent {
         this.props.updateMessage(data);
       })
       .catch((err) => console.log(err));
+  };
+
+  findCityFromLatLng = async (lat, lng) => {
+    let cityName;
+   // setLoadingCityName(true);
+    try {
+      const resp = await axiosDefault.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ`,
+      );
+      for (let address of resp.data.results[0].address_components) {
+        if (address.types[0] === 'administrative_area_level_1') {
+          cityName = address.long_name;
+          break;
+        }
+      }
+      console.log(cityName==="Thành phố Hồ Chí Minh")
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   render() {

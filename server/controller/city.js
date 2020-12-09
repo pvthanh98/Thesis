@@ -18,5 +18,33 @@ module.exports = {
             res.send(err);
             throw err;
         })
+    },
+    deleteCity: (req, res) => {
+        const {id} = req.body;
+        City.findByIdAndRemove(id)
+        .then(()=>{
+            res.sendStatus(200)
+        })
+        .catch(err=> {
+            res.status(400).send({
+                "error": "I have no ideas with this error"
+            });
+            throw err;
+        })
+    },
+    modifyCity: (req, res) => {
+        const {id, name} = req.body;
+        City.findByIdAndUpdate(id, {
+            name
+        })
+        .then(()=>{
+            res.sendStatus(200)
+        })
+        .catch(err=> {
+            res.status(400).send({
+                "error": "I have no ideas with this error"
+            });
+            throw err;
+        })
     }
 }

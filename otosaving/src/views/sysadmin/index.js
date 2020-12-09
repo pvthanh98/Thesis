@@ -5,10 +5,12 @@ import StoreIcon from "@material-ui/icons/Store";
 import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import PrivateRoute from '../../components/PrivateRoute/sys_privateroute';
+import EditLocationIcon from '@material-ui/icons/EditLocation';
 import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import Home from "./home";
 import Profile from './profile';
 import About from './about';
+import City from './city';
 const useStyle = makeStyles({
   root: {
     backgroundColor: "#000000d1",
@@ -80,6 +82,18 @@ export default (props) => {
             </Link>
           )}
         />
+         <Route
+          exact
+          path="/sys/city"
+          children={({ match }) => (
+            <Link
+              className={match ? classes.menuItemActive : classes.menuItem}
+              to="/sys/city"
+            >
+              <EditLocationIcon className={classes.icon} /> Quản lí thành phố
+            </Link>
+          )}
+        />
 
         <Route
           exact
@@ -112,6 +126,7 @@ export default (props) => {
       <Grid item xs={12} sm={12} md={10} className={classes.main}>
         <Switch>
           <PrivateRoute exact path="/sys/profile" component={Profile} />
+          <PrivateRoute exact path="/sys/city" component={City} />
           <PrivateRoute exact path="/sys/about" component={About} />
           <PrivateRoute exact path="/sys" component={Home} />
         </Switch>

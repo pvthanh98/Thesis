@@ -30,7 +30,7 @@ module.exports = {
         const perPage = 8;
         let total_page = await Store.count({});
         total_page = Math.ceil(total_page/perPage);
-        Store.find({},"name description address latitude longtitude image rating phone city")
+        Store.find({active:true},"name description address latitude longtitude image rating phone city")
             .limit(perPage)
             .skip(perPage *(page-1))
             .then((stores)=>{
@@ -45,7 +45,10 @@ module.exports = {
             })
     },
     getStoreFromCity : (req, res) =>{
-        Store.find({city:req.params.city_id},"name description address latitude longtitude image rating phone city")
+        Store.find({
+            city:req.params.city_id,
+            active:true
+        },"name description address latitude longtitude image rating phone city")
             .then((stores)=>{
                 res.json(stores)
             })
@@ -86,7 +89,7 @@ module.exports = {
     getStoreInfo : (req, res) =>{
         const { id } = req.user;
         if(id) {
-            Store.findById(id, "email name description latitude longtitude rating address image phone city")
+            Store.findById(id, "email name description latitude longtitude rating address image phone city active")
             .then(store =>{
                 if(store) res.send(store);
                 return;

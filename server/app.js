@@ -255,7 +255,9 @@ app.get('/api/service/rating/service_id/:service_id', serviceCommentCtl.getComme
 
 //CITY 
 app.get('/api/city', CityCtl.getCity);
-app.post('/api/city', CityCtl.postCity);
+app.post('/api/city', sys_auth, CityCtl.postCity);
+app.put('/api/city', sys_auth, CityCtl.modifyCity);
+app.post('/api/city/delete', sys_auth, CityCtl.deleteCity);
 
 //SYS_ADMIN
 app.get('/api/query',storeCtl.query);
