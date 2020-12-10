@@ -4,15 +4,17 @@ import { Grid, makeStyles, Typography } from "@material-ui/core";
 import StoreIcon from "@material-ui/icons/Store";
 import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import PrivateRoute from '../../components/PrivateRoute/sys_privateroute';
-import EditLocationIcon from '@material-ui/icons/EditLocation';
-import ArtTrackIcon from '@material-ui/icons/ArtTrack';
+import PrivateRoute from "../../components/PrivateRoute/sys_privateroute";
+import EditLocationIcon from "@material-ui/icons/EditLocation";
+import ArtTrackIcon from "@material-ui/icons/ArtTrack";
+import ReportIcon from "@material-ui/icons/Report";
+import CommentIcon from "@material-ui/icons/Comment";
 import Home from "./home";
-import Profile from './profile';
-import About from './about';
-import City from './city';
-import Comment from './comment';
-import CommentIcon from '@material-ui/icons/Comment';
+import Profile from "./profile";
+import About from "./about";
+import City from "./city";
+import Comment from "./comment";
+import Report from "./report";
 const useStyle = makeStyles({
   root: {
     backgroundColor: "#000000d1",
@@ -55,16 +57,16 @@ const useStyle = makeStyles({
 });
 export default (props) => {
   const classes = useStyle();
-  const [isLogin,setIsLogin] = React.useState(true);
+  const [isLogin, setIsLogin] = React.useState(true);
   const logout = () => {
     localStorage.removeItem("sys_token");
     localStorage.removeItem("sys_id");
     localStorage.removeItem("sys_avt");
     localStorage.removeItem("sys_name");
     setIsLogin(false);
-  }
+  };
 
-  if(!isLogin) return <Redirect to="/sys/login" />
+  if (!isLogin) return <Redirect to="/sys/login" />;
   return (
     <Grid container>
       <Grid item className={classes.root} xs={12} sm={12} md={2}>
@@ -84,18 +86,19 @@ export default (props) => {
             </Link>
           )}
         />
-         <Route
+        <Route
           exact
-          path="/sys/city"
+          path="/sys/report"
           children={({ match }) => (
             <Link
               className={match ? classes.menuItemActive : classes.menuItem}
-              to="/sys/city"
+              to="/sys/report"
             >
-              <EditLocationIcon className={classes.icon} /> Quản lí thành phố
+              <ReportIcon className={classes.icon} /> Báo cáo vi phạm
             </Link>
           )}
         />
+
         <Route
           exact
           path="/sys/comment"
@@ -123,6 +126,18 @@ export default (props) => {
         />
         <Route
           exact
+          path="/sys/city"
+          children={({ match }) => (
+            <Link
+              className={match ? classes.menuItemActive : classes.menuItem}
+              to="/sys/city"
+            >
+              <EditLocationIcon className={classes.icon} /> Quản lí thành phố
+            </Link>
+          )}
+        />
+        <Route
+          exact
           path="/sys/about"
           children={({ match }) => (
             <Link
@@ -141,6 +156,7 @@ export default (props) => {
         <Switch>
           <PrivateRoute exact path="/sys/profile" component={Profile} />
           <PrivateRoute exact path="/sys/city" component={City} />
+          <PrivateRoute exact path="/sys/report" component={Report} />
           <PrivateRoute exact path="/sys/comment" component={Comment} />
           <PrivateRoute exact path="/sys/about" component={About} />
           <PrivateRoute exact path="/sys" component={Home} />

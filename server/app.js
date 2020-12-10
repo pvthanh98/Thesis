@@ -50,6 +50,7 @@ const ProblemCtl = require("./controller/problem");
 const commentCtl = require("./controller/comment");
 const serviceCommentCtl = require("./controller/service_comment");
 const CityCtl = require("./controller/city");
+const reportCtl = require("./controller/report")
 
 app.post('/uploads', multipartMiddleware, function(req, resp) {
 	console.log(req.files);
@@ -270,6 +271,10 @@ app.get('/api/sys/comment/:store_id', sys_auth, sysCtl.getComment)
 app.post('/api/sys/comment/del', sys_auth, sysCtl.deleteComment)
 app.get('/api/sys/about', sysCtl.getAbout)
 
+//REPORT STORE
+
+app.post("/api/report",auth_user,reportCtl.create)
+app.get("/api/report",reportCtl.get)
 ///////// TO GET DATA ///////////////////////////////////////////////////////////
 const dataCtl = require("./controller/data");
 app.get('/api/data/store_id',dataCtl.getStoreID);
