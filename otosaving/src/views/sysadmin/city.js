@@ -38,7 +38,7 @@ export default function (props) {
   const [selectedID, setSelectedID] = React.useState(null);
   const [isSucces, setIsSuccess] = React.useState(false);
   const [isLoading, setIsloading] = React.useState(false);
-  const [isModify, setIsModify] = React.useState(true);
+  const [isModify, setIsModify] = React.useState(false);
   React.useEffect(() => {
     loadCity();
   }, []);

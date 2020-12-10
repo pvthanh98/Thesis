@@ -10,17 +10,16 @@ import Select from '@material-ui/core/Select';
 import Loading from '../../components/user_ui/loading';
 export default function (props) {
     const { open, setOpen } = props;
-    const [value, setValue] = React.useState("");
     const handleChange = (e) => {
-        setValue(e.target.value);
+        props.setValue(e.target.value);
     }
     const options = () => (props.city.map(e => (
         <option key={e._id} value={e._id}>{e.name}</option>
     )))
 
     const submit = () => {
-        if(value!==""){
-            props.setOpen(value);
+        if(props.value!==""){
+            props.setOpen(props.value);
         } else {
             alert("Bạn phải chọn thành phố bạn đang ở")
         }
@@ -41,7 +40,7 @@ export default function (props) {
                             :
                             <Select
                                 native
-                                value={value}
+                                value={props.value}
                                 onChange={handleChange}
                                 style={{ padding: "4px" }}
                                 fullWidth

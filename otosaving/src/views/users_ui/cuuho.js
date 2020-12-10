@@ -248,6 +248,7 @@ class Map extends React.PureComponent {
     myposition: null,
     city: [],
     citySelected: null,
+    citySelectValue:"",
     cityNameSelected: null,
     stores: null,
     openCityModal: true,
@@ -409,11 +410,33 @@ class Map extends React.PureComponent {
           break;
         }
       }
-      console.log(cityName==="Thành phố Hồ Chí Minh")
+
+      if (this.state.city.length<=0) {
+        let resp = await axios().get('/api/city');
+        console.log(resp.data)
+        const cities_2 = resp.data;
+        const index = cities_2.findIndex((e) => e.name === cityName);
+        if (index >= 0) this.setState({
+          citySelectValue: cities_2[index]._id
+        })
+
+      } else {
+        console.log("ahahahah")
+        const index = this.state.city.findIndex((e) => e.name === cityName);
+        if (index >= 0) this.setState({
+          citySelectValue: this.state.city[index]._id
+        });
+      }
     } catch (e) {
       console.log(e);
     }
   };
+
+  setCitySelectValue = (value) => {
+    this.setState({
+      citySelectValue:value
+    })
+  }
 
   render() {
     // if (this.state.citySelected === null) return <CitySelection city={this.state.city} getCitySelected={this.getCitySelected} />
@@ -491,7 +514,7 @@ class Map extends React.PureComponent {
           {this.props.chat_toggle && <Chat where="customer" />}
         </Container>}
         <Footer />
-        <CityModal open={this.state.openCityModal} city={this.state.city} setOpen={this.handleCityModal} />
+        <CityModal value={this.state.citySelectValue} setValue={this.setCitySelectValue} open={this.state.openCityModal} city={this.state.city} setOpen={this.handleCityModal} />
       </div>
     );
   }

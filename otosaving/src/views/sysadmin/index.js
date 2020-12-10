@@ -11,6 +11,8 @@ import Home from "./home";
 import Profile from './profile';
 import About from './about';
 import City from './city';
+import Comment from './comment';
+import CommentIcon from '@material-ui/icons/Comment';
 const useStyle = makeStyles({
   root: {
     backgroundColor: "#000000d1",
@@ -94,6 +96,18 @@ export default (props) => {
             </Link>
           )}
         />
+        <Route
+          exact
+          path="/sys/comment"
+          children={({ match }) => (
+            <Link
+              className={match ? classes.menuItemActive : classes.menuItem}
+              to="/sys/comment"
+            >
+              <CommentIcon className={classes.icon} /> Quản lí bình luận
+            </Link>
+          )}
+        />
 
         <Route
           exact
@@ -127,6 +141,7 @@ export default (props) => {
         <Switch>
           <PrivateRoute exact path="/sys/profile" component={Profile} />
           <PrivateRoute exact path="/sys/city" component={City} />
+          <PrivateRoute exact path="/sys/comment" component={Comment} />
           <PrivateRoute exact path="/sys/about" component={About} />
           <PrivateRoute exact path="/sys" component={Home} />
         </Switch>

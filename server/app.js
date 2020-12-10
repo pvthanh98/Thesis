@@ -264,8 +264,11 @@ app.get('/api/query',storeCtl.query);
 app.get('/api/sys/stores/page/:page/:active/:rating', sys_auth, sysCtl.getStores);
 app.put('/api/sys/store',sys_auth, sysCtl.activeStore);
 app.get('/api/store/profile', sys_auth, sysCtl.getProfile);
-app.post('/api/sys/profile/modify', sys_auth, upload.single("file"), sysCtl.modify)
-
+app.post('/api/sys/profile/modify', sys_auth, upload.single("file"), sysCtl.modify);
+app.post('/api/sys/about', sys_auth, sysCtl.postAbout);
+app.get('/api/sys/comment/:store_id', sys_auth, sysCtl.getComment)
+app.post('/api/sys/comment/del', sys_auth, sysCtl.deleteComment)
+app.get('/api/sys/about', sysCtl.getAbout)
 
 ///////// TO GET DATA ///////////////////////////////////////////////////////////
 const dataCtl = require("./controller/data");

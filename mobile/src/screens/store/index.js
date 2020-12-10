@@ -22,6 +22,14 @@ export default () => {
     const dispatch = useDispatch()
     React.useEffect(()=>{
         loadListMessages();
+        socket.on("customer_send_msg_to_you",(data)=>{
+            console.log("receuv");
+            loadListMessages()
+            loadMessages(data.from_id);
+        });
+        socket.on("refresh_message",()=>{
+            loadListMessages();
+        })
     })
     const loadListMessages = () => {
         axios.get("/api/messages/store_list")
@@ -30,6 +38,13 @@ export default () => {
             setNotification(data.unread);
         })
         .catch(err=>console.log(err))
+    }
+    const loadMessages = (customer_id) => {
+        axios.get(`/api/messages/store_to/${customer_id}`)
+        .then(({data})=> {
+            dispatch({type:"UPDATE_STORE_MESSAGES", messages:data})
+        })
+        .catch(err=>console.log(err));
     }
     return (
         <Tab.Navigator

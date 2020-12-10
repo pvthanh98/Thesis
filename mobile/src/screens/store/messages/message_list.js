@@ -9,33 +9,7 @@ const MessageList = ({navigation,route}) => {
     const dispatch = useDispatch();
     const messages = useSelector(state => state.message_store_list);
     const {setOptions} = route.params
-    React.useEffect(()=>{
-        socket.on("customer_send_msg_to_you",(data)=>{
-          console.log("receuv");
-          loadListMessages()
-          loadMessages(data.from_id);
-        });
-        socket.on("refresh_message",()=>{
-          loadListMessages();
-        })
-    },[]);
-
-    const loadListMessages = () => {
-        axios.get("/api/messages/store_list")
-        .then(({data})=>{
-          dispatch({type:"UPDATE_MESSAGE_STORE_LIST", messages: data});
-          setOptions({tabBarBadge: data.unread})
-        })
-        .catch(err=>console.log(err))
-    }
-    const loadMessages = (customer_id) => {
-      axios.get(`/api/messages/store_to/${customer_id}`)
-      .then(({data})=> {
-          dispatch({type:"UPDATE_STORE_MESSAGES", messages:data})
-      })
-      .catch(err=>console.log(err));
-    }
-
+   
     const handleClick = (id,name,message_id) => {
       navigation.navigate('store_chat',{
         customer_id:id,

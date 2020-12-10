@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
 const jwt = require('jsonwebtoken');
 const Store = require("../db/store");
+const Blog = require("../db/blog");
+const Comment = require("../db/comment");
 module.exports = {
     createUser : (req, res) =>{
         SysUser.create({
@@ -41,6 +43,7 @@ module.exports = {
         console.log(conditions);
         const perPage = 8;
         let total_page = await Store.count({});
+        total_page = Math.ceil(total_page/perPage);
         Store.find({},"name description address latitude longtitude image rating phone city active")
             .limit(perPage)
             .skip(perPage *(page-1))
@@ -99,6 +102,44 @@ module.exports = {
             res.sendStatus(400);
             throw err;
         })
-    }
-
+    },
+    postAbout: (req, res) => {
+        const {id} = req.body;
+        Blog.findByIdAndUpdate(id,{
+            name: req.body.name,
+            about: req.body.about
+        })
+        .then(()=>res.sendStatus(200))
+        .catch(err=>{
+            res.status(400).send("error");
+            throw err;
+        })
+    },
+    getAbout: (req, res) => {
+        Blog.find({})
+        .then((abouts)=>res.send(abouts[0]))
+        .catch(err=>{
+            res.status(400).send("error");
+            throw err;
+        })
+    },
+    getComment: (req, res) => {
+        const {store_id} = req.params;
+        Comment.find({store_id:store_id})
+        .populate("customer_id","name image")
+        .then(cmts=>res.send(cmts))
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        });
+    },
+    deleteComment: (req, res) => {
+        const {comment_id} = req.body;
+        Comment.findByIdAndRemove(comment_id)
+        .then(()=>res.sendStatus(200))
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        });
+    },
 }
