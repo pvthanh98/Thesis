@@ -248,12 +248,14 @@ export default (props) => {
   };
 
   const onSubmitReport = (content) => {
-    axios().post("/api/report", {
-      content,
-      store_id:props.match.params.id,
-	})
-	.then(()=>alert("Ý kiến của bạn được được gửi đi"))
-	.catch(err=>console.log(err));
+    setReportDialogOpen(false)
+    axios()
+      .post("/api/report", {
+        content,
+        store_id: props.match.params.id,
+      })
+      .then(() => alert("Ý kiến của bạn được được gửi đi"))
+      .catch((err) => console.log(err));
   };
 
   return (

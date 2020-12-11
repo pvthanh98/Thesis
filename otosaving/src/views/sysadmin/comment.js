@@ -16,7 +16,6 @@ import ListComment from "../../components/systemadmin/listcomment";
 import { Badge } from "reactstrap";
 import Pagination from "@material-ui/lab/Pagination";
 import {Redirect} from 'react-router-dom';
-import { red } from "@material-ui/core/colors";
 const useStyle = makeStyles({
   card: {
     backgroundColor: "#ffffff5c",

@@ -272,9 +272,9 @@ app.post('/api/sys/comment/del', sys_auth, sysCtl.deleteComment)
 app.get('/api/sys/about', sysCtl.getAbout)
 
 //REPORT STORE
-
 app.post("/api/report",auth_user,reportCtl.create)
-app.get("/api/report",reportCtl.get)
+app.get("/api/report/by/:store_id", sys_auth, reportCtl.get)
+app.get("/api/report/store", reportCtl.getStoreReport)
 ///////// TO GET DATA ///////////////////////////////////////////////////////////
 const dataCtl = require("./controller/data");
 app.get('/api/data/store_id',dataCtl.getStoreID);
