@@ -1,6 +1,7 @@
 ## Class-based components
 ```
-Class HelloReact extends React.components {
+import foobar
+class HelloReact extends React.components {
   constructor(props){
     super(props);
   }
