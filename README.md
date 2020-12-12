@@ -19,6 +19,18 @@ const HelloReact = (props) => {
     <div>Hello React </div>
   )
 }
+```
 
-
+## JSX
+```javascript
+const HelloReact = (props) => {
+  return (
+    <div>
+      <h4>Hello JSX</h4>
+      <p>
+        this is JSX element, so similiar to HTML synxtax
+      </p>
+    </div>
+  )
+}
 ```
