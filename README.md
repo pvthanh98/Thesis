@@ -11,3 +11,14 @@ class HelloReact extends React.components {
   }
 }
 ```
+
+## Functional Components
+```javascript
+const HelloReact = (props) => {
+  return (
+    <div>Hello React </div>
+  )
+}
+
+
+```
