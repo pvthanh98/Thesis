@@ -1,4 +1,4 @@
-### Class-based components
+## Class-based components
 ```
 Class HelloReact extends React.components {
   constructor(props){
