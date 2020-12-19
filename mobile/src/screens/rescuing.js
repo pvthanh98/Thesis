@@ -32,7 +32,7 @@ const defaultPosition = {
 const styles = StyleSheet.create(app_style());
 
 const Rescue = ({navigation}) => {
-  const [isHighAccuracyMode, setIsHighAccuracyMode] = React.useState(true);
+  const [isHighAccuracyMode, setIsHighAccuracyMode] = React.useState(false);
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
   const [storeIndex, setStoreIndex] = React.useState(0);
@@ -63,16 +63,21 @@ const Rescue = ({navigation}) => {
   const [error, setError] = React.useState(false);
 
   useEffect(() => {
-   // removeHigh();
+    //removeHigh();
     loadCity();
     getLocationModeAndLocation();
     loadCarProblems();
     if (citySelected === '') setCityModalVisible(true);
   }, []);
 
+  const removeHigh = () => {
+    AsycnStorage.removeItem('highAccuracyMode');
+  }
+
   const getLocationModeAndLocation = async () => {
     try {
       let mode = await AsycnStorage.getItem('highAccuracyMode');
+      console.log(mode)
       mode = (mode==='true');
       if(mode!==null) {
         getCurrentLocation(false, mode);

@@ -194,7 +194,7 @@ const EnhancedTableToolbar = (props) => {
 					id="tableTitle"
 					component="div"
 				>
-					Provisional Bill List
+					Hóa Đơn
 					{" "}<IconButton onClick={props.reloadBill} >
 						<ReplayIcon />
 					</IconButton>

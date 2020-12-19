@@ -168,7 +168,7 @@ export default function ServiceModify(props) {
                 <Grid item md={4} className={classes.root}>
                   <div>Name</div>
                   <Input fullWidth value={name} aria-describedby="my-helper-text" name="name" onChange={handleFormInput} />
-                  <FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>
+
                 </Grid>
                 <Grid item md={8} className={classes.root}>
                   <div >Description</div>
