@@ -11,10 +11,12 @@ import {
   Button,
   Text,
   TextInput,
+  Badge,
 } from 'react-native-paper';
 import axios from '../service/axios';
 import ImagePicker from 'react-native-image-picker';
-import RNFetchBlob from 'react-native-fetch-blob'
+import RNFetchBlob from 'react-native-fetch-blob';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 class UserInfo extends React.Component {
   state = {
     email: '',
@@ -25,7 +27,7 @@ class UserInfo extends React.Component {
     modify: false,
     photo: null,
     filename: null,
-    loading:true
+    loading: true,
   };
   componentDidMount() {
     this.loadUser();
@@ -41,16 +43,14 @@ class UserInfo extends React.Component {
           address: data.address,
           phone: data.phone,
           image: `${server}/images/${data.image}`,
-          loading: false
+          loading: false,
         });
-
-        
       })
       .catch((err) => {
         alert('Cannot load user');
         throw err;
       });
-  }
+  };
   handleChoosePhoto = () => {
     const options = {
       title: 'Select Avatar',
@@ -71,11 +71,11 @@ class UserInfo extends React.Component {
         const source = {uri: response.uri};
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        console.log(response)
+        console.log(response);
         this.setState({
           image: source.uri,
           photo: response.data,
-          filename: response.fileName
+          filename: response.fileName,
         });
       }
     });
@@ -83,48 +83,54 @@ class UserInfo extends React.Component {
 
   handleSubmit = async () => {
     try {
-      const user_token = await AsyncStorage.getItem("user_token");
+      const user_token = await AsyncStorage.getItem('user_token');
       let data = [
         {name: 'name', data: this.state.name},
         {name: 'address', data: this.state.address},
         {name: 'phone', data: this.state.phone},
-      ]
-      if(this.state.photo) data.push({name: 'file', filename: this.state.filename, data: this.state.photo})
+      ];
+      if (this.state.photo)
+        data.push({
+          name: 'file',
+          filename: this.state.filename,
+          data: this.state.photo,
+        });
       RNFetchBlob.fetch(
         'POST',
         `${server}/api/user/update`,
         {
-          'Authorization': `Bearer ${user_token}`,
-          'Content-Type': 'multipart/form-data'
+          Authorization: `Bearer ${user_token}`,
+          'Content-Type': 'multipart/form-data',
         },
-        data
-        ,
+        data,
       )
         .then((resp) => {
-          this.loadUser()
+          this.loadUser();
           this.setState({
-            modify:false
-          })
+            modify: false,
+          });
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         });
-
-    } catch (e){
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
-    
   };
 
   render() {
-    if(this.state.loading) return <Loading />
+    if (this.state.loading) return <Loading />;
     return (
       <View style={{flex: 1}}>
         {!this.state.modify && (
           <View style={styles.container}>
             <Avatar.Image
               size={150}
-              source={this.state.image ? {uri: this.state.image} : require('../assets/images/profile.png')}
+              source={
+                this.state.image
+                  ? {uri: this.state.image}
+                  : require('../assets/images/profile.png')
+              }
             />
             <Title>{this.state.name}</Title>
             <DataTable>
@@ -151,7 +157,8 @@ class UserInfo extends React.Component {
               </Button>
             </View>
             <View style={{width: '100%', alignItems: 'center'}}>
-              <TouchableOpacity onPress={()=> this.props.navigation.navigate('history')}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('history')}>
                 <Text style={styles.link}>Your history rescuing</Text>
               </TouchableOpacity>
             </View>
@@ -162,7 +169,11 @@ class UserInfo extends React.Component {
             <TouchableOpacity onPress={this.handleChoosePhoto}>
               <Avatar.Image
                 size={150}
-                source={this.state.image ? {uri: this.state.image} : require('../assets/images/profile.png')}
+                source={
+                  this.state.image
+                    ? {uri: this.state.image}
+                    : require('../assets/images/profile.png')
+                }
               />
             </TouchableOpacity>
             <View style={styles.lineContent}>
@@ -172,7 +183,7 @@ class UserInfo extends React.Component {
                 mode="outlined"
                 disabled
                 value={this.state.email}
-                onChangeText={(text) => this.setState({email:text})}
+                onChangeText={(text) => this.setState({email: text})}
                 style={{width: '100%'}}
               />
             </View>
@@ -182,7 +193,7 @@ class UserInfo extends React.Component {
                 placeholder="Type your name"
                 mode="outlined"
                 value={this.state.name}
-                onChangeText={(text) => this.setState({name:text})}
+                onChangeText={(text) => this.setState({name: text})}
                 style={{width: '100%'}}
               />
             </View>
@@ -192,7 +203,7 @@ class UserInfo extends React.Component {
                 placeholder="Type your address"
                 mode="outlined"
                 value={this.state.address}
-                onChangeText={(text) => this.setState({address:text})}
+                onChangeText={(text) => this.setState({address: text})}
                 style={{width: '100%'}}
               />
             </View>
@@ -202,15 +213,21 @@ class UserInfo extends React.Component {
                 placeholder="Type your phone number"
                 mode="outlined"
                 value={this.state.phone}
-                onChangeText={(text) => this.setState({phone:text})}
+                onChangeText={(text) => this.setState({phone: text})}
                 style={{width: '100%'}}
               />
             </View>
             <View style={styles.btnContainer}>
-              <Button color="gray" mode="contained" onPress={()=>this.setState({modify:false})}>
-                <Text style={{color:"#fff"}}>CANCEL</Text>
+              <Button
+                color="gray"
+                mode="contained"
+                onPress={() => this.setState({modify: false})}>
+                <Text style={{color: '#fff'}}>CANCEL</Text>
               </Button>
-              <Button style={{marginLeft:8}} mode="contained" onPress={this.handleSubmit}>
+              <Button
+                style={{marginLeft: 8}}
+                mode="contained"
+                onPress={this.handleSubmit}>
                 SAVE
               </Button>
             </View>

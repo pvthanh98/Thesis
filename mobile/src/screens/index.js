@@ -23,6 +23,7 @@ import PaymentScreen from './paypal';
 import ServiceDetail from './store_detail/service_detail';
 import ServiceRating from './store_detail/service_rating';
 import ServiceScreen from './store_detail/service';
+import {Badge} from 'react-native-paper';
 
 import call from 'react-native-phone-call';
 const Drawer = createDrawerNavigator();
@@ -35,7 +36,8 @@ socket.on('connect', async () => {
 });
 
 function StackComponent(props) {
-  const messages = useSelector(state => state.messages);
+  const messages = useSelector(state=>state.messages);
+  const message_list = useSelector(state=>state.message_list); 
   return (
     <Stack.Navigator
       screenOptions={{
@@ -59,8 +61,21 @@ function StackComponent(props) {
           headerRight: () => (
             <TouchableOpacity
               style={{marginRight: 12}}
-              onPress={() => props.navigation.navigate('chat_list')}>
-              <Icon name="email" size={24} color="#fff" />
+              onPress={() => props.navigation.navigate('chat_list')}
+            >
+              <View>
+                <Badge
+                  size={16}
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -4,
+                    zIndex:1
+                  }}>
+                  {message_list.unread}
+                </Badge>
+                <Icon name="email" size={24} color="#fff" />
+              </View>     
             </TouchableOpacity>
           ),
           headerTintColor: '#fff',
@@ -93,21 +108,20 @@ function StackComponent(props) {
           headerStyle: {
             backgroundColor: '#fff',
           },
-          headerRight:()=>(
-            <TouchableOpacity 
+          headerRight: () => (
+            <TouchableOpacity
               style={{
-                marginRight:10
+                marginRight: 10,
               }}
-              onPress={()=> call({
+              onPress={() =>
+                call({
                   number: messages.info.store.phone,
-                  prompt: false
+                  prompt: false,
                 }).catch(console.error)
-              }
-            >
+              }>
               <MaterialIcons name="call" size={22} />
             </TouchableOpacity>
-          )
-          
+          ),
         }}
       />
 
@@ -137,52 +151,51 @@ function StackComponent(props) {
       />
       <Stack.Screen
         name="store_detail"
-        component={StoreDetail} 
+        component={StoreDetail}
         options={{
           title: 'Cty ABC',
-          headerShown:false,
+          headerShown: false,
           headerTintColor: '#fff',
         }}
       />
       <Stack.Screen
         name="rating"
-        component={RatingScreen} 
+        component={RatingScreen}
         options={{
           headerTintColor: '#fff',
-          headerStyle:{
-            backgroundColor:"#295a59"
-          }
+          headerStyle: {
+            backgroundColor: '#295a59',
+          },
         }}
       />
       <Stack.Screen
         name="service_detail"
-        component={ServiceDetail} 
+        component={ServiceDetail}
         options={{
           headerTintColor: '#fff',
-          title:"Service"
+          title: 'Service',
         }}
       />
       <Stack.Screen
         name="service_rating"
-        component={ServiceRating} 
+        component={ServiceRating}
         options={{
           headerTintColor: '#fff',
-          title:"Rating"
+          title: 'Rating',
         }}
       />
-       <Stack.Screen 
-          name="services" 
-          component={ServiceScreen}   
-          options={{
-            headerTintColor: '#fff',
-          }}
-        />
+      <Stack.Screen
+        name="services"
+        component={ServiceScreen}
+        options={{
+          headerTintColor: '#fff',
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
 const Index = () => {
-  const messages = useSelector((state) => state.messages);
   const dispatch = useDispatch();
   React.useEffect(() => {
     loadListMsgOfUser();
@@ -190,16 +203,16 @@ const Index = () => {
       loadMessages(from_id);
       loadListMsgOfUser();
     });
-    socket.on("refresh_message",()=>{
+    socket.on('refresh_message', () => {
       loadListMsgOfUser();
-    }) 
+    });
   }, []);
 
   const loadListMsgOfUser = () => {
     axios
       .get('/api/messages/user_list')
       .then(({data}) => {
-        dispatch({type:"UPDATE_MESSAGE_LIST", messages: data})
+        dispatch({type: 'UPDATE_MESSAGE_LIST', messages: data});
       })
       .catch((err) => console.log(err));
   };
@@ -213,9 +226,8 @@ const Index = () => {
     <Drawer.Navigator
       initialRouteName="Home"
       overlayColor="transparent"
-      drawerContent={(props) => <DrawerContent {...props} />}
-    >
-      <Drawer.Screen name="Home" component={StackComponent} />
+      drawerContent={(props) => <DrawerContent {...props} />}>
+      <Drawer.Screen name="Home" component={StackComponent}/>
     </Drawer.Navigator>
   );
 };
