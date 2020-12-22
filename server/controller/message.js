@@ -119,6 +119,7 @@ module.exports = {
                 if(!msg.is_read && msg.is_store) unread++;
                 listMessages.push(msg)
             }
+            listMessages.sort((a,b)=>(a.is_read-b.is_read));
             res.send({
                 unread,
                 messages:listMessages
