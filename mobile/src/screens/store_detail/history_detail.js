@@ -3,61 +3,83 @@ import {View, Text, StyleSheet, Modal} from 'react-native';
 import {Title} from 'react-native-paper';
 import {DataTable, Button} from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import { WebView } from 'react-native-webview';
+import {WebView} from 'react-native-webview';
 import {server} from '../constants/index';
 import axios from '../service/axios';
+import NumberFormat from 'react-number-format';
 const HistoryDetail = (props) => {
   const {id} = props.route.params;
   const [showModal, setShowModal] = React.useState(false);
   const [status, setStatus] = React.useState('pending');
   const [bill, setBill] = React.useState(null);
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     loadBill();
-  },[]);
+  }, []);
 
   const loadBill = () => {
-    axios.get(`/api/user_bill/id/${id}`)
-    .then((resl)=>{
-      setBill(resl.data)
-      //console.log(resl.data)
-    })
-    .catch(err=> console.log(err))
-  }
+    axios
+      .get(`/api/user_bill/id/${id}`)
+      .then((resl) => {
+        setBill(resl.data);
+        //console.log(resl.data)
+      })
+      .catch((err) => console.log(err));
+  };
 
   const renderServices = () => {
-    return bill && bill.services.map((service) => (
-      <DataTable.Row key={service._id}>
-        <DataTable.Cell>{service.service_id.name}</DataTable.Cell>
-        <DataTable.Cell><Text style={{color:"red",fontWeight:"bold"}}>$ {service.quantity * service.service_id.price}</Text></DataTable.Cell>
-      </DataTable.Row>
-    ));
+    return (
+      bill &&
+      bill.services.map((service) => (
+        <DataTable.Row key={service._id}>
+          <DataTable.Cell>{service.service_id.name}</DataTable.Cell>
+          <DataTable.Cell>
+            <NumberFormat
+              value={service.quantity * service.service_id.price}
+              displayType={'text'}
+              thousandSeparator={true}
+              prefix={'đ '}
+              renderText={(value) => (
+                <Text style={{color: 'red', fontWeight: 'bold'}}>
+                  {value}
+                </Text>
+              )}
+            />
+            
+          </DataTable.Cell>
+        </DataTable.Row>
+      ))
+    );
   };
   const formatDate = (date) => {
     var newDate = new Date(date);
     var day =
-      newDate.getDate() + 1 >= 10 ? newDate.getDate() + 1 : '0' + newDate.getDate() + 1;
+      newDate.getDate() + 1 >= 10
+        ? newDate.getDate() + 1
+        : '0' + newDate.getDate() + 1;
     var month =
-      newDate.getMonth() + 1 >= 10 ? newDate.getMonth() + 1 : '0' + newDate.getMonth() + 1;
+      newDate.getMonth() + 1 >= 10
+        ? newDate.getMonth() + 1
+        : '0' + newDate.getMonth() + 1;
     return `${day}/${month}/${newDate.getFullYear()}`;
   };
 
   const handleResponse = (data) => {
-    if(data.title === 'success'){ 
+    if (data.title === 'success') {
       setShowModal(false);
       setStatus('complete');
       loadBill();
-    } else if(data.title === 'cancel') {
-      setStatus('cancel')
+    } else if (data.title === 'cancel') {
+      setStatus('cancel');
     }
-  }
+  };
 
   const confirmPayment = () => {
-    axios.get(`/api/user_bill/confirm/${id}`)
-    .then(()=>loadBill())
-    .catch(err=> console.log(err))
-   
-  }
+    axios
+      .get(`/api/user_bill/confirm/${id}`)
+      .then(() => loadBill())
+      .catch((err) => console.log(err));
+  };
   return (
     <View style={styles.container}>
       <Title>Thông tin chung</Title>
@@ -92,8 +114,8 @@ const HistoryDetail = (props) => {
           </DataTable.Cell>
         </DataTable.Row>
         <DataTable.Row>
-          <DataTable.Cell>Địa điểm</DataTable.Cell>
-            <DataTable.Cell>{bill && bill.address}</DataTable.Cell>
+          <DataTable.Cell>Địa điểm </DataTable.Cell>
+          <DataTable.Cell>{bill && bill.address}</DataTable.Cell>
         </DataTable.Row>
       </DataTable>
 
@@ -105,39 +127,43 @@ const HistoryDetail = (props) => {
         </DataTable.Header>
         {renderServices()}
       </DataTable>
-      <View style={{flexDirection:"row", justifyContent:"space-between",padding:8}}>
-          <Text>Tổng: </Text>
-          <Text style={{color:"red",fontWeight:"bold"}}>$ {bill && bill.total_cost}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 8,
+        }}>
+        <Text>Tổng: </Text>
+        <Text style={{color: 'red', fontWeight: 'bold'}}>
+          $ {bill && bill.total_cost}
+        </Text>
       </View>
       <View>
         {bill && !bill.confirm && (
-          <Button 
-            style={{marginTop: 4}} 
-            mode="contained" 
+          <Button
+            style={{marginTop: 4}}
+            mode="contained"
             color="#1c7534"
-            onPress={confirmPayment}
-          >
+            onPress={confirmPayment}>
             xác nhận hóa đơn
           </Button>
         )}
-        {bill &&!bill.paid && (
-          <Button 
-            style={{marginTop: 4}} 
-            mode="contained" 
+        {bill && !bill.paid && (
+          <Button
+            style={{marginTop: 4}}
+            mode="contained"
             color="#295a59"
-            onPress={()=> setShowModal(true)}
-          >
+            onPress={() => setShowModal(true)}>
             Thanh Toán PAYPAL
           </Button>
         )}
       </View>
-      <Modal
-        visible={showModal}
-        onRequestClose={()=> setShowModal(false)}
-      >
-        <WebView 
-          source={{ uri: `${server}/api/pay/${id}/${bill ? bill.total_cost: 0}`}} 
-          onNavigationStateChange={data=> handleResponse(data)}
+      <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
+        <WebView
+          source={{
+            uri: `${server}/api/pay/${id}/${bill ? bill.total_cost : 0}`,
+          }}
+          onNavigationStateChange={(data) => handleResponse(data)}
         />
       </Modal>
     </View>

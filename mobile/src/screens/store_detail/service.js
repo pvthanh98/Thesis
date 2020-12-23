@@ -6,11 +6,12 @@ import {server} from '../../constants/index';
 import {AirbnbRating} from 'react-native-ratings';
 import formatDate from '../../service/formatDate';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Loading from '../../components/load'
+import Loading from '../../components/load';
+import NumberFormat from 'react-number-format';
 export default (props) => {
   const [services, setSevices] = React.useState(null);
   React.useEffect(() => {
-    props.navigation.setOptions({ title: props.route.params.store_name });
+    props.navigation.setOptions({title: props.route.params.store_name});
     loadServices();
   }, []);
 
@@ -24,62 +25,68 @@ export default (props) => {
   };
 
   const calculateTotalRating = ({one, two, three, four, five}) => {
-    return (one + two + three + four + five);
-  }
-  if(!services) return <Loading text="Đang tải dịch vụ..." />
+    return one + two + three + four + five;
+  };
+  if (!services) return <Loading text="Đang tải dịch vụ..." />;
   return (
     <View>
       <FlatList
         data={services}
         numColumns={2}
         renderItem={({item}) => {
-        return (
-          <View style={styles.itemContainer}>
-            <View>
-              <Image
-                style={{width: '100%', height: 120}}
-                source={{uri: `${server}/images/${item.image}`}}
-              />
-              <Title>{item.name}</Title>
-              <View style={[styles.itemInfo,{alignItems:"center"}]}>
-                <AirbnbRating
-                  count={5}
-                  defaultRating={4}
-                  size={15}
-                  showRating={false}
+          return (
+            <View style={styles.itemContainer}>
+              <View>
+                <Image
+                  style={{width: '100%', height: 120}}
+                  source={{uri: `${server}/images/${item.image}`}}
                 />
-                <Text>
-                  <FontAwesomeIcon name="user" color="green" size={18} /> {calculateTotalRating(item.rating)}
-                </Text>
+                <Title>{item.name}</Title>
+                <View style={[styles.itemInfo, {alignItems: 'center'}]}>
+                  <AirbnbRating
+                    count={5}
+                    defaultRating={4}
+                    size={15}
+                    showRating={false}
+                  />
+                  <Text>
+                    <FontAwesomeIcon name="user" color="green" size={18} />{' '}
+                    {calculateTotalRating(item.rating)}
+                  </Text>
+                </View>
+                <View style={styles.itemInfo}>
+                  <Text style={styles.text}>{formatDate(item.timestamp)}</Text>
+                </View>
+                <View style={styles.itemInfo}>
+                  <Text style={styles.text}>
+                    <FontAwesomeIcon name="money" size={24} />
+                  </Text>
+                  <NumberFormat
+                    value={item.price}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'đ '}
+                    renderText={(value) => <Text style={{color: 'red', fontWeight: 'bold', fontSize: 16}}>{value}</Text>}
+                  />
+                </View>
               </View>
               <View style={styles.itemInfo}>
-                <Text style={styles.text}>{formatDate(item.timestamp)}</Text>
-              </View>
-              <View style={styles.itemInfo}>
-                <Text style={styles.text}>
-                  <FontAwesomeIcon name="money" size={24} />
-                </Text>
-                <Text style={{color: 'red', fontWeight: 'bold', fontSize: 16}}>
-                  $ {item.price}
-                </Text>
+                <Button
+                  color="#ddd"
+                  mode="contained"
+                  onPress={() =>
+                    props.navigation.navigate('service_detail', {
+                      service: item,
+                    })
+                  }>
+                  CHI TIẾT
+                </Button>
               </View>
             </View>
-            <View style={styles.itemInfo}>
-              <Button 
-                color="#ddd" 
-                mode="contained"
-                onPress={()=>props.navigation.navigate("service_detail",{
-                  service:item
-                })}
-              >
-                CHI TIẾT
-              </Button>
-            </View>
-          </View>
-        );
-      }}
-      keyExtractor={(item) => item.name}
-    />
+          );
+        }}
+        keyExtractor={(item) => item.name}
+      />
     </View>
   );
 };
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
     padding: 4,
     margin: 4,
     flex: 1,
-    justifyContent:"space-between"
+    justifyContent: 'space-between',
   },
   image: {
     width: '100%',
@@ -104,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 4,
-    alignItems:"center"
+    alignItems: 'center',
   },
   text: {
     fontSize: 16,

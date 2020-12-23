@@ -6,6 +6,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {WebView} from 'react-native-webview';
 import {server} from '../constants/index';
 import axios from '../service/axios';
+import NumberFormat from 'react-number-format';
 const HistoryDetail = (props) => {
   const {id} = props.route.params;
   const [showModal, setShowModal] = React.useState(false);
@@ -33,9 +34,15 @@ const HistoryDetail = (props) => {
         <View style={styles.item} key={service._id}>
           <Text style={styles.itemRow}>{service.service_id.name}</Text>
           <Text style={styles.itemRow}>
-            <Text style={{color: 'red', fontWeight: 'bold'}}>
-              $ {service.quantity * service.service_id.price}
-            </Text>
+            <NumberFormat
+              value={service.quantity * service.service_id.price}
+              displayType={'text'}
+              thousandSeparator={true}
+              prefix={'đ '}
+              renderText={(value) => (
+                <Text style={{color: 'red', fontWeight: 'bold'}}>{value}</Text>
+              )}
+            />
           </Text>
         </View>
       ))
@@ -117,28 +124,33 @@ const HistoryDetail = (props) => {
         </View>
         {renderServices()}
       </View>
-      <View style={{flexDirection:"row", justifyContent:"space-between",padding:8}}>
-          <Text>Tổng: </Text>
-          <Text style={{color:"red",fontWeight:"bold"}}>$ {bill && bill.total_cost}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 8,
+        }}>
+        <Text>Tổng: </Text>
+        <Text style={{color: 'red', fontWeight: 'bold'}}>
+          $ {bill && bill.total_cost}
+        </Text>
       </View>
       <View>
         {bill && !bill.confirm && (
-          <Button 
-            style={{marginTop: 4}} 
-            mode="contained" 
+          <Button
+            style={{marginTop: 4}}
+            mode="contained"
             color="#1c7534"
-            onPress={confirmPayment}
-          >
+            onPress={confirmPayment}>
             xác nhận hóa đơn
           </Button>
         )}
-        {bill &&!bill.paid && (
-          <Button 
-            style={{marginTop: 4}} 
-            mode="contained" 
+        {bill && !bill.paid && (
+          <Button
+            style={{marginTop: 4}}
+            mode="contained"
             color="#295a59"
-            onPress={()=> setShowModal(true)}
-          >
+            onPress={() => setShowModal(true)}>
             Thanh Toán PAYPAL
           </Button>
         )}
