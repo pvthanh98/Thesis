@@ -7,9 +7,9 @@ import MessageListScreen from './messages/index';
 import SettingScreen from './settings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {server} from '../../constants/index';
-import {useSelector, useDispatch} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux';
 import io from 'socket.io-client';
-import axios from '../../service/store_axios'
+import axios from '../../service/store_axios';
 const socket = io(server);
 socket.on('connect', async () => {
   const admin_token = await AsyncStorage.getItem('admin_token');
@@ -23,7 +23,6 @@ export default () => {
     React.useEffect(()=>{
         loadListMessages();
         socket.on("customer_send_msg_to_you",(data)=>{
-            console.log("receuv");
             loadListMessages()
             loadMessages(data.from_id);
         });

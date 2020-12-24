@@ -156,7 +156,7 @@ export default function ProvisionalBill(props) {
             Danh sách
           </Link>
           <Link
-            to="/admin/bill/add/init"
+             to="/admin/bill/add/init/init"
             style={{color:"black"}}
           >
             <AddIcon className={classes.icon} />

@@ -10,6 +10,7 @@ export default function() {
                 <h1 style={{textAlign:"center"}}>DATA CENTER PROCESSING</h1>
                 <Button style={{margin:"4px"}} variant="contained" onClick={()=>setRedirect("/store_comment")}>STORE COMMENTS</Button>
                 <Button style={{margin:"4px"}} variant="contained" onClick={()=>{setRedirect("/service_comment")}}  color="primary">SERVICE COMMENTS</Button>
+                <Button style={{margin:"4px"}} variant="contained" onClick={()=>{setRedirect("/bill")}}  color="secondary">Add Bill</Button>
             </div>
         </div>
     )

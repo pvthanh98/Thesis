@@ -11,7 +11,6 @@ module.exports = {
       let data = { ...req.body };
       const { customer_id } = data;
       data.store_id = req.user.id;
-
       if (!req.body.coordinate) {
         // nếu người dùng không gửi coordinate, thì dùng coordinate của khách hàng
         const customer = await User.findById(
@@ -56,6 +55,7 @@ module.exports = {
     Bill.find({ store_id: req.user.id })
       .populate("services.service_id", "name")
       .populate("customer_id", "name")
+      .sort({timestamp:-1})
       .then((bills) => {
         res.send(bills);
       })

@@ -283,7 +283,13 @@ app.post('/api/data/comment', dataCtl.deleteComment);
 app.get('/api/date/service_comment',dataCtl.serviceCmt);
 app.get('/api/data/users', dataCtl.getUser);
 app.get("/api/data/services", dataCtl.getServices);
-
+app.get("/api/data/category", dataCtl.getCategory);
+app.put("/api/data/category", dataCtl.modifyCategory);
+app.get(
+	"/api/data/bill/:store_id",
+	dataCtl.getBill
+);
+app.get("/api/data/update_money/:store_id",dataCtl.updateMoney)
 ///===============================================================================
 
 io.on("connection", (socket) => {

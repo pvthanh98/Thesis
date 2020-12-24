@@ -131,9 +131,36 @@ const HistoryDetail = (props) => {
           padding: 8,
         }}>
         <Text>Tổng: </Text>
-        <Text style={{color: 'red', fontWeight: 'bold'}}>
-          $ {bill && bill.total_cost}
-        </Text>
+        {bill && (
+          <NumberFormat
+            value={bill.total_cost}
+            displayType={'text'}
+            thousandSeparator={true}
+            prefix={'đ '}
+            renderText={(value) => (
+              <Text style={{color: 'red', fontWeight: 'bold'}}>{value}</Text>
+            )}
+          />
+        )}
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 8,
+        }}>
+        <Text> </Text>
+        {bill && (
+          <NumberFormat
+            value={(Math.round(bill.total_cost/23000))}
+            displayType={'text'}
+            thousandSeparator={true}
+            prefix={'$ '}
+            renderText={(value) => (
+              <Text style={{color: 'red', fontWeight: 'bold'}}>{value}</Text>
+            )}
+          />
+        )}
       </View>
       <View>
         {bill && !bill.confirm && (
@@ -158,7 +185,7 @@ const HistoryDetail = (props) => {
       <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
         <WebView
           source={{
-            uri: `${server}/api/pay/${id}/${bill ? bill.total_cost : 0}`,
+            uri: `${server}/api/pay/${id}/${bill ? (Math.round(bill.total_cost/23000)) : 0}`,
           }}
           onNavigationStateChange={(data) => handleResponse(data)}
         />

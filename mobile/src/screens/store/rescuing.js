@@ -19,11 +19,27 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
 import Loading from '../../components/load';
 import {socket} from './index';
+import PushNotification from "react-native-push-notification";
 
 const defaultPosition = {
   lat: 10.860281,
   lng: 106.650232,
 };
+PushNotification.configure({
+  onRegister: function (token) {
+    console.log("TOKEN:", token);
+  },
+  onNotification: function (notification) {
+    console.log("NOTIFICATION:", notification);
+  },
+  permissions: {
+    alert: true,
+    badge: true,
+    sound: true,
+  },
+  popInitialNotification: true,
+  requestPermissions: Platform.OS === 'ios',
+});
 export default function Home({navigation}) {
   const isFocused = useIsFocused();
   const mystore = useSelector((state) => state.mystore);
@@ -37,7 +53,7 @@ export default function Home({navigation}) {
   React.useEffect(() => {
     loadMyStore();
     socket.on('new_rescue', function () {
-      console.log('there is new');
+      push_rescue_notification();
       loadMyStore();
     });
   }, []);
@@ -144,6 +160,14 @@ export default function Home({navigation}) {
       />
     ));
 
+  const push_rescue_notification = () => {
+    console.log("notification")
+    PushNotification.localNotification({
+      title:"New rescue",
+      messages:"You have an new rescue"
+    })
+  }
+
   if (!mystore) return <Loading text="Đang tải vị trí của hàng" />;
   return (
     <View style={styles.container}>
@@ -187,6 +211,7 @@ export default function Home({navigation}) {
           }}>
           <ActivityIndicator color="blue" style={{marginTop: 4}} />
           {!rescueList && <Text>Đang tải yêu cầu cứu hộ</Text>}
+          
         </View>
       )}
       {selectedOto && (
@@ -211,6 +236,7 @@ export default function Home({navigation}) {
               ? 'YÊU CẦU CỨU HỘ'
               : 'KHÔNG CÓ YÊU CẦU'}
           </Button>
+      {/* //    <Button onPress={push_rescue_notification}>notification</Button> */}
           {!loading ? (
             <IconButton
               icon={() => (

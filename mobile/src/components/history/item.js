@@ -31,26 +31,28 @@ const HistoryItem = (props) => {
       </View>
       <View style={styles.rightContainer}>
         <View style={{flexDirection: 'row'}}>
-          <Text>
-            {' '}
-            <Icon
-              name="check-circle"
-              color={props.paid ? 'green' : 'black'}
-              size={20}
-            />
-          </Text>
-          <Text> Thanh toán</Text>
+          {props.paid ? (
+            <View style={{flexDirection: 'row'}}>
+              <Text>
+                <Icon name="check-circle" color={'green'} size={20} />
+              </Text>
+              <Text>Thanh toán</Text>
+            </View>
+          ) : (
+            <Text>Chờ thanh toán</Text>
+          )}
         </View>
         <View style={{flexDirection: 'row'}}>
-          <Text>
-            {' '}
-            <Icon
-              name="check-circle"
-              color={props.confirm ? 'green' : 'black'}
-              size={20}
-            />
-          </Text>
-          <Text> Xác nhận</Text>
+          {props.confirm ? (
+            <View style={{flexDirection: 'row'}}>
+              <Text>
+                <Icon name="check-circle" color={'green'} size={20} />
+              </Text>
+              <Text>Đã xác nhận</Text>
+            </View>
+          ) : (
+            <Text>Chờ xác nhận</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>

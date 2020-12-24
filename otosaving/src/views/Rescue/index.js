@@ -143,9 +143,7 @@ const MyMapComponent = compose(
 						}
 					}
 				);
-
 			}
-
 			if (this.props.carRescue.length > 0 && !this.props.carRescue[0].distance) {
 				this.updateDistance();
 			} else console.log("no need to update distance")
@@ -236,7 +234,7 @@ const MyMapComponent = compose(
 											</Tooltip>
 											<Tooltip title="Thanh thêm vào hóa đơn">
 												<IconButton
-													onClick={() => props.setIsRedirect(e.customer_id._id)}
+													onClick={() => props.setIsRedirect(`${e.customer_id._id}/${e.coordinate.lat},${e.coordinate.lng}`)}
 												>
 													<PaymentIcon style={{ color: "#3b0957" }} />
 												</IconButton>
@@ -415,7 +413,7 @@ export default function Rescue() {
 							<IconButton
 								aria-label="gps"
 								className={classes.margin}
-								onClick={() => setIsRedirect(e.customer_id._id)}
+								onClick={() => setIsRedirect(`${e.customer_id._id}/${e.coordinate.lat},${e.coordinate.lng}`)}
 							>
 								<PaymentIcon style={{ color: "#3b0957" }} />
 							</IconButton>
