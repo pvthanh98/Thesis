@@ -52,10 +52,17 @@ module.exports = {
     }
   },
   getBill: (req, res) => {
+    const {sortconfirm, sortpaid} = req.params;
+    let conditions = {};
+    if(sortconfirm==1) conditions.confirm = -1;
+    if(sortconfirm==0) conditions.confirm = 1;
+    if(sortpaid==1) conditions.paid = -1;
+    if(sortpaid==0) conditions.paid = 1;
+    if(sortconfirm == 2 && sortpaid == 2) conditions.timestamp = -1;
     Bill.find({ store_id: req.user.id })
       .populate("services.service_id", "name")
       .populate("customer_id", "name")
-      .sort({timestamp:-1})
+      .sort(conditions)
       .then((bills) => {
         res.send(bills);
       })

@@ -154,7 +154,7 @@ module.exports = {
     getRescueLocation: (req, res) => {
         const {id} = req.user;
         Bill.find({store_id:id},"coordinate customer_id timestamp total_cost")
-        .populate("customer_id", "name")
+        .populate("customer_id", "name image")
         .then((bill)=> {
             res.send(bill)
         })

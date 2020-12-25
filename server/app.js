@@ -134,7 +134,7 @@ app.get(
 
 //BILL
 app.get(
-	"/api/bill",
+	"/api/bill/:sortconfirm/:sortpaid",
 	passport.authenticate("jwt", { session: false }),
 	BillCtl.getBill
 );

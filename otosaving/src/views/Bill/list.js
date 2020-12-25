@@ -33,7 +33,9 @@ import Alert from "@material-ui/lab/Alert";
 import CheckCircleIcon from "@material-ui/icons/CheckCircleOutline";
 import formatDate from "../../service/formatDate";
 import NumberFormat from "react-number-format";
-
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import {Badge} from 'reactstrap';
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -227,11 +229,49 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        <div style={{display:"flex", flexDirection:"row"}}>
+          <div style={{width:"80px",display:"flex", alignItems:"center"}}>
+            <Badge color="primary">Thanh toán</Badge>
+          </div>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={props.paidState}
+            onChange={e=>{
+              props.setPaidState(e.target.value);
+              props.setConfirmState(2);
+              props.reloadBill(2,e.target.value);
+            }}
+            style={{width:"200px"}}
+          >
+            <MenuItem value={2}>Tất cả</MenuItem>
+            <MenuItem value={0}>Chưa thanh toán</MenuItem>
+            <MenuItem value={1}>Đã thanh toán</MenuItem>
+          </Select>
+          <div style={{width:"80px",display:"flex", alignItems:"center"}}>
+            <Badge color="success">Xác nhận</Badge>
+          </div>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            onChange={e=>{
+              props.setConfirmState(e.target.value);
+              props.setPaidState(2)
+              props.reloadBill(e.target.value,2);
+            }}
+            value={props.confirmState}
+            style={{width:"200px"}}
+          >
+            <MenuItem value={2}>Tất cả</MenuItem>
+            <MenuItem value={0}>Chưa xác nhận</MenuItem>
+            <MenuItem value={1}>Đã xác nhận</MenuItem>
+          </Select>
+          <Tooltip title="Filter list">
+            <IconButton aria-label="filter list">
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
       )}
     </Toolbar>
   );
@@ -281,6 +321,8 @@ const ProvisionalBillList = (props) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [loading, setLoading] = React.useState(false);
   const [toModifyPage, setToModifyPage] = React.useState(false);
+  const [paidState, setPaidState] = React.useState(2) // 2 means all, 0 no payment, 1 payment
+  const [confirmState, setConfirmState] = React.useState(2) //2 means all,...
   const dispatch = useDispatch();
 
   const bills = useSelector((state) => state.bills);
@@ -298,13 +340,13 @@ const ProvisionalBillList = (props) => {
   }));
 
   useEffect(() => {
-    reloadBill();
+    reloadBill(confirmState,paidState);
   }, []);
 
-  const reloadBill = () => {
+  const reloadBill = (confirmState,paidState) => {
     setLoading(true);
     axios()
-      .get("/api/bill")
+      .get(`/api/bill/${confirmState}/${paidState}`)
       .then(({ data }) => {
         setAndDelayLoading(data);
       })
@@ -372,7 +414,7 @@ const ProvisionalBillList = (props) => {
         bill_ids: selected,
       })
       .then(() => {
-        reloadBill();
+        reloadBill(confirmState,paidState);
       })
       .catch((err) => console.log(err));
   };
@@ -383,7 +425,7 @@ const ProvisionalBillList = (props) => {
         bill_ids: selected,
       })
       .then(() => {
-        reloadBill();
+        reloadBill(confirmState,paidState);
       })
       .catch((err) => console.log(err));
   };
@@ -433,6 +475,11 @@ const ProvisionalBillList = (props) => {
             selected={selected}
             bills={bills}
             confirmPayment={confirmPayment}
+            paidState={paidState}
+            setPaidState={setPaidState}
+            confirmState={confirmState}
+            setConfirmState={setConfirmState}
+            reloadBill={reloadBill}
           />
           <TableContainer>
             <Table
@@ -517,15 +564,16 @@ const ProvisionalBillList = (props) => {
                             />
                           )}
                         </TableCell>
-                        <TableCell align="right">{row.confirm ?  <CustomAlert
+                        <TableCell align="right">
+                          {row.confirm ? (
+                            <CustomAlert
                               color="success"
                               message="Đã xác nhận"
-                            /> :
-							<CustomAlert
-							color="error"
-							message="Chờ xác nhận"
-						  />
-						}</TableCell>
+                            />
+                          ) : (
+                            <CustomAlert color="error" message="Chờ xác nhận" />
+                          )}
+                        </TableCell>
                       </TableRow>
                     );
                   })}
