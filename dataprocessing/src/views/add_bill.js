@@ -9,7 +9,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import LinearProgress from "@material-ui/core/LinearProgress";
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import NumberFormat from 'react-number-format';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 const emailList = [
   "cuahang01@gmail.com",
   "cuahang02@gmail.com",
@@ -315,6 +317,12 @@ function AddBill() {
           
             <div style={{ marginTop: "8px" }}>
               Ngày: {`${date}-${new Date().getMonth()+1}-${new Date().getFullYear()}`} 
+              <IconButton onClick={()=>setDate(date+1)}>
+                <ArrowUpwardIcon />
+              </IconButton>
+              <IconButton onClick={()=>setDate(date-1)}>
+                <ArrowDownwardIcon />
+              </IconButton>
             </div>
             <div style={{ marginTop: "8px" }}>
                 <Button variant="contained" onClick={randomDate}>Random</Button>{" "}

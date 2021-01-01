@@ -49,7 +49,7 @@ const MyMapComponent = compose(
 		googleMapURL:
 			"https://maps.googleapis.com/maps/api/js?key=AIzaSyAB5wWf_sSXn5sO1KE8JqDPWW4XZ8QKYSQ&v=3.exp&libraries=geometry,drawing,places",
 		loadingElement: <div style={{ height: `100%` }} />,
-		containerElement: <div style={{ height: `600px` }} />,
+		containerElement: <div style={{ height: `400px` }} />,
 		mapElement: <div style={{ height: `100%` }} />,
 	}),
 	withScriptjs,
@@ -234,7 +234,7 @@ const MyMapComponent = compose(
 											</Tooltip>
 											<Tooltip title="Thanh thêm vào hóa đơn">
 												<IconButton
-													onClick={() => props.setIsRedirect(`${e.customer_id._id}/${e.coordinate.lat},${e.coordinate.lng}`)}
+													onClick={() => props.setIsRedirect(`${e.customer_id._id}/${e.coordinate.lat},${e.coordinate.lng}/${e._id}`)}
 												>
 													<PaymentIcon style={{ color: "#3b0957" }} />
 												</IconButton>
@@ -413,7 +413,7 @@ export default function Rescue() {
 							<IconButton
 								aria-label="gps"
 								className={classes.margin}
-								onClick={() => setIsRedirect(`${e.customer_id._id}/${e.coordinate.lat},${e.coordinate.lng}`)}
+								onClick={() => setIsRedirect(`${e.customer_id._id}/${e.coordinate.lat},${e.coordinate.lng}/${e._id}`)}
 							>
 								<PaymentIcon style={{ color: "#3b0957" }} />
 							</IconButton>

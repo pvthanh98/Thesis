@@ -3,13 +3,16 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Avatar, Title} from 'react-native-paper';
 import {AirbnbRating} from 'react-native-ratings';
 import formatDate from '../../service/formatDate';
+import {server} from '../../constants/index';
 export default (props) => {
   return (
     <View style={styles.commentContainer}>
       <View style={styles.commentHeader}>
         <Avatar.Image
           size={30}
-          source={require('../../assets/images/profile.png')}
+          source={{
+            uri: `${server}/images/${props.customer_id.image}`,
+          }}
         />
         <Title style={{marginLeft: 8}}>{props.customer_id ? props.customer_id.name: "Unknow"}</Title>
       </View>

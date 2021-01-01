@@ -88,6 +88,13 @@ export default function Process(props) {
       })
       .catch((err) => console.log(err));
   };
+
+  const onRemoveRescue = (id) => {
+    axios.post('/api/rescue/remove',{id})
+    .then(()=>alert("Thành công"))
+    .catch(err=>console.log(err));
+  }
+
   return (
     <View
       style={[
@@ -144,6 +151,9 @@ export default function Process(props) {
               </View>
             </View>
           </ScrollView>
+          <Button style={{marginBottom:4}} mode="contained" onPress={()=>onRemoveRescue(rescue_id)} color="red">
+            Xóa
+          </Button>
           <Button mode="contained" onPress={onSubmitBill} color="green">
             Thêm hóa đơn và đánh dấu hoàn tất
           </Button>

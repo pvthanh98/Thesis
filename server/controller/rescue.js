@@ -26,7 +26,7 @@ module.exports = {
         })
         .populate("customer_id", "name latitude longtitude phone address image")
         .populate("problem")
-        .sort({is_complete:1})
+        .sort({is_complete:1, timestamp:-1})
         .limit(perPage)
         .skip(perPage *(page-1))
         .then(rescuelist=> {
@@ -136,5 +136,13 @@ module.exports = {
             res.sendStatus(400);
             throw err;
         })    
+    },
+    removeRescue : (req, res) =>{ 
+        const { id } = req.body;
+        Rescue.findByIdAndRemove(id).then(()=>res.sendStatus(200))
+        .catch(err=>{
+            res.sendStatus(400);
+            throw err;
+        })
     }
 }

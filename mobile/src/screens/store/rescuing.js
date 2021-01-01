@@ -230,7 +230,10 @@ export default function Home({navigation}) {
           <Button
             mode="contained"
             icon={() => <MaterialIcon name="search" size={20} color="#fff" />}
-            onPress={() => setSelectedOto({...rescueList[0]})}
+            onPress={() => {
+              setSelectedOto({...rescueList[0]});
+              getDirection(rescueList[0].coordinate.lat,rescueList[0].coordinate.lng)
+            }}
             disabled={rescueList && rescueList.length > 0 ? false : true}>
             {rescueList && rescueList.length > 0
               ? 'YÊU CẦU CỨU HỘ'

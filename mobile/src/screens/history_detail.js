@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Modal} from 'react-native';
+import {View, Text, StyleSheet, Modal, ScrollView} from 'react-native';
 import {Title} from 'react-native-paper';
 import {DataTable, Button} from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -78,7 +78,7 @@ const HistoryDetail = (props) => {
       .catch((err) => console.log(err));
   };
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Title>Thông tin chung</Title>
       <View>
         <View style={styles.item}>
@@ -174,13 +174,15 @@ const HistoryDetail = (props) => {
         )}
         {bill && !bill.paid && (
           <Button
-            style={{marginTop: 4}}
+            style={{marginTop: 4, marginBottom:4}}
             mode="contained"
             color="#295a59"
             onPress={() => setShowModal(true)}>
             Thanh Toán PAYPAL
           </Button>
         )}
+        <View style={{height:40}}>
+        </View>
       </View>
       <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
         <WebView
@@ -190,7 +192,7 @@ const HistoryDetail = (props) => {
           onNavigationStateChange={(data) => handleResponse(data)}
         />
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 

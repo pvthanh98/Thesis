@@ -89,7 +89,7 @@ const dashboardRoutes = [
     showSidebar: false
   },
   {
-    path: "/bill/add/:customer_id/:coordinate",
+    path: "/bill/add/:customer_id/:coordinate/:rescue_id",
     name: "Hóa Đơn",
     icon: "business_center",
     component: BillAdd,

@@ -49,7 +49,7 @@ function StackComponent(props) {
         name="rescuing"
         component={RescuingScreen}
         options={{
-          title: 'CỨU HỘ OTO',
+          title: 'OTO RESCUING',
           headerTitleAlign: 'center',
           headerLeft: () => (
             <TouchableOpacity

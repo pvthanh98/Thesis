@@ -15,7 +15,7 @@ module.exports = {
             .limit(10)
             .sort({timestamp:-1});
             messages.reverse();
-            
+        
             if (messages.length > 0) {
                 res.json({
                     info: {
@@ -85,6 +85,7 @@ module.exports = {
                 if(!msg.is_read && !msg.is_store) unread++;
                 listMessages.push(msg)
             }
+            listMessages.sort((a,b)=>(a.is_read-b.is_read));
             res.send({
                 unread,
                 messages:listMessages

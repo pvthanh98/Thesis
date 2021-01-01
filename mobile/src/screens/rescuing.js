@@ -151,7 +151,9 @@ const Rescue = ({navigation}) => {
           coordinate: currentLocation,
         })
         .then((resl) => {
-          alert('Yêu cầu của bạn đã được gửi');
+          Alert.alert("Thành công", "Yêu cầu của bạn đã được gửi đi, chúng tôi sẽ liên bạn ngay lập tức",[
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ])
           socket.emit('new_rescue', {to: selectedStore.id});
         })
         .catch((err) => {
@@ -374,6 +376,7 @@ const Rescue = ({navigation}) => {
       },
       (error) => {
         setIsHighAccuracyMode(highAccuracy);
+        removeHigh();
         setError(true);
         setCityModalVisible(false)
         // loadStore(null);

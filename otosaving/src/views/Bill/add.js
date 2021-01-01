@@ -108,13 +108,15 @@ export default function ProvisionalBill(props) {
   const [billTemp, setBillTemp] = React.useState([]);
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [coordinate, setCoordinate] = React.useState("");
+  const [rescue_idState, setRescue_idState] = React.useState("");
   //////// for submit
   const [customerID, setCustomerID] = React.useState(null);
   useEffect(() => {
-    const { customer_id, coordinate } = props.match.params;
-    console.log(coordinate);
+    const { customer_id, coordinate, rescue_id } = props.match.params;
+    console.log(rescue_id);
     if (customer_id !== "init") setInputSearch(customer_id);
     if (coordinate !== "init") setCoordinate(coordinate);
+    if (rescue_id !== "init") setRescue_idState(rescue_id);
     return function () {
       setErr(false);
     };
@@ -245,6 +247,8 @@ export default function ProvisionalBill(props) {
       total_cost,
       services,
     };
+    console.log(bill)
+    if(rescue_idState!="init") bill.rescue_id = rescue_idState;
 
     if (coordinate !== "") {
       bill.coordinate = {
@@ -289,7 +293,7 @@ export default function ProvisionalBill(props) {
             Danh Sách
           </Link>
           <Link
-            to="/admin/bill/add/init/init"
+            to="/admin/bill/add/init/init/init"
             style={{ color: "black" }}
             className={classes.linkCustom}
           >

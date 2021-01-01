@@ -346,7 +346,7 @@ const ProvisionalBillList = (props) => {
   const reloadBill = (confirmState,paidState) => {
     setLoading(true);
     axios()
-      .get(`/api/bill/${confirmState}/${paidState}`)
+      .get(`/api/bill/filter/${confirmState}/${paidState}`)
       .then(({ data }) => {
         setAndDelayLoading(data);
       })
@@ -453,7 +453,7 @@ const ProvisionalBillList = (props) => {
             Danh sách
           </Link>
           <Link
-            to="/admin/bill/add/init/init"
+            to="/admin/bill/add/init/init/init"
             style={{ color: "black" }}
             className={
               props.match.url === "/admin/bill/add" ? classes.linkCustom : ""

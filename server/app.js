@@ -134,7 +134,7 @@ app.get(
 
 //BILL
 app.get(
-	"/api/bill/:sortconfirm/:sortpaid",
+	"/api/bill/filter/:sortconfirm/:sortpaid",
 	passport.authenticate("jwt", { session: false }),
 	BillCtl.getBill
 );
@@ -235,6 +235,7 @@ app.get('/api/rescue/page/:page', passport.authenticate("jwt", { session: false 
 app.put('/api/rescue', passport.authenticate("jwt", { session: false }), RescueCtl.modifyRescue);
 app.get('/api/rescue/search/name/:name', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescue);
 app.get('/api/rescue/search/date/:date', passport.authenticate("jwt", { session: false }), RescueCtl.searchRescueByDate);
+app.post('/api/rescue/remove',passport.authenticate("jwt", { session: false }), RescueCtl.removeRescue)
 
 app.put('/api/rescue/id/:id', passport.authenticate("jwt", { session: false }), RescueCtl.modifyAllRescue);
 //RESCUE FOR MOBILE
