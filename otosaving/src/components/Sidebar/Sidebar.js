@@ -83,11 +83,9 @@ export default function Sidebar(props) {
   );
   var brand = (
     <div className={classes.logo} style={{color:"white", textAlign:"center"}}>
-      <div>THANHPHAN</div> 
       <div>
         OTO RESCUING
       </div>
-      
     </div>
   );
   return (

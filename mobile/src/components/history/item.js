@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Title} from 'react-native-paper';
 import NumberFormat from 'react-number-format';
+import dateFormat from '../../service/formatDate';
 const HistoryItem = (props) => {
   const {navigation} = props;
   return (
@@ -15,6 +16,7 @@ const HistoryItem = (props) => {
       }>
       <View style={styles.leftContainer}>
         <Title>{props.store_id.name}</Title>
+        <Text>Ngày: {dateFormat(props.timestamp)}</Text>
         <Text>Số lượng dịch vụ: {props.services.length}</Text>
         <View style={{flexDirection: 'row'}}>
           <Text>Tổng tiền:</Text>

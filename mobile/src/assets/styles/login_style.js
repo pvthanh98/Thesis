@@ -1,10 +1,9 @@
 export default function () {
     return {
         container:{
-            justifyContent:"center",
             alignItems:"center",
             flex:1,
-            backgroundColor:'#295a59',
+            backgroundColor:'#01877c',
             padding:12
         }, 
         welcome : {

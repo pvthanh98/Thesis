@@ -182,6 +182,8 @@ app.get(
 );
 
 app.get("/api/customer/bill", user_auth, BillCtl.getCustomerBill);
+app.get("/api/mobile/customer/bill/:state", user_auth, BillCtl.getMobileCustomerBill);
+//state 0 means all, 1 confirm, 2 payment
 //
 
 

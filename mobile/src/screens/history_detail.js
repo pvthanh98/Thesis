@@ -7,6 +7,7 @@ import {WebView} from 'react-native-webview';
 import {server} from '../constants/index';
 import axios from '../service/axios';
 import NumberFormat from 'react-number-format';
+import dateFormat from '../service/formatDate'
 const HistoryDetail = (props) => {
   const {id} = props.route.params;
   const [showModal, setShowModal] = React.useState(false);
@@ -48,18 +49,6 @@ const HistoryDetail = (props) => {
       ))
     );
   };
-  const formatDate = (date) => {
-    var newDate = new Date(date);
-    var day =
-      newDate.getDate() + 1 >= 10
-        ? newDate.getDate() + 1
-        : '0' + newDate.getDate() + 1;
-    var month =
-      newDate.getMonth() + 1 >= 10
-        ? newDate.getMonth() + 1
-        : '0' + newDate.getMonth() + 1;
-    return `${day}/${month}/${newDate.getFullYear()}`;
-  };
 
   const handleResponse = (data) => {
     if (data.title === 'success') {
@@ -88,7 +77,7 @@ const HistoryDetail = (props) => {
         <View style={styles.item}>
           <Text style={styles.itemRow}>Ngày</Text>
           <Text style={styles.itemRow}>
-            {bill && formatDate(bill.timestamp)}
+            {bill && dateFormat(bill.timestamp)}
           </Text>
         </View>
         <View style={styles.item}>

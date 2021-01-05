@@ -189,7 +189,7 @@ export default function Profile(props) {
                 <MaterialIcon name="save-alt" size={20} color="#fff" />
               )}
               onPress={submit}>
-              UPDATE
+              Cập nhật
             </Button>
 
             <Button
@@ -197,7 +197,7 @@ export default function Profile(props) {
               color="#c9162b"
               style={{marginLeft: 4}}
               onPress={loadInput}>
-              CANCEL
+              Hủy
             </Button>
           </View>
         </View>

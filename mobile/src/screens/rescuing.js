@@ -63,7 +63,7 @@ const Rescue = ({navigation}) => {
   const [error, setError] = React.useState(false);
 
   useEffect(() => {
-    //removeHigh();
+   // removeHigh();
     loadCity();
     getLocationModeAndLocation();
     loadCarProblems();
@@ -73,6 +73,7 @@ const Rescue = ({navigation}) => {
   const removeHigh = () => {
     AsycnStorage.removeItem('highAccuracyMode');
   }
+
 
   const getLocationModeAndLocation = async () => {
     try {
@@ -364,13 +365,16 @@ const Rescue = ({navigation}) => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        console.log(success, ' // line 371')
         setCurrentLocation(success);
         setSelectedLocation(success);
         setGlobalLoading(false);
         if(citySelected!="") setCityModalVisible(true)
         findCityFromLatLng(success.lat, success.lng);
         setError(false);
-        if(reset) loadStore(success,currentCity);
+        if(reset) {
+          setCityModalVisible(true);
+        }
         AsycnStorage.setItem('highAccuracyMode', highAccuracy.toString());
         setIsHighAccuracyMode(highAccuracy);
       },
@@ -475,8 +479,8 @@ const Rescue = ({navigation}) => {
                   ? currentLocation.lng
                   : defaultPosition.lng,
               }}
-              image={require('../assets/images/test.png')}>
-              <Callout tooltip>
+              image={require('../assets/images/test1.png')}>
+              <Callout tooltip onPress={()=>getCurrentLocation(true, !isHighAccuracyMode)}>
                 <View style={styles.calloutContainer}>
                   <Text style={styles.title}>Vị trí của bạn?</Text>
                 </View>

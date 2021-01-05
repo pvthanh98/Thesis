@@ -63,13 +63,13 @@ export default function Login(props) {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#295a59" barStyle="light-content" />
+      <StatusBar backgroundColor="#01877c" barStyle="light-content" />
       <Image
-        source={require('../assets/images/logo2.png')}
-        style={{height: 150, width: '80%'}}
+        source={require('../assets/images/logo1.png')}
+        style={{height: 150, width: '100%'}}
         resizeMethod="auto"
       />
-      <Text style={styles.welcome}>Login</Text>
+      <Text style={styles.welcome}>OTO RESCUING</Text>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons
           style={styles.iconStyle}
@@ -103,12 +103,12 @@ export default function Login(props) {
       </View>
       <View style={[styles.inputContainer, {marginTop: 20}]}>
         <Button onPress={handleLoginButton} color="#fff" mode="contained">
-          Login
+          Đăng nhập
         </Button>
         <Button
           color="#fff"
           onPress={() => props.navigation.navigate('signup')}>
-          Signup
+          Đăng ký
         </Button>
       </View>
       {loading && <ActivityIndicator color="#fff" size="large" />}

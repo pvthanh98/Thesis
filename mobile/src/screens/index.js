@@ -38,6 +38,7 @@ socket.on('connect', async () => {
 function StackComponent(props) {
   const messages = useSelector(state=>state.messages);
   const message_list = useSelector(state=>state.message_list); 
+  const dispatch = useDispatch();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -131,6 +132,16 @@ function StackComponent(props) {
         options={{
           title: 'Lịch Sử Cứu Hộ',
           headerTintColor: '#fff',
+          headerRight: () => (
+            <TouchableOpacity
+              style={{marginRight: 12}}
+              onPress={() =>  dispatch({type:"UPDATE_MODAL_HISTORY", state:true})}
+            >
+              <View>
+                <Icon name="filter-list-alt" size={24} color="#fff" />
+              </View>     
+            </TouchableOpacity>
+          ),
         }}
       />
       <Stack.Screen

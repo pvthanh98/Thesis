@@ -5,6 +5,7 @@ import store_in_area from './store_in_area';
 import messages from './messages';
 import message_list from './message_list';
 import customer_bill from './customer_bill';
+import modalHistory from './modalHistory';
 //admin side
 import mystore from './admin_side/mystore_info';
 import message_store_list from './admin_side/massage_store_list';
@@ -17,5 +18,6 @@ export default combineReducers({
     customer_bill,
     mystore,
     message_store_list,
-    message_store
+    message_store,
+    modalHistory
 });

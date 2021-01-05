@@ -68,6 +68,25 @@ module.exports = {
       })
       .catch((err) => res.send(err));
   },
+  getMobileCustomerBill: (req, res) => {
+    const customer_id = req.user.id;
+    const {state} = req.params; // state 0 all, 1 confirm, 2 payment.
+    let conditions = {};
+    if(state=="0") conditions.timestamp = -1;
+    if(state=="1") conditions.confirm = 1;
+    if(state=="2") conditions.paid = 1;
+    Bill.find({ customer_id })
+      .populate("services.service_id", "name price")
+      .populate("store_id", "name")
+      .sort(conditions)
+      .then((bills) => {
+        res.json(bills);
+      })
+      .catch((err) => {
+        res.sendStatus(400);
+        throw err;
+      });
+  },
 
   deleteBill: async (req, res) => {
     const { bill_ids } = req.body;
@@ -147,6 +166,7 @@ module.exports = {
     Bill.find({ customer_id })
       .populate("services.service_id", "name price")
       .populate("store_id", "name")
+      .sort({timestamp:-1})
       .then((bills) => {
         res.json(bills);
       })

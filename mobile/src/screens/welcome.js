@@ -9,10 +9,12 @@ export default ({navigation}) => {
       <View style={styles.header}>
         {/* <Text style={styles.appTitle}>OTO RESCUING</Text> */}
         <Image 
-          source={require('../assets/images/logo2.png')} 
-          style={{height:150, width:"80%"}}
+          source={require('../assets/images/logo1.png')} 
+          style={{height:200, width:"100%"}}
+          
           resizeMethod="auto"
         />
+        <Text style={{fontSize:40, color:"white", fontFamily:"sans-serif"}}>OTO RESCUING</Text>
       </View>
       <Animatable.View 
         style={styles.footer}
