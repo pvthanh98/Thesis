@@ -85,14 +85,6 @@ export default (props) => {
           ))}
         </TableBody>
       </Table>
-      <TablePagination
-        rowsPerPageOptions={[8]}
-        component="div"
-        count={props.total_page}
-        page={props.page}
-        rowsPerPage={props.rowsPerPage}
-        onChangePage={props.handleChangePage}
-      />
     </TableContainer>
   );
 };

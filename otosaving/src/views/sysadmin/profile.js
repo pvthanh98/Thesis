@@ -197,7 +197,7 @@ export default function (props) {
           />
            <Input type="file" name="image" onChange={e=>setImageInput(e.target.files[0])} />
           <Typography variant="h4" style={{ marginTop: "8px" }}>
-            THANH PHAN
+            OTO RESCUING
           </Typography>
         </div>
       </Grid>

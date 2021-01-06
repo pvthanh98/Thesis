@@ -70,7 +70,7 @@ export default (props) => {
                   />
                 </View>
               </View>
-              <View style={styles.itemInfo}>
+              {/* <View style={styles.itemInfo}>
                 <Button
                   color="#ddd"
                   mode="contained"
@@ -81,7 +81,7 @@ export default (props) => {
                   }>
                   CHI TIẾT
                 </Button>
-              </View>
+              </View> */}
             </View>
           );
         }}

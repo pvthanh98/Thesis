@@ -6,6 +6,7 @@ const path = require("path");
 const Jimp = require('jimp');
 const Customer = require("../db/customer");
 const Bill = require("../db/bill");
+
 module.exports = {
     createStore : (req, res) =>{
         const errors = validationResult(req);
@@ -182,7 +183,8 @@ module.exports = {
     },
     getSearchSS: (req, res) => {
 		const {name} = req.params;
-		Store.find({$text:{$search:name}}, "email name description latitude longtitude rating address image phone")
+        Store.find({$text:{$search:name}}, "email name description latitude longtitude rating address image phone active city")
+        .limit(8)
 		.then(stores=>{
 			res.send(stores)
 		})
