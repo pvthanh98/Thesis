@@ -5,6 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import  {shallowEqual} from 'react-redux';
 import {socket} from './index';
 const ChatList = ({navigation}) => {
+
   const message_list = useSelector(state => state.message_list,shallowEqual);
   const handleClick =(store_id,store_name,message_id) =>{
     navigation.navigate('chat',{

@@ -69,9 +69,6 @@ function MyNavbar(props) {
           <img src="/images/logo2.png" height="100px" />
           <div>
             <div>
-              <b style={{ color: "#f7f7f7", fontFamily: "Arial sans-serif" }}>THANH PHAN</b>
-            </div>
-            <div>
               <b style={{ color: "#f7f7f7", fontFamily: "Arial sans-serif" }}>OTO RESCUING</b>
             </div>
           </div>

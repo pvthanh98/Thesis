@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {server} from '../../../constants/index';
-import moment from 'moment';
+import moment from '../../../service/vnmoment';
 export default (props) => {
     const isMyMsg = () => {
         return props.is_store;
@@ -26,7 +26,7 @@ export default (props) => {
                     styles.textBody,
                     {color:isMyMsg()? "white": "black"}
                 ]}>{props.body}</Text>
-                <Text style={[styles.textTime, {color:isMyMsg()? "white": "black"}]}>-- {moment(props.timestamp).fromNow()} --</Text>
+                <Text style={[styles.textTime, {color:isMyMsg()? "white": "black"}]}>-- {moment(props.timestamp)} --</Text>
             </View>
         </View>
     )

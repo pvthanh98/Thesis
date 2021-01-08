@@ -85,7 +85,7 @@ module.exports = {
                 if(!msg.is_read && !msg.is_store) unread++;
                 listMessages.push(msg)
             }
-            listMessages.sort((a,b)=>(a.is_read-b.is_read));
+            listMessages.sort((a,b)=>(b.timestamp-a.timestamp));
             res.send({
                 unread,
                 messages:listMessages
@@ -114,13 +114,13 @@ module.exports = {
             let unread =0;
             for(let i=0;i<store_id_list.length;i++){
                 let msg = await Message
-                                .findOne({store_id:store_id_list[i]._id}, "name body is_read is_store")
+                                .findOne({store_id:store_id_list[i]._id}, "name body is_read is_store timestamp")
                                 .populate("store_id", "name image")
                                 .sort({timestamp:-1}).limit(1);
                 if(!msg.is_read && msg.is_store) unread++;
                 listMessages.push(msg)
             }
-            listMessages.sort((a,b)=>(a.is_read-b.is_read));
+            listMessages.sort((a,b)=>(b.timestamp-a.timestamp));
             res.send({
                 unread,
                 messages:listMessages

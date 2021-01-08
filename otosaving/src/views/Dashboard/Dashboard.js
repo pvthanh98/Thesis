@@ -27,8 +27,8 @@ import Typography from "@material-ui/core/Typography";
 import Linechart from "../../components/Charts/line";
 import LineCharCost from "../../components/Charts/lineCost";
 import NumberFormat from "react-number-format";
-import {server} from '../../constant';
-import {Avatar} from '@material-ui/core';
+import { server } from "../../constant";
+import { Avatar } from "@material-ui/core";
 const useStyles = makeStyles(styles);
 
 const { compose, withProps, lifecycle } = require("recompose");
@@ -93,9 +93,20 @@ const MyMapComponent = compose(
         >
           <InfoWindow>
             <div>
-              <div style={{display:"flex", flexDirection:"row", alignItems:"center"}}>
-                <Avatar style={{height:"30px", width: "30px"}} src={`${server}/images/${rescue.customer_id.image}`} />
-                <div style={{marginLeft:"4px"}}>{rescue.customer_id.name}</div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Avatar
+                  style={{ height: "30px", width: "30px" }}
+                  src={`${server}/images/${rescue.customer_id.image}`}
+                />
+                <div style={{ marginLeft: "4px" }}>
+                  {rescue.customer_id.name}
+                </div>
               </div>
 
               <NumberFormat
@@ -104,8 +115,8 @@ const MyMapComponent = compose(
                 displayType="text"
                 renderText={(value) => (
                   <div>
-                    <AttachMoneyIcon/>
-                    <b style={{color:"red",fontWeight:"bold"}}>{value}</b>
+                    <AttachMoneyIcon />
+                    <b style={{ color: "red", fontWeight: "bold" }}>{value}</b>
                   </div>
                 )}
                 suffix={" đ "}
@@ -204,7 +215,7 @@ export default function Dashboard() {
       .get("/api/store/rescue_location")
       .then((res) => {
         setRescueLocation(res.data);
-        console.log(res.data)
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -275,7 +286,17 @@ export default function Dashboard() {
                 <Store />
               </CardIcon>
               <p className={classes.cardCategory}>Doanh Thu</p>
-              <h3 className={classes.cardTitle}>{costToday}</h3>
+              <h3 className={classes.cardTitle}>
+                <NumberFormat
+                  value={costToday}
+                  thousandSeparator
+                  displayType="text"
+                  renderText={(value) => (
+                    <b style={{ color: "red", fontWeight: "bold" }}>{value}</b>
+                  )}
+                  suffix={" đ "}
+                />
+              </h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
@@ -292,7 +313,17 @@ export default function Dashboard() {
                 <Icon>info_outline</Icon>
               </CardIcon>
               <p className={classes.cardCategory}>Doanh Thu</p>
-              <h3 className={classes.cardTitle}>{costWeek}</h3>
+              <h3 className={classes.cardTitle}>
+                <NumberFormat
+                  value={costWeek}
+                  thousandSeparator
+                  displayType="text"
+                  renderText={(value) => (
+                    <b style={{ color: "red", fontWeight: "bold" }}>{value}</b>
+                  )}
+                  suffix={" đ "}
+                />  
+              </h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>

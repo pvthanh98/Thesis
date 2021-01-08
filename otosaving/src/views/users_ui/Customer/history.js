@@ -18,6 +18,7 @@ import { Button } from "@material-ui/core";
 import formatDate from "../../../service/formatDate";
 import axios from "../../../service/axios_user";
 import { Redirect } from "react-router-dom";
+import HistoryIcon from '@material-ui/icons/History';
 import { server } from "../../../constant";
 import NumberFormat from "react-number-format";
 const useStyles = makeStyles((theme) => ({
@@ -249,7 +250,7 @@ export default function Bill(props) {
             style={{ marginTop: "12px", color: "#1ba6c6" }}
             variant="h4"
           >
-            CUSTOMER PAYMENT <PaymentIcon />
+            LỊCH SỬ CỨU HỘ <HistoryIcon />
           </Typography>
         </Grid>
         <Grid

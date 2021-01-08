@@ -33,6 +33,7 @@ export default () => {
     const loadListMessages = () => {
         axios.get("/api/messages/store_list")
         .then(({data})=>{
+        //    console.log(data);
             dispatch({type:"UPDATE_MESSAGE_STORE_LIST", messages: data})
             setNotification(data.unread);
         })

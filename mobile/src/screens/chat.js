@@ -38,12 +38,21 @@ export default ({route, navigation}) => {
 
     const sendMessage = () => {
         loadMessageLocal();
+        loadListMsgOfUser();
         socket.emit("customer_send_msg", {
             to: messages.info.store.id,
             body: msgInput
         });
         setMsgInput("");
     }
+    const loadListMsgOfUser = () => {
+        axios
+          .get('/api/messages/user_list')
+          .then(({data}) => {
+            dispatch({type: 'UPDATE_MESSAGE_LIST', messages: data});
+          })
+          .catch((err) => console.log(err));
+      };
 
     const loadMessageLocal = () => {
         let newMsg = {

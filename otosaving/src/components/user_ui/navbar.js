@@ -65,9 +65,9 @@ function MyNavbar(props) {
         <Link className={classes.logo} to="/">
           <img src="/images/logo2.png" height="100px" />
           <div>
-            <div>
+            {/* <div>
               <b style={{ color: "#922b2b", fontFamily: "Arial sans-serif" }}>THANH PHAN</b>
-            </div>
+            </div> */}
             <div>
               <b style={{ color: "#922b2b", fontFamily: "Arial sans-serif" }}>OTO RESCUING</b>
             </div>

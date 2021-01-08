@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Avatar, Title, Text  } from 'react-native-paper';
 import {server} from '../../../constants/index';
-import moment from 'moment'
+import moment from '../../../service/vnmoment';
 const ChatListItem = (props) => {
     return (
       <View 
@@ -18,7 +18,7 @@ const ChatListItem = (props) => {
                   ? <Text style={{fontWeight:"bold"}}>{props.body}</Text>
                   : <Text>{props.body}</Text>
                 }
-                <Text style={{color:"grey"}}>{moment(props.timestamp).fromNow()}</Text>
+                <Text style={{color:"grey"}}>{moment(props.timestamp)}</Text>
             </View>
          </View>
         

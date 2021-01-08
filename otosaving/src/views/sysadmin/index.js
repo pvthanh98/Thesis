@@ -28,7 +28,7 @@ const useStyle = makeStyles({
     backgroundRepeat: "no-repeat",
   },
   title: {
-    fontFamily: "fantasy",
+  //  fontFamily: "fantasy",
     textAlign: "center",
     color: "#fff",
     padding: "16px",
@@ -71,9 +71,8 @@ export default (props) => {
     <Grid container>
       <Grid item className={classes.root} xs={12} sm={12} md={2}>
         <Typography className={classes.title} variant="h5">
-          SYSTEM ADMIN
+          QUẢN TRỊ <div>HỆ THỐNG</div> 
         </Typography>
-
         <Route
           exact
           path="/sys"

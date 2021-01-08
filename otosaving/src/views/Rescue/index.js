@@ -22,7 +22,7 @@ import CallIcon from "@material-ui/icons/Call";
 import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import SearchIcon from '@material-ui/icons/Search';
-
+import CancelIcon from '@material-ui/icons/Cancel';
 import { Input } from "@material-ui/core"
 
 import { server } from '../../constant';
@@ -33,6 +33,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {Redirect } from 'react-router-dom'
 import {socket} from '../../layouts/Admin';
 import Pagination from '@material-ui/lab/Pagination';
+import {Badge} from 'reactstrap';
 
 const { compose, withProps, lifecycle } = require("recompose");
 const {
@@ -239,13 +240,13 @@ const MyMapComponent = compose(
 													<PaymentIcon style={{ color: "#3b0957" }} />
 												</IconButton>
 											</Tooltip>
-											{!e.is_complete && <Tooltip title="Đánh dấu hoàn tất">
+											{/* {!e.is_complete && <Tooltip title="Xóa">
 												<IconButton
 													onClick={() => props.setComplete(e._id)}
 												>
-													<CheckIcon style={{ color: "#044711" }} />
+													<CancelIcon style={{ color: "#044711" }} />
 												</IconButton>
-											</Tooltip>}
+											</Tooltip>} */}
 
 										</Typography>
 
@@ -367,9 +368,9 @@ export default function Rescue() {
 		dispatch({ type: "SET_CHAT_TOGGLE", state: true });
 	};
 
-	const setComplete = (rescue_id) => {
+	const deleteRescue = (rescue_id) => {
 		axios()
-			.put("/api/rescue", { id: rescue_id })
+			.post("/api/rescue/remove", { id: rescue_id })
 			.then(() => {
 				loadOtoRescuing();
 			})
@@ -420,23 +421,12 @@ export default function Rescue() {
 						</Tooltip>
 					</div>
 				)}
-				{!e.is_complete && (
-					<div>
-						<Tooltip title="Đánh dấu hoàn tất">
-							<IconButton
-								aria-label="gps"
-								className={classes.margin}
-								onClick={() => setComplete(e._id)}
-							>
-								<CheckIcon style={{ color: "#044711" }} />
-							</IconButton>
-						</Tooltip>
-					</div>
-				)}
 				{e.is_complete && (
 					<div>
 						<Typography style={{ color: "green", marginLeft: "4px" }} variant="body1">
-							Đã hoàn thành
+							<Badge color="success">
+								Đã hoàn thành
+							</Badge>
 						</Typography>
 					</div>
 				)}
@@ -460,7 +450,7 @@ export default function Rescue() {
 								});
 							}}
 						>
-							<GpsFixedIcon style={{ color: "#70091c" }} />
+							<GpsFixedIcon style={{ color: "#044711" }} />
 						</IconButton>
 					</Tooltip>
 				</div>
@@ -474,6 +464,19 @@ export default function Rescue() {
 						</IconButton>
 					</Tooltip>
 				</div>
+				{(
+					<div>
+						<Tooltip title="Đánh dấu hoàn tất">
+							<IconButton
+								aria-label="gps"
+								className={classes.margin}
+								onClick={() => deleteRescue(e._id)}
+							>
+								<CancelIcon style={{ color: "#9c0828" }} />
+							</IconButton>
+						</Tooltip>
+					</div>
+				)}
 			</ListItem>
 		));
 
@@ -534,7 +537,7 @@ export default function Rescue() {
 						selectedCustomer={selectedCustomer}
 						setSelectedCustomer={setSelectedCustomer}
 						handleOpenMessage={handleOpenMessage}
-						setComplete={setComplete}
+						// setComplete={setComplete}
 						handleClickOpen={handleClickOpen}
 						callInsideMap={callInsideMap}
 						setIsRedirect={setIsRedirect}
