@@ -61,8 +61,8 @@ function Report(props) {
 
   const handleClickAndLoad = (store) => {
     setStoreSelected(store);
-    if(store) setFilter(store._id);
-    else setFilter("all")
+    if (store) setFilter(store._id);
+    else setFilter("all");
   };
 
   const loadStore = () => {
@@ -70,6 +70,16 @@ function Report(props) {
       .get("/api/report/store")
       .then((resp) => {
         setStores(resp.data);
+      })
+      .catch((err) => console.log(err));
+  };
+  const deleteComment = (id) => {
+    axios()
+      .get("/api/report/remove", {
+        id,
+      })
+      .then(() => {
+        loadReport(filter);
       })
       .catch((err) => console.log(err));
   };
@@ -85,7 +95,7 @@ function Report(props) {
               ? "Danh sách - Tất cả"
               : "Danh sách - " + storeSelected.name}
           </Badge>
-          <ListReport reports={reports} />
+          <ListReport reports={reports} deleteComment={deleteComment} />
         </div>
       </Grid>
       <Grid item xs={12} sm={12} md={4}>
@@ -103,7 +113,7 @@ function Report(props) {
                 onClick={() => handleClickAndLoad(null)}
                 button
                 className={
-                  storeSelected  === null
+                  storeSelected === null
                     ? classes.listItemActive
                     : classes.listItem
                 }
@@ -111,19 +121,13 @@ function Report(props) {
                 <ListItemIcon>
                   <AssignmentIndIcon
                     style={{
-                      color:
-                        storeSelected === null
-                          ? "black"
-                          : "black",
+                      color: storeSelected === null ? "black" : "black",
                     }}
                   />
                 </ListItemIcon>
                 <ListItemText
                   style={{
-                    color:
-                      storeSelected === null
-                        ? "black"
-                        : "black",
+                    color: storeSelected === null ? "black" : "black",
                   }}
                   primary={"Tất cả"}
                 />

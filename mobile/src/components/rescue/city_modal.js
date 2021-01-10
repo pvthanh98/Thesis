@@ -22,7 +22,7 @@ export default (props) => {
               <Picker.Item label={'Chọn Thành phố...'} value={''} />
               {renderCityItem()}
             </Picker>
-            <Button style={{width: 100}} onPress={()=>{
+            <Button disabled={props.loadingCityName ? true : false} style={{width: 100}} onPress={()=>{
               props.setCurrentCity(props.citySelected)
               setVisible(false);
             }} mode="contained">

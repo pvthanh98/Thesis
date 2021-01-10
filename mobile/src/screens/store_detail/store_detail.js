@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView, StatusBar, ActivityIndicator} from 'react-native';
-import {Avatar, Title, Button} from 'react-native-paper';
+import {Avatar, Title, Button, IconButton,Menu} from 'react-native-paper';
 import {Rating} from 'react-native-ratings';
 import Progress from '../../components/progress/progress';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,11 +8,13 @@ import CommentItem from '../../components/store_detail/comment_item';
 import axios from '../../service/axios';
 import {server} from '../../constants/index';
 import SplashScreen from '../../components/load';
+
 const StoreDetail = (props) => {
   const [store, setStore] = React.useState(null);
   const [totalRating, setTotalRating] = React.useState(null);
   const [ratingPercentage, setRatingPercentage] = React.useState(null);
   const [comments, setComments] = React.useState(null);
+  const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
     const {store_id} = props.route.params;
     axios
@@ -93,7 +95,19 @@ const StoreDetail = (props) => {
           size={100}
           source={{uri: `${server}/images/${store ? store.image : ''}`}}
         />
-        <Title style={{textAlign: 'center'}}>{store && store.name}</Title>
+        <Title style={{textAlign: 'center'}}>
+          {store && store.name}
+          <IconButton
+            icon= {()=><MaterialIcons name="report" size={24} color="red" />}
+            onPress={()=>props.navigation.navigate("report",{
+              store:{
+                id: store._id,
+                name:store.name
+              }
+            })}
+          />
+        </Title>
+        
         <Text>{store && store.description}</Text>
 
         <View style={styles.basisInfo}>

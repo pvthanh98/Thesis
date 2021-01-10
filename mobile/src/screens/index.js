@@ -23,6 +23,7 @@ import PaymentScreen from './paypal';
 import ServiceDetail from './store_detail/service_detail';
 import ServiceRating from './store_detail/service_rating';
 import ServiceScreen from './store_detail/service';
+import Report from './store_detail/report';
 import {Badge} from 'react-native-paper';
 
 import call from 'react-native-phone-call';
@@ -200,6 +201,14 @@ function StackComponent(props) {
         component={ServiceScreen}
         options={{
           headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="report"
+        component={Report}
+        options={{
+          headerTintColor: '#fff',
+          title: 'Báo cáo vi phạm',
         }}
       />
     </Stack.Navigator>

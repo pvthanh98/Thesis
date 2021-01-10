@@ -58,4 +58,11 @@ module.exports = {
       throw e;
     }
   },
+  removeReport: (req, res) => {
+    const {id} = req.body;
+    Report.findByIdAndRemove(id, function(err,docs){
+      if(!err) res.sendStatus(200);
+      else res.sendStatus(400);
+    });
+  }
 };
