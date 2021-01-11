@@ -552,7 +552,33 @@ export default function Rescue() {
 					</IconButton>
 				</Typography>
 			</GridItem>
-			<GridItem xs={12} sm={12} md={8}>
+			<GridItem xs={12} sm={12} md={12}>
+				{/* <Input
+					style={{ width: "80%" }}
+					placeholder="Tìm tên khách hàng"
+					value={customerName}
+					onChange={(e) => setCustomerName(e.target.value)}
+				/>
+				<IconButton
+					onClick={searchRescueByCustomerName}
+				>
+					<SearchIcon style={{ color: "#115293" }} />
+				</IconButton> */}
+				<div style={{ position: "relative" }}>
+					<DatePicker
+						placeholderText="Tìm theo ngày"
+						selected={startDate}
+						onChange={date => setStartDate(date)}
+						style={{ border: "none", borderBottom: "1px solid #ddd" }}
+					/>
+					<IconButton
+						onClick={searchRescueByCustomerDate}
+					>
+						<SearchIcon style={{ color: "#115293" }} />
+					</IconButton>
+				</div>
+			</GridItem>
+			<GridItem xs={12} sm={12} md={12}>
 				{loading && <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
 					<CircularProgress color="secondary" />
 				</div>}
@@ -569,35 +595,6 @@ export default function Rescue() {
 				{totalPage >= 0 && <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
 					<Pagination count={totalPage} onChange={(e, value) => loadOtoRescuing(value)} color="primary" />
 				</div>}
-			</GridItem>
-			<GridItem xs={12} sm={12} md={4}>
-				<Typography variant="h5" className="mt-3" gutterBottom>
-					Bộ lọc
-				</Typography>
-				<Input
-					style={{ width: "80%" }}
-					placeholder="Tìm tên khách hàng"
-					value={customerName}
-					onChange={(e) => setCustomerName(e.target.value)}
-				/>
-				<IconButton
-					onClick={searchRescueByCustomerName}
-				>
-					<SearchIcon style={{ color: "#115293" }} />
-				</IconButton>
-				<div style={{ position: "relative" }}>
-					<DatePicker
-						placeholderText="Tìm theo ngày"
-						selected={startDate}
-						onChange={date => setStartDate(date)}
-						style={{ border: "none", borderBottom: "1px solid #ddd" }}
-					/>
-					<IconButton
-						onClick={searchRescueByCustomerDate}
-					>
-						<SearchIcon style={{ color: "#115293" }} />
-					</IconButton>
-				</div>
 			</GridItem>
 		</GridContainer>
 	);

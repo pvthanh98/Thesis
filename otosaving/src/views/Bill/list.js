@@ -69,12 +69,12 @@ const headCells = [
     disablePadding: true,
     label: "ID",
   },
-  { id: "Date", numeric: true, disablePadding: false, label: "Date" },
-  { id: "Customer", numeric: true, disablePadding: false, label: "Customer" },
-  { id: "Total", numeric: true, disablePadding: false, label: "Total" },
-  { id: "Quantity", numeric: true, disablePadding: false, label: "Quantity" },
-  { id: "Paid", numeric: true, disablePadding: false, label: "Paid" },
-  { id: "Confirm", numeric: true, disablePadding: false, label: "Confirm" },
+  { id: "Date", numeric: true, disablePadding: false, label: "Ngày" },
+  { id: "Customer", numeric: true, disablePadding: false, label: "Khách hàng" },
+  { id: "Total", numeric: true, disablePadding: false, label: "Tổng" },
+  { id: "Quantity", numeric: true, disablePadding: false, label: "Số lượng" },
+  { id: "Paid", numeric: true, disablePadding: false, label: "Thanh toán" },
+  { id: "Confirm", numeric: true, disablePadding: false, label: "Xác nhận" },
 ];
 
 function EnhancedTableHead(props) {
@@ -212,7 +212,7 @@ const EnhancedTableToolbar = (props) => {
       )}
 
       {numSelected === 1 && (
-        <Tooltip title="modify">
+        <Tooltip title="Chi tiết">
           <IconButton
             onClick={() => props.setToModifyPage(true)}
             aria-label="modify"
@@ -223,7 +223,7 @@ const EnhancedTableToolbar = (props) => {
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip title="Xóa">
           <IconButton onClick={props.deleteBill} aria-label="delete">
             <DeleteIcon />
           </IconButton>

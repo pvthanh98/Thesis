@@ -19,17 +19,17 @@ class LineChart extends Component {
 				text: "Doanh thu theo tuần"
 			},
 			axisY: {
-				title: "$",
+				title: "VND",
 				includeZero: false,
 			},
 			axisX: {
-				title: "Date",
+				title: "Ngày",
 				valueFormatString: "DD-MM",
 				interval: 2
 			},
 			data: [{
 				type: "line",
-				toolTipContent: "Week {x}: {y}%",
+				toolTipContent: "{x}: {y} VND",
 				dataPoints: data
 			}]
 		}

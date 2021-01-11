@@ -1,8 +1,8 @@
 import React from "react";
 import {server} from '../../../constant';
-import moment from 'moment';
+import moment from '../../../service/vnmoment';
 export default (props) => {
-  console.log(moment(props.message.timestamp).fromNow())
+ // console.log(moment(props.message.timestamp).fromNow())
   const {message} = props;
   if(props.where==="customer"){
     switch (message.is_store) {
@@ -18,7 +18,7 @@ export default (props) => {
             <div className="forloat">
               <div className="msg-content partner-msg-content">{message.body}</div>
               <div className="msg-info al-left">
-                {moment(message.timestamp).fromNow()}
+                {moment(message.timestamp)}
               </div>
             </div>
           </div>
@@ -29,7 +29,7 @@ export default (props) => {
           <div className="msg my_msg">
             <div className="msg-content my-msg-content">{message.body}</div>
             <div className="msg-info al-right" style={{textAlign:"right"}}>
-              {moment(message.timestamp).fromNow()}
+              {moment(message.timestamp)}
             </div>
           </div>
         );
@@ -39,7 +39,7 @@ export default (props) => {
           <div className="msg my_msg">
             <div className="msg-content my-msg-content">{props.msg}</div>
             <div className="msg-info" style={{ textAlign: "right" }}>
-              {moment(message.time).fromNow()}
+              {moment(message.time)}
             </div>
           </div>
         );
@@ -61,7 +61,7 @@ export default (props) => {
             <div className="forloat">
               <div className="msg-content partner-msg-content">{message.body}</div>
               <div className="msg-info al-left">
-                {moment(message.timestamp).fromNow()}
+                {moment(message.timestamp)}
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@ export default (props) => {
           <div className="msg my_msg">
             <div className="msg-content my-msg-content">{message.body}</div>
             <div className="msg-info al-right" style={{textAlign:"right"}}>
-              {moment(message.timestamp).fromNow()}
+              {moment(message.timestamp)}
             </div>
           </div>
         );
@@ -82,7 +82,7 @@ export default (props) => {
           <div className="msg my_msg">
             <div className="msg-content my-msg-content">{message.msg}</div>
             <div className="msg-info" style={{ textAlign: "right" }}>
-              {moment(message.timestamp).fromNow()}
+              {moment(message.timestamp)}
             </div>
           </div>
         );

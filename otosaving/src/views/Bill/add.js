@@ -379,12 +379,12 @@ export default function ProvisionalBill(props) {
                     variant="contained"
                     onClick={() => setIsMadeBill(!isMadeBill)}
                   >
-                    {!isMadeBill ? "Make Bill" : "Cancel"}
+                    {!isMadeBill ? "Lập hóa đơn " : "Hủy"}
                   </Button>
                 </div>
                 {isSuccess && (
                   <Alert className="mt-3" severity="success">
-                    success
+                    Thành công
                   </Alert>
                 )}
               </GridItem>
@@ -403,7 +403,7 @@ export default function ProvisionalBill(props) {
                 <GridItem xs={12} sm={12} md={12}>
                   <Table
                     tableHeaderColor="primary"
-                    tableHead={["ID", "Name", "Price", "Quantity", "Total", ""]}
+                    tableHead={["ID", "Tên", "Giá", "Số lượng", "Tổng tiền", ""]}
                     tableData={renderBillTemp()}
                   />
                 </GridItem>
@@ -452,7 +452,7 @@ export default function ProvisionalBill(props) {
         <GridItem xs={12} sm={12} md={4}>
           <Card>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Add New</h4>
+              <h4 className={classes.cardTitleWhite}>Thêm mới</h4>
             </CardHeader>
             <CardBody>
               <GridContainer>

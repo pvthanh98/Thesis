@@ -3,6 +3,7 @@ import Navbar from "../../components/user_ui/navbar";
 import Footer from "../../components/user_ui/footer";
 import { connect } from "react-redux";
 import { Container, Row, Col } from "reactstrap";
+import { Redirect } from 'react-router-dom';
 import { Avatar, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import axios from "service/axios_user";
@@ -240,7 +241,11 @@ const MyMapComponent = compose(
                       >
                         GỬI TIN NHẮN
                       </Button>
-                      <Button variant="contained" className="ml-2">
+                      <Button 
+                        variant="contained" 
+                        onClick={()=>props.setRedirectLink(`/store/id/${props.selectedWindow.id}`)} 
+                        className="ml-2"
+                      >
                         CHI TIẾT CỬA HÀNG
                       </Button>
                     </div>
@@ -269,11 +274,18 @@ class Map extends React.PureComponent {
     stores: null,
     openCityModal: true,
     sortStoreByRating: true,
+    redirectlink:null,
   };
   componentDidMount() {
     this.loadMyposition();
     this.loadCarProblems();
     this.getCity();
+  }
+
+  setRedirectLink = (link) => {
+    this.setState({
+      redirectlink:link
+    })
   }
 
   handleCityModal = (city_id) => {
@@ -477,6 +489,7 @@ class Map extends React.PureComponent {
 
   render() {
     // if (this.state.citySelected === null) return <CitySelection city={this.state.city} getCitySelected={this.getCitySelected} />
+    if(this.state.redirectlink) return <Redirect push to={this.state.redirectlink} />
     return (
       <div>
         <Navbar />
@@ -489,6 +502,7 @@ class Map extends React.PureComponent {
               stores={this.state.stores}
               updateStore={this.updateStore}
               handleClickSendMessage={this.handleClickSendMessage}
+              setRedirectLink={this.setRedirectLink}
             />
           ) : (
             <Loading message="Đang tải vị trí của bạn" />

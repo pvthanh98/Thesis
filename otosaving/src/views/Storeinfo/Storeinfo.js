@@ -260,7 +260,7 @@ export default function StoreInfo() {
                     <Input fullWidth={true} value={lng} name="lng" onChange={onInputChange} />
                 </Grid>
                 <Grid item md={4} className={classes.customContainer}>
-                    <Button onClick={onFormSubmit} variant="contained" color="secondary">UPDATE</Button>
+                    <Button onClick={onFormSubmit} variant="contained" color="secondary">CẬP NHẬT</Button>
                     {loading && <Loading style={{marginLeft:"24px"}} />}
                 </Grid>
                 <Grid item md={8} className={classes.customContainer}>

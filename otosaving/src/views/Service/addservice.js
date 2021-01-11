@@ -160,7 +160,7 @@ export default function AddService() {
                       fullWidth
                       variant="standard"
                       value={price}
-                      currencySymbol="$"
+                      currencySymbol="VND"
                       outputFormat="string"
                       onChange={(event, value)=> setPrice(value)}
                   />
