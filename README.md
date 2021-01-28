@@ -2,12 +2,9 @@
 Tác giả: Phan Văn Thành
 ## Mô Tả
 Hệ thống bao gồm 3 modules chính:
-+ Quản trị hệ thống
-+ Cửa hàng cứu hộ
-+ Khách hàng
-Người quản trị hệ thống có vai trò giám sát hệ thống, cửa hàng và khách hàng
-Cửa hàng bán hoặc cứu hộ ô tô có thể đăng ký thông tin lên hệ thống để tiếp cận với khách hàng
-Khách hàng sử dụng dịch vụ cứu hộ khi xe ô tô gặp phải sự cố trên đường
++ Người quản trị hệ thống có vai trò giám sát hệ thống, cửa hàng và khách hàng
++ Cửa hàng bán hoặc cứu hộ ô tô có thể đăng ký thông tin lên hệ thống để tiếp cận với khách hàng
++ Khách hàng sử dụng dịch vụ cứu hộ khi xe ô tô gặp phải sự cố trên đường
 ## Công nghệ sử dụng
 + NodeJs
 + ReactJS
