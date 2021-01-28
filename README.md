@@ -11,10 +11,10 @@ Hệ thống bao gồm 3 modules chính:
 + React Native
 ## Cách vận hành ứng dụng sau khi tải về
 ### Download node modules
-+ Chuyển vào thư mục server và dùng lệnh ```javascript npm install``` để download các gối thư viện cần thiết.
++ Chuyển vào thư mục server và dùng lệnh ``` npm install``` để download các gối thư viện cần thiết.
 + Lần lượt chuyển vào thư mục **otorescuing** và **mobile** dùng lệnh ```npm install```.
 ### Vận hành
-+ Bước 1: Vào thư mục **server và** ```javascript npm start``` để chạy server.
-+ Bước 2: Vào thư mục **otorescuing** và dùng lệnh ```javascript npm start``` để chạy website.
-+ Bước 3: Vào thư mục **mobile** và dùng lệnh ```javascript npx react-native run-android``` để khởi chạy ứng dụng trên điện thoại Android.
++ Bước 1: Vào thư mục **server và** ``` npm start``` để chạy server.
++ Bước 2: Vào thư mục **otorescuing** và dùng lệnh ``` npm start``` để chạy website.
++ Bước 3: Vào thư mục **mobile** và dùng lệnh ``` npx react-native run-android``` để khởi chạy ứng dụng trên điện thoại Android.
 
