@@ -15,6 +15,6 @@ Hệ thống bao gồm 3 modules chính:
 + Lần lượt chuyển vào thư mục **otorescuing** và **mobile** dùng lệnh ```npm install```.
 ### Vận hành
 + Bước 1: Vào thư mục **server và** ``` npm start``` để chạy server.
-+ Bước 2: Vào thư mục **otorescuing** và dùng lệnh ``` npm start``` để chạy website.
++ Bước 2: Vào thư mục **otorescuing** và dùng lệnh ```npm start``` để chạy website.
 + Bước 3: Vào thư mục **mobile** và dùng lệnh ``` npx react-native run-android``` để khởi chạy ứng dụng trên điện thoại Android.
 
