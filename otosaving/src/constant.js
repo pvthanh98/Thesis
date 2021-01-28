@@ -1,1 +1,0 @@
-export const server = "http://34.72.53.26:8080/";
